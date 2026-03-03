@@ -1,0 +1,46 @@
+{
+  "name": "optimtournee",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Landing page SaaS pour l'optimisation d'itinéraires - PME paysagistes",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "next": "^15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^5.0.0",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
+    "posthog-js": "^1.215.3",
+    "lucide-react": "^0.475.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.1",
+    "@radix-ui/react-slot": "^1.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/leaflet": "^1.9.16",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^4.0.6",
+    "@tailwindcss/postcss": "^4.0.6",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "^15.1.7",
+    "prettier": "^3.5.1",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
