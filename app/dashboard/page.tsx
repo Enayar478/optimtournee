@@ -1,28 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
-import { Icon } from "leaflet";
+import dynamic from "next/dynamic";
 import { Client, Team, Schedule, DailyRoute } from "@/types/domain";
 import { generateSchedule } from "@/lib/domain/scheduler";
 import { getMockWeather } from "@/lib/services/weather";
 import { format, startOfWeek, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
 
-const clientIcon = new Icon({
-  iconUrl: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzIyYzU1ZSI+PHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDljMCA1LjI1IDcgMTMgNyAxM3M3LTcuNzUgNy0xM2MwLTMuODctMy4xMy03LTctN3ptMCA5LjVjLTEuMzggMC0yLjUtMS4xMi0yLjUtMi41czEuMTItMi41IDIuNS0yLjUgMi41IDEuMTIgMi41IDIuNS0xLjEyIDIuNS0yLjUgMi41eiIvPjwvc3ZnPg==",
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-});
-
-const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
+const DashboardMap = dynamic(() => import("@/components/map/DashboardMap"), { ssr: false });
 
 export default function DashboardPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<"day" | "week">("week");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -46,7 +38,7 @@ export default function DashboardPage() {
     setIsLoading(true);
     const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
     const end = addDays(start, 6);
-    
+
     const sched = await generateSchedule(
       {
         startDate: start,
@@ -60,9 +52,9 @@ export default function DashboardPage() {
         allowWeekendWork: false,
         weatherBufferDays: 1,
       },
-      async (date, loc) => getMockWeather(date)
+      async (_date, _loc) => getMockWeather(_date)
     );
-    
+
     setSchedule(sched);
     setIsLoading(false);
   };
@@ -147,7 +139,10 @@ export default function DashboardPage() {
                       <div
                         key={route.teamId}
                         className="p-2 rounded text-sm"
-                        style={{ backgroundColor: `${team?.color}20`, borderLeft: `3px solid ${team?.color}` }}
+                        style={{
+                          backgroundColor: `${team?.color}20`,
+                          borderLeft: `3px solid ${team?.color}`,
+                        }}
                       >
                         <div className="font-medium" style={{ color: team?.color }}>
                           {team?.name}
@@ -166,33 +161,7 @@ export default function DashboardPage() {
         {/* Carte */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="h-[400px]">
-            <MapContainer center={[48.8566, 2.3522]} zoom={12} className="h-full w-full">
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org">OSM</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              {clients.map((c) => (
-                <Marker key={c.id} position={[c.location.lat, c.location.lng]} icon={clientIcon}>
-                  <Popup>{c.name}</Popup>
-                </Marker>
-              ))}
-              {schedule?.routes.map((route, idx) => {
-                const team = teams.find((t) => t.id === route.teamId);
-                const positions = route.interventions.map((i) => {
-                  const client = clients.find((c) => c.id === i.clientId);
-                  return client ? [client.location.lat, client.location.lng] : null;
-                }).filter(Boolean) as [number, number][];
-                
-                return (
-                  <Polyline
-                    key={route.teamId}
-                    positions={positions}
-                    color={team?.color || COLORS[idx % COLORS.length]}
-                    weight={3}
-                  />
-                );
-              })}
-            </MapContainer>
+            <DashboardMap clients={clients} teams={teams} schedule={schedule} />
           </div>
         </div>
       </div>
