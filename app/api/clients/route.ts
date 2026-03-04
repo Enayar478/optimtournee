@@ -1,38 +1,9 @@
 import { NextResponse } from "next/server";
 import { Client } from "@/types/domain";
+import { MOCK_CLIENTS } from "@/lib/data/mock-data";
 
-// Stockage en mémoire (remplacé par DB plus tard)
-let clients: Client[] = [
-  {
-    id: "c1",
-    name: "M. Dupont - Villa Les Roses",
-    location: {
-      lat: 48.8566,
-      lng: 2.3522,
-      address: "12 Rue de la Paix, Paris",
-    },
-    contactPhone: "06 12 34 56 78",
-    contactEmail: "dupont@email.com",
-    notes: "Portail rouge, chien sympathique",
-    contract: {
-      id: "ctr1",
-      clientId: "c1",
-      recurrence: "weekly",
-      dayOfWeek: 2,
-      durationMinutes: 120,
-      interventionType: "mowing",
-      requiredEquipment: ["lawn_tractor", "blower"],
-      weatherConstraints: {
-        maxWindSpeed: 30,
-        noRainForecast: true,
-        minTemperature: 5,
-        maxTemperature: 35,
-      },
-      startDate: new Date("2025-01-01"),
-      priority: 3,
-    },
-  },
-];
+// Stockage en mémoire initialisé avec les données mockées
+let clients: Client[] = [...MOCK_CLIENTS];
 
 export async function GET() {
   return NextResponse.json(clients);
