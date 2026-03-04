@@ -1,0 +1,16 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icône -->
+  <g transform="translate(0, 0)">
+    <rect width="40" height="40" rx="8" fill="#2D5A3D"/>
+    <path d="M12 28C12 28 16 28 18 24C20 20 16 16 20 12C24 8 28 8 28 8" 
+          stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="12" cy="28" r="3" fill="#E07B39"/>
+    <path d="M28 8C28 8 30 6 32 8C34 10 32 12 30 12" 
+          stroke="#6BB3C7" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </g>
+  
+  <!-- Texte "OptimTournée" -->
+  <text x="50" y="27" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#1A1A1A">
+    Optim<tspan fill="#2D5A3D">Tournée</tspan>
+  </text>
+</svg>

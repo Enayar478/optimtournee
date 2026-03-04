@@ -1,0 +1,58 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond -->
+  <rect width="1200" height="630" fill="url(#ogGradient)"/>
+  
+  <!-- Pattern de routes subtil -->
+  <g opacity="0.1">
+    <path d="M0 315 Q300 200 600 315 T1200 250" stroke="#2D5A3D" stroke-width="4" fill="none"/>
+    <path d="M0 400 Q400 300 800 400 T1200 350" stroke="#2D5A3D" stroke-width="4" fill="none"/>
+  </g>
+  
+  <!-- Logo -->
+  <g transform="translate(100, 100)">
+    <rect width="80" height="80" rx="16" fill="#2D5A3D"/>
+    <path d="M24 56C24 56 32 56 36 48C40 40 32 32 40 24C48 16 56 16 56 16" 
+          stroke="white" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <circle cx="24" cy="56" r="6" fill="#E07B39"/>
+    <path d="M56 16C56 16 60 12 64 16C68 20 64 24 60 24" 
+          stroke="#6BB3C7" stroke-width="4" stroke-linecap="round" fill="none"/>
+  </g>
+  
+  <!-- Titre -->
+  <text x="100" y="250" fill="#1A1A1A" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="800">
+    Optimisez vos tournées
+  </text>
+  
+  <text x="100" y="330" fill="#2D5A3D" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="800">
+    en quelques clics
+  </text>
+  
+  <!-- Sous-titre -->
+  <text x="100" y="420" fill="#4A4A4A" font-family="Inter, system-ui, sans-serif" font-size="32">
+    Gagnez jusqu'à 2h par jour sur vos déplacements d'entretien
+  </text>
+  
+  <!-- CTA visuel -->
+  <g transform="translate(100, 480)">
+    <rect width="280" height="60" rx="8" fill="#2D5A3D"/>
+    <text x="140" y="40" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="20" font-weight="600">
+      Essayer gratuitement →
+    </text>
+  </g>
+  
+  <!-- Badge économies -->
+  <g transform="translate(900, 480)">
+    <rect width="200" height="60" rx="30" fill="#E07B39"/>
+    <text x="100" y="40" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="20" font-weight="700">
+      -20% de carburant
+    </text>
+  </g>
+  
+  <defs>
+    <linearGradient id="ogGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8F5EC"/>
+      <stop offset="50%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#E8F4F7"/>
+    </linearGradient>
+  </defs>
+</svg>
