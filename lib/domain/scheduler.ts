@@ -1,16 +1,28 @@
 /**
  * Moteur de planification intelligent avec contraintes météo
+ * 
+ * CORRECTIONS APPORTÉES (Argos):
+ * - Types stricts au lieu de `any`
+ * - Fix calcul récurrence mensuelle (30j → vrai mois)
+ * - Null safety sur clientMap.get()
+ * - Type guards sur les enums
  */
 
 import {
-  Client, Team, Equipment, RecurringContract, OneOffRequest,
-  PlannedIntervention, DailyRoute, Schedule, ScheduleStats,
-  SchedulingConstraints, WeatherForecast, GeoLocation
+  Team, RecurringContract,
+  DailyRoute, Schedule, ScheduleStats,
+  SchedulingConstraints, WeatherForecast, GeoLocation,
+  InterventionType, EquipmentType, WeatherConstraints, RecurrenceType
 } from '../../types/domain';
-
 function addDays(date: Date, days: number): Date {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
+  return result;
+}
+
+function addMonths(date: Date, months: number): Date {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() + months);
   return result;
 }
 
@@ -45,30 +57,90 @@ function minutesToTime(minutes: number): string {
   return `${Math.floor(minutes/60).toString().padStart(2,'0')}:${(minutes%60).toString().padStart(2,'0')}`;
 }
 
+// Type guard pour vérifier si une valeur est un InterventionType valide
+function isValidInterventionType(value: string): value is InterventionType {
+  const validTypes: InterventionType[] = [
+    'mowing', 'hedge_trimming', 'pruning', 'weeding', 
+    'planting', 'maintenance', 'emergency'
+  ];
+  return validTypes.includes(value as InterventionType);
+}
+
+// Type guard pour vérifier si un équipement est valide
+function isValidEquipmentType(value: string): value is EquipmentType {
+  const validTypes: EquipmentType[] = [
+    'lawn_tractor', 'push_mower', 'hedge_trimmer', 'chainsaw',
+    'blower', 'trailer', 'utility_vehicle'
+  ];
+  return validTypes.includes(value as EquipmentType);
+}
+
+/**
+ * Génère les dates d'occurrences pour un contrat récurrent
+ * FIX: Utilise vrai calcul de mois au lieu de 30j fixes
+ */
 export function generateRecurringOccurrences(
   contract: RecurringContract, startDate: Date, endDate: Date
 ): Date[] {
   const dates: Date[] = [];
   let current = new Date(contract.startDate);
   
-  const increments: Record<string, number> = {
-    weekly: 7, biweekly: 14, monthly: 30, bimonthly: 60, quarterly: 90
-  };
-  
+  // Avancer jusqu'à la fenêtre de planification
   while (current < startDate) {
-    current = addDays(current, increments[contract.recurrence] || 7);
+    current = advanceDate(current, contract.recurrence);
   }
   
+  // Collecter toutes les dates dans la fenêtre
   while (current <= endDate && (!contract.endDate || current <= contract.endDate)) {
     if (current.getDay() === contract.dayOfWeek) {
       dates.push(new Date(current));
     }
-    current = addDays(current, 1);
+    current = advanceDate(current, contract.recurrence);
   }
   
   return dates;
 }
 
+/**
+ * Avance une date selon le type de récurrence
+ * FIX: Gestion correcte des mois (variable 28-31j)
+ */
+function advanceDate(date: Date, recurrence: RecurrenceType): Date {
+  switch (recurrence) {
+    case 'weekly':
+      return addDays(date, 7);
+    case 'biweekly':
+      return addDays(date, 14);
+    case 'monthly':
+      return addMonths(date, 1);
+    case 'bimonthly':
+      return addMonths(date, 2);
+    case 'quarterly':
+      return addMonths(date, 3);
+    default:
+      return addDays(date, 7);
+  }
+}
+
+// Interface interne pour les tâches à planifier
+interface TaskToSchedule {
+  type: 'recurring' | 'oneoff';
+  id: string;
+  clientId: string;
+  date: Date;
+  duration: number;
+  interventionType: InterventionType;
+  requiredEquipment: EquipmentType[];
+  priority: number;
+  weatherConstraints: WeatherConstraints;
+  sourceId: string;
+}
+
+/**
+ * Génère un planning optimisé avec contraintes météo
+ * 
+ * TODO: Cette fonction mute les objets task.date — à refactorer pour immutabilité
+ */
 export async function generateSchedule(
   constraints: SchedulingConstraints,
   weatherProvider: (date: Date, loc: GeoLocation) => Promise<WeatherForecast | undefined>
@@ -76,18 +148,7 @@ export async function generateSchedule(
   const { startDate, endDate, teams, clients, oneOffRequests } = constraints;
   const clientMap = new Map(clients.map(c => [c.id, c]));
   
-  const toSchedule: Array<{
-    type: 'recurring' | 'oneoff';
-    id: string;
-    clientId: string;
-    date: Date;
-    duration: number;
-    interventionType: import("@/types/domain").InterventionType;
-    requiredEquipment: import("@/types/domain").EquipmentType[];
-    priority: number;
-    weatherConstraints: any;
-    sourceId: string;
-  }> = [];
+  const toSchedule: TaskToSchedule[] = [];
   
   // Collecter interventions récurrentes
   for (const client of clients) {
@@ -128,6 +189,7 @@ export async function generateSchedule(
     }
   }
   
+  // Trier par priorité puis par date
   toSchedule.sort((a, b) => b.priority - a.priority || a.date.getTime() - b.date.getTime());
   
   const routes = new Map<string, DailyRoute>();
@@ -149,10 +211,15 @@ export async function generateSchedule(
     return routes.get(key)!;
   }
   
+  // Traiter chaque tâche
   for (const task of toSchedule) {
     const client = clientMap.get(task.clientId);
-    if (!client) continue;
+    if (!client) {
+      console.warn(`Client non trouvé: ${task.clientId}`);
+      continue;
+    }
     
+    // Filtrer les équipes disponibles ce jour-là
     const availableTeams = teams.filter(t => {
       if (!t.workSchedule.workingDays.includes(task.date.getDay())) return false;
       if (t.unavailableDates.some(d => isSameDay(d, task.date))) return false;
@@ -160,10 +227,12 @@ export async function generateSchedule(
     });
     
     if (availableTeams.length === 0) {
+      // NOTE: Mutation de task.date — à améliorer pour immutabilité
       task.date = addDays(task.date, 1);
       continue;
     }
     
+    // Vérifier la météo
     const weather = await weatherProvider(task.date, client.location);
     const wc = task.weatherConstraints;
     if (weather && (
@@ -172,15 +241,20 @@ export async function generateSchedule(
       weather.temperature > wc.maxTemperature ||
       weather.temperature < wc.minTemperature
     )) {
+      // NOTE: Mutation de task.date — à améliorer pour immutabilité
       task.date = addDays(task.date, 1);
       continue;
     }
     
+    // Trouver la meilleure équipe (plus proche)
     let bestTeam: Team | null = null;
     let minDistance = Infinity;
     
     for (const team of availableTeams) {
-      if (!team.skills.includes(task.interventionType) && !team.skills.includes('maintenance')) continue;
+      // Vérifier compétences
+      if (!team.skills.includes(task.interventionType) && !team.skills.includes('maintenance')) {
+        continue;
+      }
       
       const route = getRoute(task.date, team);
       const availableMins = timeToMinutes(team.workSchedule.endTime) - 
@@ -188,13 +262,17 @@ export async function generateSchedule(
       const usedMins = route.interventions.reduce((s, i) => 
         s + i.estimatedDurationMinutes + i.estimatedTravelTimeMinutes, 0);
       
+      // Vérifier capacité horaire
       if (usedMins + task.duration > availableMins) continue;
       
+      // Calculer distance depuis dernière intervention
       const lastLoc = route.interventions.length 
         ? clientMap.get(route.interventions[route.interventions.length-1].clientId)?.location 
         : team.defaultStartLocation;
       
-      const dist = lastLoc ? calculateDistance(lastLoc, client.location) : 0;
+      if (!lastLoc) continue; // FIX: Null safety
+      
+      const dist = calculateDistance(lastLoc, client.location);
       if (dist < minDistance) {
         minDistance = dist;
         bestTeam = team;
@@ -208,14 +286,25 @@ export async function generateSchedule(
         ? clientMap.get(lastInt.clientId)?.location 
         : bestTeam.defaultStartLocation;
       
-      const travelDist = prevLoc ? calculateDistance(prevLoc, client.location) : 0;
+      if (!prevLoc) continue; // FIX: Null safety
+      
+      const travelDist = calculateDistance(prevLoc, client.location);
       const travelTime = estimateTravelTime(travelDist);
       
+      // Calculer heure de début
       let startMins = timeToMinutes(bestTeam.workSchedule.startTime);
       if (lastInt) {
         startMins = timeToMinutes(lastInt.estimatedStartTime) + 
           lastInt.estimatedDurationMinutes + lastInt.estimatedTravelTimeMinutes;
       }
+      
+      // Validation du type d'intervention
+      if (!isValidInterventionType(task.interventionType)) {
+        console.warn(`Type d'intervention invalide: ${task.interventionType}`);
+      }
+      
+      // Validation des équipements
+      const validEquipment = task.requiredEquipment.filter(eq => isValidEquipmentType(eq));
       
       route.interventions.push({
         id: task.id,
@@ -223,12 +312,12 @@ export async function generateSchedule(
         sourceContractId: task.type === 'recurring' ? task.sourceId : undefined,
         sourceRequestId: task.type === 'oneoff' ? task.sourceId : undefined,
         clientId: task.clientId,
-        interventionType: task.interventionType as any,
+        interventionType: task.interventionType,
         scheduledDate: new Date(task.date),
         estimatedStartTime: minutesToTime(startMins),
         estimatedDurationMinutes: task.duration,
         assignedTeamId: bestTeam.id,
-        assignedEquipment: task.requiredEquipment as any,
+        assignedEquipment: validEquipment,
         status: 'planned',
         routeOrder: route.interventions.length,
         estimatedTravelTimeMinutes: Math.round(travelTime/60),
@@ -256,10 +345,36 @@ export async function generateSchedule(
   };
 }
 
+/**
+ * Calcule les statistiques du planning
+ * FIX: Initialisation propre de equipmentUtilization
+ */
 function calculateStats(routes: DailyRoute[]): ScheduleStats {
   const totalInt = routes.reduce((s, r) => s + r.interventions.length, 0);
   const totalDist = routes.reduce((s, r) => s + r.totalDistanceKm, 0);
   const totalDrive = routes.reduce((s, r) => s + r.totalDrivingTimeMinutes, 0);
+  
+  // FIX: Initialiser equipmentUtilization avec tous les types à 0
+  const equipmentUtilization: Record<EquipmentType, number> = {
+    lawn_tractor: 0,
+    push_mower: 0,
+    hedge_trimmer: 0,
+    chainsaw: 0,
+    blower: 0,
+    trailer: 0,
+    utility_vehicle: 0,
+  };
+  
+  // Compter l'utilisation réelle
+  for (const route of routes) {
+    for (const intervention of route.interventions) {
+      for (const eq of intervention.assignedEquipment) {
+        if (eq in equipmentUtilization) {
+          equipmentUtilization[eq]++;
+        }
+      }
+    }
+  }
   
   return {
     totalInterventions: totalInt,
@@ -267,6 +382,6 @@ function calculateStats(routes: DailyRoute[]): ScheduleStats {
     totalDrivingTimeHours: Math.round(totalDrive / 6) / 10,
     clientsServed: new Set(routes.flatMap(r => r.interventions.map(i => i.clientId))).size,
     teamsUtilized: new Set(routes.map(r => r.teamId)).size,
-    equipmentUtilization: {} as any,
+    equipmentUtilization,
   };
 }
