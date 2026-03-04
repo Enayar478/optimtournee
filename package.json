@@ -10,10 +10,19 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.0.0",
+    "@prisma/client": "^6.3.1",
     "@radix-ui/react-slot": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -41,7 +50,9 @@
     "postcss": "^8.5.2",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "prisma": "^6.3.1",
     "tailwindcss": "^4.0.6",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
   "engines": {
