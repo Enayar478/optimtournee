@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import RouteOptimizerDemo from "@/components/map/RouteOptimizerDemo";
+import RouteOptimizerDemoClient from "@/components/map/RouteOptimizerDemoClient";
 
 export const metadata: Metadata = {
   title: "Démo - OptimTournée",
@@ -13,13 +13,13 @@ export default function DemoPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Démonstration interactive</h1>
           <p className="text-lg text-gray-600 max-w-3xl">
-            Découvrez comment OptimTournée génère automatiquement des plannings optimisés 
-            en tenant compte de la météo, des contraintes d'équipes et des récurrences clients.
+            Découvrez comment OptimTournée génère automatiquement des plannings optimisés
+            en tenant compte de la météo, des contraintes d&apos;équipes et des récurrences clients.
             Cette démo utilise des données fictives pour illustrer le fonctionnement.
           </p>
         </div>
 
-        <RouteOptimizerDemo />
+        <RouteOptimizerDemoClient />
       </div>
     </div>
   );
