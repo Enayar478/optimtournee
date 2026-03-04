@@ -1,35 +1,23 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "framer-motion";
-import { Client, Team, Schedule, DailyRoute } from "@/types/domain";
-import { generateSchedule } from "@/lib/domain/scheduler";
-import { getMockWeather } from "@/lib/services/weather";
-import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-import { fr } from "date-fns/locale";
+
 import { 
-  MapPin, 
   Calendar, 
   Users, 
   Route, 
   Clock, 
-  Play, 
   ChevronLeft, 
   ChevronRight,
-  Layers,
   Navigation,
   Zap,
   Wind,
   Droplets,
   Sun,
   CloudRain,
-  Thermometer,
   Maximize2,
-  Minimize2,
-  Filter,
-  MoreVertical
+  Minimize2
 } from "lucide-react";
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -79,7 +67,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"planning" | "map" | "stats">("planning");
+  
   const [showWeather, setShowWeather] = useState(true);
 
   useEffect(() => {

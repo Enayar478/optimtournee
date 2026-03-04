@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String
+  latitude    Float
+  longitude   Float
+  contractType ContractType @default(WEEKLY)
+  startDate   DateTime @default(now())
+  preferredDay String? // Lundi, Mardi, etc.
+  notes       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  interventions Intervention[]
+  
+  @@index([latitude, longitude])
+  @@index([isActive])
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  name      String
+  color     String   @default("#22c55e") // Vert par défaut
+  members   String[] // Array de noms
+  email     String?
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  equipment     Equipment[]
+  interventions Intervention[]
+  
+  @@index([isActive])
+}
+
+model Equipment {
+  id          String   @id @default(uuid())
+  name        String
+  type        EquipmentType
+  teamId      String?
+  isAvailable Boolean  @default(true)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  team Team? @relation(fields: [teamId], references: [id])
+  
+  @@index([teamId])
+  @@index([isAvailable])
+}
+
+model Intervention {
+  id          String   @id @default(uuid())
+  clientId    String
+  teamId      String?
+  date        DateTime
+  status      InterventionStatus @default(PENDING)
+  duration    Int      @default(60) // Durée en minutes
+  notes       String?
+  weather     Json?    // Données météo au moment de l'intervention
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  team   Team?  @relation(fields: [teamId], references: [id])
+  
+  @@index([clientId])
+  @@index([teamId])
+  @@index([date])
+  @@index([status])
+}
+
+model Schedule {
+  id          String   @id @default(uuid())
+  weekStart   DateTime // Début de semaine (Lundi)
+  teamId      String?
+  data        Json     // Planning généré avec toutes les tournées
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([weekStart])
+  @@index([teamId])
+}
+
+enum ContractType {
+  WEEKLY      // Hebdomadaire
+  BIWEEKLY    // Bi-hebdomadaire
+  MONTHLY     // Mensuel
+  ONE_TIME    // Ponctuel
+}
+
+enum EquipmentType {
+  TONDEUSE
+  TRACTOR
+  TAILLE_HAIE
+  SOUFFLEUR
+  TRONCONNEUSE
+  CAMION
+  REMORQUE
+  OTHER
+}
+
+enum InterventionStatus {
+  PENDING     // En attente
+  CONFIRMED   // Confirmé
+  IN_PROGRESS // En cours
+  COMPLETED   // Terminé
+  CANCELLED   // Annulé
+}
