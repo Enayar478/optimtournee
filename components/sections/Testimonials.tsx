@@ -4,37 +4,37 @@ import { Star, Quote } from "lucide-react";
 
 const testimonials = [
   {
-    quote: "Gagné 2h par jour sur mes tournées. Je peux enfin passer plus de temps avec mes clients et moins sur la route.",
-    author: "Pierre Dubois",
-    role: "Paysagiste",
-    company: "12 salariés",
+    quote: "Avant, je passais mon dimanche soir à planifier la semaine sur Excel. Maintenant j'ai mes tournées en 3 clics. Mes gars ont même plus besoin de m'appeler pour savoir où aller.",
+    author: "Franck Morel",
+    role: "Chef d'entreprise",
+    company: "7 salariés · Amiens",
     rating: 5,
-    avatar: "PD",
+    avatar: "FM",
   },
   {
-    quote: "15% de carburant en moins dès le premier mois. L'optimisation est vraiment efficace, même avec nos contraintes de chantier.",
-    author: "Marie Lefebvre",
-    role: "Dirigeante",
-    company: "PME 25 personnes",
+    quote: "On a récupéré près de 400€ de carburant le premier mois. Quand tu sais que l'entretien c'est 5% de marge, ça change tout. Mes clients hebdo restent hebdo, mais j'optimise le trajet.",
+    author: "Lucie Garnier",
+    role: "Gérante",
+    company: "12 salariés · Lyon",
     rating: 5,
-    avatar: "ML",
+    avatar: "LG",
   },
   {
-    quote: "Mon équipe adore, c'est simple et intuitif. Plus besoin de passer des heures à planifier les tournées le dimanche soir.",
-    author: "Jean Bernard",
+    quote: "Le truc qui tue, c'est la météo. Une pluie imprévue et c'est tout le planning qui déraille. Là, ça se décale tout seul et mon équipe reçoit la tournée à jour le matin.",
+    author: "Marc Delacroix",
     role: "Responsable exploitation",
-    company: "8 salariés",
+    company: "9 salariés · Nantes",
     rating: 5,
-    avatar: "JB",
+    avatar: "MD",
   },
 ];
 
 const trustedBy = [
-  "Vert&Co",
-  "Espaces Verts Pro",
-  "Nature Services",
-  "Green Garden",
-  "Paysage & Cie",
+  "Espaces Verts 62",
+  "Jardins Moreau",
+  "Vert Service Pro",
+  "Nature et Paysage",
+  "Green Concept",
 ];
 
 export function Testimonials() {
@@ -44,11 +44,10 @@ export function Testimonials() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Ils gagnent du temps{" "}
-            <span className="text-forest">chaque jour</span>
+            Ceux qui en ont marre de perdre du temps sur la route
           </h2>
           <p className="text-xl text-muted-foreground">
-            Rejoignez plus de 300 entreprises qui optimisent leurs tournées avec OptimTournée.
+            Des paysagistes comme vous qui ont récupéré leurs soirées et leurs marges.
           </p>
         </div>
 
@@ -95,7 +94,7 @@ export function Testimonials() {
         {/* Trusted By */}
         <div className="mt-16 text-center">
           <p className="text-sm text-muted-foreground mb-6">
-            Ils nous font confiance
+            Ils utilisent OptimTournée chaque jour
           </p>
           <div className="flex flex-wrap justify-center gap-8 opacity-50">
             {trustedBy.map((name, index) => (
