@@ -4,27 +4,27 @@ import { ArrowRight, MapPin, Zap, Clock, Fuel } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-forest-surface via-white to-sky-surface/30 py-20 lg:py-28">
+    <section className="from-forest-surface to-sky-surface/30 relative overflow-hidden bg-gradient-to-br via-white py-20 lg:py-28">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left Content */}
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 bg-forest-surface text-forest-dark px-4 py-2 rounded-full text-sm font-medium">
-              <Zap className="w-4 h-4" />
+            <div className="bg-forest-surface text-forest-dark inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium">
+              <Zap className="h-4 w-4" />
               Planifiez vos tournées en 3 minutes
             </div>
-            
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
-              Tondez plus,{" "}
-              <span className="text-forest">roulez moins</span>
+
+            <h1 className="text-foreground text-4xl leading-tight font-bold lg:text-5xl xl:text-6xl">
+              Tondez plus, <span className="text-forest">roulez moins</span>
             </h1>
-            
-            <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-xl">
-              Vos tournées d'entretien, planifiées sans y penser. 
-              Moins d'essence, moins de temps perdu, plus de marge en fin de mois.
+
+            <p className="text-muted-foreground max-w-xl text-lg leading-relaxed lg:text-xl">
+              Vos tournées d&apos;entretien, planifiées sans y penser. Moins
+              d&apos;essence, moins de temps perdu, plus de marge en fin de
+              mois.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            <div className="flex flex-col gap-4 sm:flex-row">
               <TrackButton
                 event={AnalyticsEvents.CTA_HERO_CLICK}
                 variant="primary"
@@ -32,9 +32,9 @@ export function Hero() {
                 className="group"
               >
                 Tester gratuitement
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </TrackButton>
-              
+
               <TrackButton
                 event={AnalyticsEvents.CTA_DEMO_CLICK}
                 variant="outline"
@@ -43,44 +43,44 @@ export function Hero() {
                 Voir comment ça marche
               </TrackButton>
             </div>
-            
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+
+            <div className="text-muted-foreground flex flex-wrap items-center gap-6 text-sm">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-forest" />
+                <Clock className="text-forest h-4 w-4" />
                 Planification en 3 min
               </div>
               <div className="flex items-center gap-2">
-                <Fuel className="w-4 h-4 text-forest" />
+                <Fuel className="text-forest h-4 w-4" />
                 -20% de carburant
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-forest" />
+                <MapPin className="text-forest h-4 w-4" />
                 Météo intégrée
               </div>
             </div>
           </div>
-          
+
           {/* Right Content - App Preview */}
           <div className="relative">
-            <div className="relative bg-white rounded-2xl shadow-2xl p-4 border border-border">
+            <div className="border-border relative rounded-2xl border bg-white p-4 shadow-2xl">
               {/* Mock App Interface */}
-              <div className="aspect-[4/3] bg-gradient-to-br from-forest-surface to-sky-surface/20 rounded-xl overflow-hidden">
+              <div className="from-forest-surface to-sky-surface/20 aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br">
                 {/* Header */}
-                <div className="bg-forest text-white px-4 py-3 flex items-center justify-between">
+                <div className="bg-forest flex items-center justify-between px-4 py-3 text-white">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5" />
+                    <Zap className="h-5 w-5" />
                     <span className="font-semibold">OptimTournée</span>
                   </div>
                   <div className="text-sm text-white/80">Semaine du 3 mars</div>
                 </div>
-                
+
                 {/* Map Area */}
-                <div className="p-4 h-full">
-                  <div className="grid grid-cols-3 gap-3 h-full">
+                <div className="h-full p-4">
+                  <div className="grid h-full grid-cols-3 gap-3">
                     {/* Map visualization */}
-                    <div className="col-span-2 bg-white rounded-lg border border-border relative overflow-hidden">
+                    <div className="border-border relative col-span-2 overflow-hidden rounded-lg border bg-white">
                       <div className="absolute inset-0 opacity-10">
-                        <svg viewBox="0 0 400 300" className="w-full h-full">
+                        <svg viewBox="0 0 400 300" className="h-full w-full">
                           <path
                             d="M50,150 Q100,100 150,150 T250,150 T350,100"
                             fill="none"
@@ -94,12 +94,16 @@ export function Hero() {
                           <circle cx="320" cy="90" r="6" fill="#2D5A3D" />
                         </svg>
                       </div>
-                      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-sm">
-                        <div className="text-xs text-muted-foreground">Trajet optimisé</div>
-                        <div className="text-lg font-bold text-forest font-mono">42 km</div>
+                      <div className="absolute bottom-3 left-3 rounded-lg bg-white/90 px-3 py-2 shadow-sm backdrop-blur">
+                        <div className="text-muted-foreground text-xs">
+                          Trajet optimisé
+                        </div>
+                        <div className="text-forest font-mono text-lg font-bold">
+                          42 km
+                        </div>
                       </div>
                     </div>
-                    
+
                     {/* Stops List */}
                     <div className="space-y-2">
                       {[
@@ -110,12 +114,12 @@ export function Hero() {
                       ].map((stop, i) => (
                         <div
                           key={i}
-                          className={`p-2 rounded-lg text-sm ${
+                          className={`rounded-lg p-2 text-sm ${
                             stop.status === "current"
                               ? "bg-forest text-white"
                               : stop.status === "done"
-                              ? "bg-muted text-muted-foreground"
-                              : "bg-white border border-border"
+                                ? "bg-muted text-muted-foreground"
+                                : "border-border border bg-white"
                           }`}
                         >
                           <div className="font-medium">{stop.name}</div>
@@ -127,15 +131,15 @@ export function Hero() {
                 </div>
               </div>
             </div>
-            
+
             {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-forest/10 rounded-full blur-2xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-sky/10 rounded-full blur-3xl" />
-            
+            <div className="bg-forest/10 absolute -top-4 -right-4 h-24 w-24 rounded-full blur-2xl" />
+            <div className="bg-sky/10 absolute -bottom-4 -left-4 h-32 w-32 rounded-full blur-3xl" />
+
             {/* Floating badge */}
-            <div className="absolute -bottom-2 -right-2 bg-economy text-white px-4 py-2 rounded-lg shadow-lg">
+            <div className="bg-economy absolute -right-2 -bottom-2 rounded-lg px-4 py-2 text-white shadow-lg">
               <div className="text-xs font-medium">Économie réelle</div>
-              <div className="text-lg font-bold font-mono">-420€/mois</div>
+              <div className="font-mono text-lg font-bold">-420€/mois</div>
             </div>
           </div>
         </div>

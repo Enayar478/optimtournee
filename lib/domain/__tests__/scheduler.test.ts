@@ -3,17 +3,13 @@
  * @argos_qa_bot — Coverage: génération occurrences, scheduling basique, contraintes météo
  */
 
-import {
-  generateRecurringOccurrences,
-  generateSchedule,
-} from "../scheduler";
+import { generateRecurringOccurrences, generateSchedule } from "../scheduler";
 import {
   RecurringContract,
   Client,
   Team,
   SchedulingConstraints,
   WeatherForecast,
-  OneOffRequest,
 } from "../../../types/domain";
 
 describe("generateRecurringOccurrences", () => {
@@ -38,9 +34,9 @@ describe("generateRecurringOccurrences", () => {
   it("génère les bonnes occurrences hebdomadaires", () => {
     const start = new Date("2024-03-01");
     const end = new Date("2024-03-31");
-    
+
     const dates = generateRecurringOccurrences(baseContract, start, end);
-    
+
     expect(dates.length).toBeGreaterThan(0);
     for (const date of dates) {
       expect(date.getDay()).toBe(2);
@@ -50,9 +46,9 @@ describe("generateRecurringOccurrences", () => {
   it("génère zéro occurrence si la fenêtre est avant le contrat", () => {
     const start = new Date("2023-01-01");
     const end = new Date("2023-12-31");
-    
+
     const dates = generateRecurringOccurrences(baseContract, start, end);
-    
+
     expect(dates).toHaveLength(0);
   });
 });
@@ -68,7 +64,12 @@ describe("generateSchedule", () => {
     isSuitable: true,
   });
 
-  const createMockClient = (id: string, name: string, lat: number, lng: number): Client => ({
+  const createMockClient = (
+    id: string,
+    name: string,
+    lat: number,
+    lng: number
+  ): Client => ({
     id,
     name,
     location: { lat, lng, address: `${name} Address` },
@@ -96,7 +97,11 @@ describe("generateSchedule", () => {
     name: "Équipe Alpha",
     members: [{ id: "m1", firstName: "Jean", lastName: "Dupont" }],
     assignedEquipment: ["push_mower", "lawn_tractor"],
-    defaultStartLocation: { lat: 48.8566, lng: 2.3522, address: "Dépôt central" },
+    defaultStartLocation: {
+      lat: 48.8566,
+      lng: 2.3522,
+      address: "Dépôt central",
+    },
     skills: ["mowing", "maintenance"],
     unavailableDates: [],
     workSchedule: {

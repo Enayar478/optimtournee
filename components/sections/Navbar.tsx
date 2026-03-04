@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { TrackButton } from "@/components/analytics/TrackButton";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 import { Menu, X, Leaf } from "lucide-react";
@@ -15,19 +16,21 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-border">
+    <nav className="border-border sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-forest rounded-lg flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center gap-2">
+            <div className="bg-forest flex h-8 w-8 items-center justify-center rounded-lg">
+              <Leaf className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">OptimTournée</span>
-          </a>
+            <span className="text-foreground text-xl font-bold">
+              OptimTournée
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-8 md:flex">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -53,26 +56,22 @@ export function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+            className="hover:bg-muted rounded-lg p-2 transition-colors md:hidden"
           >
-            {isOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border">
+          <div className="border-border border-t py-4 md:hidden">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors py-2"
+                  className="text-muted-foreground hover:text-foreground py-2 transition-colors"
                 >
                   {link.label}
                 </a>
@@ -81,7 +80,7 @@ export function Navbar() {
                 event={AnalyticsEvents.NAV_CTA_CLICK}
                 variant="primary"
                 size="sm"
-                className="w-full mt-2"
+                className="mt-2 w-full"
               >
                 Demander une démo
               </TrackButton>

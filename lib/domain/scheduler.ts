@@ -9,12 +9,8 @@
  */
 
 import {
-  Client,
   Team,
-  Equipment,
   RecurringContract,
-  OneOffRequest,
-  PlannedIntervention,
   DailyRoute,
   Schedule,
   ScheduleStats,
@@ -175,7 +171,7 @@ export async function generateSchedule(
   constraints: SchedulingConstraints,
   weatherProvider: (
     date: Date,
-    loc: GeoLocation
+    _loc: GeoLocation
   ) => Promise<WeatherForecast | undefined>
 ): Promise<Schedule> {
   const { startDate, endDate, teams, clients, oneOffRequests } = constraints;

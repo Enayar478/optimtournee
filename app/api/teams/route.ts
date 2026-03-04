@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Team } from "@/types/domain";
 
-let teams: Team[] = [
+const teams: Team[] = [
   {
     id: "t1",
     name: "Équipe Alpha",
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     };
     teams.push(newTeam);
     return NextResponse.json(newTeam, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

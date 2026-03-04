@@ -253,7 +253,7 @@ function ClientModal({
                 setForm({ ...form, hasContract: e.target.checked })
               }
             />
-            Contrat d'entretien récurrent
+            Contrat d&apos;entretien récurrent
           </label>
 
           {form.hasContract && (

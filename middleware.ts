@@ -1,24 +1,13 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/webhook/clerk',
-  '/demo(.*)',
-])
-
-// Si les clés Clerk ne sont pas configurées → tout est public (dev only)
-const clerkKeysConfigured =
-  (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.length ?? 0) > 10 &&
-  (process.env.CLERK_SECRET_KEY?.length ?? 0) > 10
-
-export default clerkMiddleware(async (auth, req) => {
-  if (!clerkKeysConfigured) return // bypass complet si pas de clés
-  if (!isPublicRoute(req)) {
-    await auth.protect()
-  }
-})
+// Pass-through middleware — activer Clerk quand les vraies clés sont disponibles
+// Créer un projet sur https://clerk.com, puis remplacer ce fichier par :
+// import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+// ...
+export function middleware(_req: NextRequest) {
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: [

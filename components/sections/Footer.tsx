@@ -26,44 +26,44 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-foreground text-white py-16">
+    <footer className="bg-foreground py-16 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+        <div className="mb-12 grid gap-12 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-forest rounded-lg flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
+            <div className="mb-4 flex items-center gap-2">
+              <div className="bg-forest flex h-8 w-8 items-center justify-center rounded-lg">
+                <Leaf className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold">OptimTournée</span>
             </div>
-            <p className="text-white/60 mb-6 max-w-sm">
-              Optimisez vos tournées d'entretien et gagnez du temps chaque jour. 
-              Conçu pour les paysagistes, par des paysagistes.
+            <p className="mb-6 max-w-sm text-white/60">
+              Optimisez vos tournées d&apos;entretien et gagnez du temps chaque
+              jour. Conçu pour les paysagistes, par des paysagistes.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social, index) => (
                 <a
                   key={index}
                   href={social.href}
-                  className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 transition-colors hover:bg-white/20"
                   aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="h-5 w-5" />
                 </a>
               ))}
             </div>
           </div>
-          
+
           {/* Links */}
           <div>
-            <h4 className="font-semibold mb-4">Produit</h4>
+            <h4 className="mb-4 font-semibold">Produit</h4>
             <ul className="space-y-3">
               {footerLinks.produit.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors"
+                    className="text-white/60 transition-colors hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -71,15 +71,15 @@ export function Footer() {
               ))}
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-4">Ressources</h4>
+            <h4 className="mb-4 font-semibold">Ressources</h4>
             <ul className="space-y-3">
               {footerLinks.ressources.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors"
+                    className="text-white/60 transition-colors hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -87,15 +87,15 @@ export function Footer() {
               ))}
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-4">Entreprise</h4>
+            <h4 className="mb-4 font-semibold">Entreprise</h4>
             <ul className="space-y-3">
               {footerLinks.entreprise.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-white/60 hover:text-white transition-colors"
+                    className="text-white/60 transition-colors hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -104,20 +104,29 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        
+
         {/* Bottom */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/60 text-sm">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
+          <p className="text-sm text-white/60">
             © 2025 OptimTournée — Conçu pour les paysagistes 🌳
           </p>
           <div className="flex gap-6 text-sm">
-            <a href="#" className="text-white/60 hover:text-white transition-colors">
+            <a
+              href="#"
+              className="text-white/60 transition-colors hover:text-white"
+            >
               Mentions légales
             </a>
-            <a href="#" className="text-white/60 hover:text-white transition-colors">
+            <a
+              href="#"
+              className="text-white/60 transition-colors hover:text-white"
+            >
               CGU
             </a>
-            <a href="#" className="text-white/60 hover:text-white transition-colors">
+            <a
+              href="#"
+              className="text-white/60 transition-colors hover:text-white"
+            >
               Confidentialité
             </a>
           </div>

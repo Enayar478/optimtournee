@@ -11,7 +11,7 @@ export interface OptimizedRoute {
   waypoints: Waypoint[];
   totalDistance: number; // en mètres
   totalDuration: number; // en secondes
-  geometry?: any; // GeoJSON pour Leaflet
+  geometry?: object; // GeoJSON pour Leaflet
 }
 
 // Algorithme simple du plus proche voisin (TSP approximatif)
@@ -33,9 +33,10 @@ function calculateDistance(p1: Waypoint, p2: Waypoint): number {
 
 function optimizeRouteNearestNeighbor(waypoints: Waypoint[]): OptimizedRoute {
   if (waypoints.length <= 2) {
-    const totalDistance = waypoints.length === 2 
-      ? calculateDistance(waypoints[0], waypoints[1])
-      : 0;
+    const totalDistance =
+      waypoints.length === 2
+        ? calculateDistance(waypoints[0], waypoints[1])
+        : 0;
     return {
       waypoints,
       totalDistance,
@@ -45,7 +46,7 @@ function optimizeRouteNearestNeighbor(waypoints: Waypoint[]): OptimizedRoute {
 
   const unvisited = [...waypoints];
   const optimized: Waypoint[] = [];
-  
+
   // Commencer par le premier point
   let current = unvisited.shift()!;
   optimized.push(current);

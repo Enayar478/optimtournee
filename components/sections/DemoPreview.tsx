@@ -1,27 +1,26 @@
 import { RouteOptimizer } from "@/components/map/RouteOptimizer";
-import { WeatherOverlay } from "@/components/map/WeatherOverlay";
 import { TrackButton } from "@/components/analytics/TrackButton";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 
 export function DemoPreview() {
   return (
-    <section id="demo" className="py-20 bg-gray-50">
+    <section id="demo" className="bg-gray-50 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
             Essayez par vous-même
           </h2>
           <p className="text-xl text-gray-600">
-            Testez notre outil d&apos;optimisation en direct. 
-            Ajoutez des points sur la carte et voyez l&apos;itinéraire optimal se calculer.
+            Testez notre outil d&apos;optimisation en direct. Ajoutez des points
+            sur la carte et voyez l&apos;itinéraire optimal se calculer.
           </p>
         </div>
-        
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+
+        <div className="rounded-2xl bg-white p-6 shadow-lg">
           <RouteOptimizer />
         </div>
-        
-        <div className="text-center mt-8">
+
+        <div className="mt-8 text-center">
           <TrackButton
             event={AnalyticsEvents.SIGNUP_INTENT}
             variant="primary"

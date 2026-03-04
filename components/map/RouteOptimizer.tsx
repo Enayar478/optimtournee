@@ -20,7 +20,7 @@ const OpenStreetMap = dynamic(
 import { Button } from "@/components/ui/button";
 import { Waypoint, OptimizedRoute } from "@/types";
 import { TrackButton } from "@/components/analytics/TrackButton";
-import { MapPin, Plus, Trash2, Navigation } from "lucide-react";
+import { MapPin, Trash2, Navigation } from "lucide-react";
 
 export function RouteOptimizer() {
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);

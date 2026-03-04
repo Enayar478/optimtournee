@@ -1,34 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Team, InterventionType } from "@/types/domain";
-
-const DAYS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
-
-const INTERVENTION_LABELS = {
-  mowing: "Tonte",
-  hedge_trimming: "Taille de haie",
-  pruning: "Élagage",
-  weeding: "Désherbage",
-  planting: "Plantation",
-  maintenance: "Maintenance",
-  emergency: "Urgence",
-};
-
-const COLORS = [
-  "#22c55e",
-  "#3b82f6",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-];
+import { Team } from "@/types/domain";
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
   useEffect(() => {
     fetchTeams();
@@ -40,24 +16,12 @@ export default function TeamsPage() {
     setTeams(data);
   };
 
-  const deleteTeam = async (id: string) => {
-    if (!confirm("Supprimer cette équipe ?")) return;
-    await fetch(`/api/teams?id=${id}`, { method: "DELETE" });
-    fetchTeams();
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold">Équipes</h1>
-          <button
-            onClick={() => {
-              setEditingTeam(null);
-              setIsModalOpen(true);
-            }}
-            className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-          >
+          <button className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700">
             + Nouvelle équipe
           </button>
         </div>

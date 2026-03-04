@@ -6,7 +6,11 @@ let clients: Client[] = [
   {
     id: "c1",
     name: "M. Dupont - Villa Les Roses",
-    location: { lat: 48.8566, lng: 2.3522, address: "12 Rue de la Paix, Paris" },
+    location: {
+      lat: 48.8566,
+      lng: 2.3522,
+      address: "12 Rue de la Paix, Paris",
+    },
     contactPhone: "06 12 34 56 78",
     contactEmail: "dupont@email.com",
     notes: "Portail rouge, chien sympathique",
@@ -18,7 +22,12 @@ let clients: Client[] = [
       durationMinutes: 120,
       interventionType: "mowing",
       requiredEquipment: ["lawn_tractor", "blower"],
-      weatherConstraints: { maxWindSpeed: 30, noRainForecast: true, minTemperature: 5, maxTemperature: 35 },
+      weatherConstraints: {
+        maxWindSpeed: 30,
+        noRainForecast: true,
+        minTemperature: 5,
+        maxTemperature: 35,
+      },
       startDate: new Date("2025-01-01"),
       priority: 3,
     },
@@ -43,7 +52,7 @@ export async function POST(request: Request) {
     };
     clients.push(newClient);
     return NextResponse.json(newClient, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
@@ -57,7 +66,7 @@ export async function PUT(request: Request) {
     }
     clients[index] = { ...clients[index], ...body };
     return NextResponse.json(clients[index]);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
@@ -71,7 +80,7 @@ export async function DELETE(request: Request) {
     }
     clients = clients.filter((c) => c.id !== id);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

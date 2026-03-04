@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import posthog from "posthog-js";
 
 interface TrackButtonProps {
   children: React.ReactNode;
   event: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   onClick?: () => void;
   className?: string;
   variant?: "primary" | "secondary" | "outline";
@@ -36,14 +35,16 @@ export function TrackButton({
     onClick?.();
   };
 
-  const baseStyles = "font-medium rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2";
-  
+  const baseStyles =
+    "font-medium rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2";
+
   const variantStyles = {
-    primary: "bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow",
+    primary:
+      "bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow",
     secondary: "bg-gray-100 hover:bg-gray-200 text-gray-900",
     outline: "border-2 border-green-600 text-green-600 hover:bg-green-50",
   };
-  
+
   const sizeStyles = {
     sm: "px-3 py-1.5 text-sm",
     md: "px-5 py-2.5 text-base",
