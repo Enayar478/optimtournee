@@ -1,35 +1,35 @@
-import { MapPin, Route, Cloud, Clock, Smartphone, Shield } from "lucide-react";
+import { CloudRain, Route, CalendarDays, Smartphone, AlertTriangle, Users } from "lucide-react";
 
 const features = [
   {
     icon: Route,
-    title: "Optimisation intelligente",
-    description: "Notre algorithme calcule l'itinéraire le plus court en tenant compte du trafic en temps réel.",
+    title: "Tournées optimisées",
+    description: "L'algo calcule le meilleur trajet entre vos clients. Moins de kilomètres, moins d'essence, plus de temps sur les chantiers.",
   },
   {
-    icon: Cloud,
-    title: "Météo intégrée",
-    description: "Visualisez les conditions météo pour chaque chantier et anticipez les imprévus.",
+    icon: CloudRain,
+    title: "Météo qui décide à votre place",
+    description: "Pluie prévue ? Les entretiens pelouse se décalent automatiquement. Vos équipes reçoivent la tournée mise à jour le matin.",
   },
   {
-    icon: Clock,
-    title: "Gain de temps",
-    description: "Réduisez vos kilomètres parcourus de 20 à 30% et gagnez jusqu'à 2h par jour.",
+    icon: CalendarDays,
+    title: "Récurrences gérées tout seul",
+    description: "Hebdo, bi-hebdo, mensuel… Une fois paramétré, les tournées se génèrent automatiquement. Fini le planning le dimanche soir.",
   },
   {
     icon: Smartphone,
-    title: "Application mobile",
-    description: "Accédez à vos tournées sur le terrain avec notre app iOS et Android.",
+    title: "Sur le terrain, ça juste marche",
+    description: "Vos équipes voient leur tournée du jour, cliquent sur l'adresse pour naviguer, cochhent quand c'est fait. Rien de plus.",
   },
   {
-    icon: MapPin,
-    title: "Géolocalisation",
-    description: "Suivez vos équipes en temps réel et adaptez les plannings à la volée.",
+    icon: AlertTriangle,
+    title: "Urgences qui s'insèrent sans tout casser",
+    description: "Un client qui réclame une intervention rapide ? L'algo trouve le meilleur créneau sans décaler toute la semaine.",
   },
   {
-    icon: Shield,
-    title: "Données sécurisées",
-    description: "Vos données client sont chiffrées et hébergées en France.",
+    icon: Users,
+    title: "Équipes et congés en ligne de mire",
+    description: "Qui est dispo cette semaine ? Qui a pris congés ? La planification tient compte de vos effectifs réels.",
   },
 ];
 
@@ -39,12 +39,12 @@ export function Features() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Tout ce qu'il faut pour{" "}
-            <span className="text-forest">optimiser vos déplacements</span>
+            Moins de temps sur la route,{" "}
+            <span className="text-forest">plus de marge en fin de mois</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            Une solution complète pensée pour les entreprises du paysagisme, 
-            de l'entretien d'espaces verts et des services à domicile.
+            Les outils qu'il vous manquait pour gérer vos tournées d'entretien 
+            sans y passer des heures chaque semaine.
           </p>
         </div>
         

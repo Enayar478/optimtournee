@@ -1,6 +1,6 @@
 import { TrackButton } from "@/components/analytics/TrackButton";
 import { AnalyticsEvents } from "@/lib/analytics/events";
-import { ArrowRight, MapPin, Zap, Clock, Users } from "lucide-react";
+import { ArrowRight, MapPin, Zap, Clock, Fuel } from "lucide-react";
 
 export function Hero() {
   return (
@@ -11,19 +11,17 @@ export function Hero() {
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 bg-forest-surface text-forest-dark px-4 py-2 rounded-full text-sm font-medium">
               <Zap className="w-4 h-4" />
-              Nouveau : Optimisation IA pour paysagistes
+              Planifiez vos tournées en 3 minutes
             </div>
             
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
-              Optimisez vos{" "}
-              <span className="text-forest">tournées</span>{" "}
-              en quelques clics
+              Tondez plus,{" "}
+              <span className="text-forest">roulez moins</span>
             </h1>
             
             <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-xl">
-              Gagnez jusqu'à 2 heures par jour sur vos déplacements. 
-              OptimTournée calcule automatiquement le meilleur itinéraire 
-              pour vos équipes d'entretien.
+              Vos tournées d'entretien, planifiées sans y penser. 
+              Moins d'essence, moins de temps perdu, plus de marge en fin de mois.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -33,7 +31,7 @@ export function Hero() {
                 size="lg"
                 className="group"
               >
-                Essayer gratuitement
+                Tester gratuitement
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </TrackButton>
               
@@ -42,22 +40,22 @@ export function Hero() {
                 variant="outline"
                 size="lg"
               >
-                Voir la démo
+                Voir comment ça marche
               </TrackButton>
             </div>
             
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-forest" />
-                Mise en place en 5 min
+                Planification en 3 min
+              </div>
+              <div className="flex items-center gap-2">
+                <Fuel className="w-4 h-4 text-forest" />
+                -20% de carburant
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-forest" />
-                Sans carte requise
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-forest" />
-                300+ entreprises
+                Météo intégrée
               </div>
             </div>
           </div>
@@ -73,7 +71,7 @@ export function Hero() {
                     <Zap className="w-5 h-5" />
                     <span className="font-semibold">OptimTournée</span>
                   </div>
-                  <div className="text-sm text-white/80">Lundi 3 mars</div>
+                  <div className="text-sm text-white/80">Semaine du 3 mars</div>
                 </div>
                 
                 {/* Map Area */}
@@ -105,10 +103,10 @@ export function Hero() {
                     {/* Stops List */}
                     <div className="space-y-2">
                       {[
-                        { name: "Client A", time: "8h30", status: "done" },
-                        { name: "Client B", time: "9h45", status: "current" },
-                        { name: "Client C", time: "11h00", status: "pending" },
-                        { name: "Client D", time: "14h00", status: "pending" },
+                        { name: "Dupont", time: "8h30", status: "done" },
+                        { name: "Martin", time: "9h45", status: "current" },
+                        { name: "Bernard", time: "11h00", status: "pending" },
+                        { name: "Petit", time: "14h00", status: "pending" },
                       ].map((stop, i) => (
                         <div
                           key={i}
@@ -136,8 +134,8 @@ export function Hero() {
             
             {/* Floating badge */}
             <div className="absolute -bottom-2 -right-2 bg-economy text-white px-4 py-2 rounded-lg shadow-lg">
-              <div className="text-xs font-medium">Économie</div>
-              <div className="text-lg font-bold font-mono">-23%</div>
+              <div className="text-xs font-medium">Économie réelle</div>
+              <div className="text-lg font-bold font-mono">-420€/mois</div>
             </div>
           </div>
         </div>
