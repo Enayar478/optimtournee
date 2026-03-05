@@ -23,6 +23,8 @@ const createNumberedIcon = (number: number, color: string) => {
 };
 
 interface DashboardMapProps {
+  showWeather?: boolean;
+  teamColors?: { base: string; gradient: string; bg: string; light: string; text: string; }[];
   clients: Client[];
   teams: Team[];
   schedule: Schedule | null;

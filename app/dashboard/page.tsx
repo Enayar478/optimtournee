@@ -307,7 +307,7 @@ export default function DashboardPage() {
                   <div className="mt-3 pt-3 border-t border-white/20 flex gap-4 text-xs">
                     <span className="flex items-center gap-1">
                       <Droplets className="w-3 h-3" />
-                      {currentWeather.precipitationProbability}%
+                      {currentWeather.rainProbability || 0}%
                     </span>
                     <span className="flex items-center gap-1">
                       <Wind className="w-3 h-3" />
@@ -349,7 +349,6 @@ export default function DashboardPage() {
                               : "hover:bg-slate-50"
                           )}
                           style={{ 
-                            ringColor: isSelected ? team.color : undefined 
                           }}
                         >
                           <div 
