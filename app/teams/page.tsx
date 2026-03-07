@@ -2,12 +2,13 @@
 
 export const dynamic = "force-dynamic";
 
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Team } from "@/types/domain";
 import { Users, Plus, MoreVertical } from "lucide-react";
 
-export default function TeamsPage() {
+function TeamsContent() {
   const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
@@ -112,5 +113,14 @@ export default function TeamsPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+// Export with AdminLayout wrapper
+export default function TeamsPage() {
+  return (
+    <AdminLayout>
+      <TeamsContent />
+    </AdminLayout>
   );
 }

@@ -2,6 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -28,7 +29,7 @@ const RECURRENCE_COLORS: Record<RecurrenceType, string> = {
   quarterly: "bg-pink-500",
 };
 
-export default function ClientsPage() {
+function ClientsContent() {
   const [clients, setClients] = useState<Client[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -223,4 +224,13 @@ function ClientModal({
 }) {
   // ... même code qu'avant
   return null; // Simplifié pour l'exemple
+}
+
+// Export with AdminLayout wrapper
+export default function ClientsPage() {
+  return (
+    <AdminLayout>
+      <ClientsContent />
+    </AdminLayout>
+  );
 }
