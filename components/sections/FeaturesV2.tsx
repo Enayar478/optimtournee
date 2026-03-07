@@ -155,7 +155,7 @@ export function FeaturesV2() {
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
-                  <{/* Hover Overlay */}
+                  {/* Hover Overlay */}
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-t from-[#2D5A3D]/80 to-transparent flex items-end justify-center pb-6"
                     initial={{ opacity: 0 }}
@@ -196,7 +196,7 @@ export function FeaturesV2() {
                     {feature.description}
                   </p>
                   
-                  <{/* Animated Line */}
+                  {/* Animated Line */}
                   <motion.div
                     className="mt-6 h-1 rounded-full bg-gradient-to-r from-transparent via-[#2D5A3D]/20 to-transparent"
                     initial={{ scaleX: 0 }}
