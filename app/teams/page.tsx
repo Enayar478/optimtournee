@@ -1,7 +1,11 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Team } from "@/types/domain";
+import { Users, Plus, MoreVertical } from "lucide-react";
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -17,44 +21,95 @@ export default function TeamsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Équipes</h1>
-          <button className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700">
-            + Nouvelle équipe
-          </button>
+    <div className="p-6 space-y-6">
+      <motion.div 
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-transparent">
+            Équipes
+          </h1>
+          <p className="text-muted-foreground mt-1">Gérez vos équipes et leurs membres</p>
         </div>
+        
+        <motion.button 
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2D5A3D] to-[#3D7A52] text-white rounded-xl font-medium shadow-lg"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Plus className="w-5 h-5" />
+          Nouvelle équipe
+        </motion.button>
+      </motion.div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
-            <div
-              key={team.id}
-              className="rounded-lg bg-white p-6 shadow"
-              style={{ borderLeft: `4px solid ${team.color}` }}
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-xl font-bold">{team.name}</h3>
-                <div
-                  className="h-4 w-4 rounded-full"
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {teams.map((team, index) => (
+          <motion.div
+            key={team.id}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg border border-gray-100 group"
+          >
+            <div 
+              className="absolute top-0 left-0 w-full h-1"
+              style={{ backgroundColor: team.color }} 
+            />
+            
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <motion.div 
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
                   style={{ backgroundColor: team.color }}
-                />
-              </div>
-              <div className="mb-4">
-                <h4 className="mb-2 text-sm font-medium text-gray-500">
-                  Membres ({team.members.length})
-                </h4>
-                <div className="space-y-1">
-                  {team.members.map((m) => (
-                    <div key={m.id} className="text-sm">
-                      {m.firstName} {m.lastName}
-                    </div>
-                  ))}
+                  whileHover={{ rotate: 5 }}
+                >
+                  {team.name.charAt(0)}
+                </motion.div>
+                <div>
+                  <h3 className="text-xl font-bold">{team.name}</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Users className="w-4 h-4" />
+                    {team.members.length} membres
+                  </div>
                 </div>
               </div>
+              
+              <motion.button 
+                className="p-2 rounded-lg hover:bg-gray-100"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <MoreVertical className="w-5 h-5 text-gray-400" />
+              </motion.button>
             </div>
-          ))}
-        </div>
+            
+            <div className="space-y-2">
+              {team.members.slice(0, 3).map((m, i) => (
+                <motion.div 
+                  key={m.id}
+                  className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.05 }}
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2D5A3D] to-[#4A90A4] flex items-center justify-center text-white text-xs font-bold">
+                    {m.firstName.charAt(0)}{m.lastName.charAt(0)}
+                  </div>
+                  <span className="text-sm">{m.firstName} {m.lastName}</span>
+                </motion.div>
+              ))}
+              
+              {team.members.length > 3 && (
+                <div className="text-sm text-muted-foreground text-center py-1">
+                  +{team.members.length - 3} autres
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
