@@ -1,5 +1,4 @@
-import { GET, POST, PUT, DELETE } from '../route';
-import { Client } from '@/types/domain';
+import { GET, POST } from '../route';
 
 describe('/api/clients', () => {
   const mockClient = {
