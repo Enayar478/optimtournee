@@ -30,6 +30,7 @@ export function Hero() {
                 variant="primary"
                 size="lg"
                 className="group"
+                href="/sign-up"
               >
                 Tester gratuitement
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -39,6 +40,7 @@ export function Hero() {
                 event={AnalyticsEvents.CTA_DEMO_CLICK}
                 variant="outline"
                 size="lg"
+                href="/demo"
               >
                 Voir comment ça marche
               </TrackButton>

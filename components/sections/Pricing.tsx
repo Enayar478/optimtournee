@@ -112,6 +112,7 @@ export function Pricing() {
                 variant={plan.popular ? "secondary" : "primary"}
                 size="md"
                 className="w-full"
+                href="/sign-up"
               >
                 {plan.cta}
               </TrackButton>

@@ -25,6 +25,7 @@ export function DemoPreview() {
             event={AnalyticsEvents.SIGNUP_INTENT}
             variant="primary"
             size="lg"
+            href="/sign-up"
           >
             Commencer gratuitement
           </TrackButton>

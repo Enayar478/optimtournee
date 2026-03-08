@@ -20,6 +20,7 @@ export function CTASection() {
             event={AnalyticsEvents.SIGNUP_INTENT}
             variant="secondary"
             size="lg"
+            href="/sign-up"
           >
             Créer un compte gratuit
             <ArrowRight className="w-5 h-5" />

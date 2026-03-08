@@ -295,7 +295,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sky-100 text-sm">Météo aujourd'hui</p>
+                      <p className="text-sky-100 text-sm">Météo aujourd&apos;hui</p>
                       <p className="text-2xl font-bold">{currentWeather.temperature}°C</p>
                       <p className="text-sm text-sky-100 capitalize">{currentWeather.condition}</p>
                     </div>

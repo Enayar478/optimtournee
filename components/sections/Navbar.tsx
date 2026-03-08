@@ -48,6 +48,7 @@ export function Navbar() {
               event={AnalyticsEvents.NAV_CTA_CLICK}
               variant="primary"
               size="sm"
+              href="/demo"
             >
               Demander une démo
             </TrackButton>
@@ -81,6 +82,7 @@ export function Navbar() {
                 variant="primary"
                 size="sm"
                 className="mt-2 w-full"
+                href="/demo"
               >
                 Demander une démo
               </TrackButton>

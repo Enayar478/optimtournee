@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import posthog from "posthog-js";
 
 interface TrackButtonProps {
@@ -11,6 +12,7 @@ interface TrackButtonProps {
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "md" | "lg" | "default";
   disabled?: boolean;
+  href?: string;
 }
 
 export function TrackButton({
@@ -22,6 +24,7 @@ export function TrackButton({
   variant = "primary",
   size = "md",
   disabled,
+  href,
 }: TrackButtonProps) {
   const handleClick = () => {
     // Track event in PostHog
@@ -52,13 +55,25 @@ export function TrackButton({
     lg: "px-8 py-4 text-lg",
   };
 
-  return (
+  const buttonClass = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+
+  const buttonContent = (
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={buttonClass}
     >
       {children}
     </button>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="inline-flex">
+        {buttonContent}
+      </Link>
+    );
+  }
+
+  return buttonContent;
 }
