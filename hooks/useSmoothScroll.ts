@@ -20,6 +20,9 @@ export function useSmoothScroll() {
     };
 
     document.addEventListener('click', handleAnchorClick);
-    return () => document.removeEventListener('click', handleAnchorClick);
+    return () => {
+      document.removeEventListener('click', handleAnchorClick);
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
   }, []);
 }

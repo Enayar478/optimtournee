@@ -1,93 +1,65 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { TrackButton } from "@/components/analytics/TrackButton";
-import { AnalyticsEvents } from "@/lib/analytics/events";
-import { Menu, X, Leaf } from "lucide-react";
-
-const navLinks = [
-  { href: "#features", label: "Fonctionnalités" },
-  { href: "#demo", label: "Démo" },
-  { href: "#pricing", label: "Tarifs" },
-];
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <nav className="border-border sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
+    <motion.header
+      className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="bg-forest flex h-8 w-8 items-center justify-center rounded-lg">
-              <Leaf className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-foreground text-xl font-bold">
+            <Image
+              src="/logo.png"
+              alt="OptimTournée"
+              width={40}
+              height={40}
+              className="rounded-lg"
+            />
+            <span className="text-xl font-bold text-[#2D5A3D]">
               OptimTournée
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="#features" className="text-gray-600 hover:text-[#2D5A3D] transition-colors">
+              Fonctionnalités
+            </Link>
+            <Link href="#pricing" className="text-gray-600 hover:text-[#2D5A3D] transition-colors">
+              Tarifs
+            </Link>
+            <Link href="/demo" className="text-gray-600 hover:text-[#2D5A3D] transition-colors">
+              Démo
+            </Link>
+          </nav>
 
           {/* CTA */}
-          <div className="hidden md:block">
-            <TrackButton
-              event={AnalyticsEvents.NAV_CTA_CLICK}
-              variant="primary"
-              size="sm"
+          <div className="flex items-center gap-4">
+            <Link
+              href="/sign-in"
+              className="hidden sm:block text-gray-600 hover:text-[#2D5A3D] transition-colors"
             >
-              Demander une démo
-            </TrackButton>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="hover:bg-muted rounded-lg p-2 transition-colors md:hidden"
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="border-border border-t py-4 md:hidden">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-muted-foreground hover:text-foreground py-2 transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-              <TrackButton
-                event={AnalyticsEvents.NAV_CTA_CLICK}
-                variant="primary"
-                size="sm"
-                className="mt-2 w-full"
+              Connexion
+            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/sign-up"
+                className="px-4 py-2 bg-[#2D5A3D] text-white rounded-lg hover:bg-[#3D7A52] transition-colors"
               >
-                Demander une démo
-              </TrackButton>
-            </div>
+                Essayer gratuitement
+              </Link>
+            </motion.div>
           </div>
-        )}
+        </div>
       </div>
-    </nav>
+    </motion.header>
   );
 }

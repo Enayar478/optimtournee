@@ -4,13 +4,13 @@ import { AnalyticsEvents } from "@/lib/analytics/events";
 
 export function DemoPreview() {
   return (
-    <section id="demo" className="bg-gray-50 py-20">
+    <section id="demo" className="bg-slate-50 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold text-foreground lg:text-4xl">
             Essayez par vous-même
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-muted-foreground">
             Testez notre outil d&apos;optimisation en direct. Ajoutez des points
             sur la carte et voyez l&apos;itinéraire optimal se calculer.
           </p>
@@ -25,6 +25,7 @@ export function DemoPreview() {
             event={AnalyticsEvents.SIGNUP_INTENT}
             variant="primary"
             size="lg"
+            href="/sign-up"
           >
             Commencer gratuitement
           </TrackButton>
