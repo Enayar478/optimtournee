@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -12,4 +9,247 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// User — lié à Clerk via clerkId
+// ─────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  clients   Client[]
+  teams     Team[]
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────
+// Client
+// ─────────────────────────────────────────────
+
+model Client {
+  id           String             @id @default(cuid())
+  userId       String
+  user         User               @relation(fields: [userId], references: [id])
+  name         String
+  address      String
+  lat          Float
+  lng          Float
+  contactPhone String?
+  contactEmail String?
+  notes        String?
+  contract     RecurringContract?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Team
+// ─────────────────────────────────────────────
+
+model Team {
+  id                  String             @id @default(cuid())
+  userId              String
+  user                User               @relation(fields: [userId], references: [id])
+  name                String
+  color               String             @default("#2D5A3D")
+  members             TeamMember[]
+  defaultStartAddress String?
+  defaultStartLat     Float?
+  defaultStartLng     Float?
+  workScheduleStart   String             @default("08:00")
+  workScheduleEnd     String             @default("17:00")
+  lunchBreakMinutes   Int                @default(60)
+  workingDays         Int[]
+  unavailableDates    DateTime[]
+  skills              InterventionType[]
+  assignedEquipment   EquipmentType[]
+}
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  teamId       String
+  team         Team     @relation(fields: [teamId], references: [id])
+  firstName    String
+  lastName     String
+  phone        String?
+  licenseTypes String[]
+}
+
+// ─────────────────────────────────────────────
+// Equipment
+// ─────────────────────────────────────────────
+
+model Equipment {
+  id               String        @id @default(cuid())
+  type             EquipmentType
+  name             String
+  requiresTrailer  Boolean       @default(false)
+  maintenanceDates DateTime[]
+}
+
+// ─────────────────────────────────────────────
+// Recurring Contract
+// ─────────────────────────────────────────────
+
+model RecurringContract {
+  id                String           @id @default(cuid())
+  clientId          String           @unique
+  client            Client           @relation(fields: [clientId], references: [id])
+  recurrence        RecurrenceType
+  dayOfWeek         Int
+  interventionType  InterventionType
+  durationMinutes   Int
+  requiredEquipment EquipmentType[]
+  priority          Int              @default(1)
+  startDate         DateTime
+  endDate           DateTime?
+  notes             String?
+  // WeatherConstraints (inline)
+  maxWindSpeed      Float            @default(50)
+  noRainForecast    Boolean          @default(false)
+  minTemperature    Float            @default(-5)
+  maxTemperature    Float            @default(40)
+}
+
+// ─────────────────────────────────────────────
+// One-Off Request
+// ─────────────────────────────────────────────
+
+model OneOffRequest {
+  id                 String           @id @default(cuid())
+  clientId           String
+  requestDate        DateTime         @default(now())
+  preferredDateStart DateTime?
+  preferredDateEnd   DateTime?
+  interventionType   InterventionType
+  description        String
+  durationEstimate   Int
+  requiredEquipment  EquipmentType[]
+  priority           Int              @default(1)
+  status             OneOffStatus     @default(pending)
+  // WeatherConstraints (inline)
+  maxWindSpeed       Float            @default(50)
+  noRainForecast     Boolean          @default(false)
+  minTemperature     Float            @default(-5)
+  maxTemperature     Float            @default(40)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Planned Intervention
+// ─────────────────────────────────────────────
+
+model PlannedIntervention {
+  id                         String             @id @default(cuid())
+  sourceType                 SourceType
+  sourceContractId           String?
+  sourceRequestId            String?
+  clientId                   String
+  interventionType           InterventionType
+  scheduledDate              DateTime
+  estimatedStartTime         String
+  estimatedDurationMinutes   Int
+  assignedTeamId             String
+  assignedEquipment          EquipmentType[]
+  status                     InterventionStatus @default(planned)
+  routeOrder                 Int                @default(0)
+  estimatedTravelTimeMinutes Int                @default(0)
+  estimatedTravelDistanceKm  Float              @default(0)
+  // WeatherForecast (inline, optional)
+  weatherDate                DateTime?
+  weatherTemperature         Float?
+  weatherWindSpeed           Float?
+  weatherRainProbability     Float?
+  weatherRainMm              Float?
+  weatherCondition           WeatherCondition?
+  weatherIsSuitable          Boolean?
+  createdAt                  DateTime           @default(now())
+  updatedAt                  DateTime           @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Schedule
+// ─────────────────────────────────────────────
+
+model Schedule {
+  id                       String   @id @default(cuid())
+  name                     String
+  startDate                DateTime
+  endDate                  DateTime
+  generatedAt              DateTime @default(now())
+  version                  Int      @default(1)
+  // Stats (inline)
+  totalInterventions       Int      @default(0)
+  totalDistanceKm          Float    @default(0)
+  totalDrivingTimeHours    Float    @default(0)
+  clientsServed            Int      @default(0)
+  teamsUtilized            Int      @default(0)
+  estimatedTimeSavedHours  Float?
+  estimatedFuelSavedLiters Float?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum RecurrenceType {
+  weekly
+  biweekly
+  monthly
+  bimonthly
+  quarterly
+}
+
+enum InterventionType {
+  mowing
+  hedge_trimming
+  pruning
+  weeding
+  planting
+  maintenance
+  emergency
+}
+
+enum InterventionStatus {
+  planned
+  in_progress
+  completed
+  cancelled
+  postponed
+}
+
+enum EquipmentType {
+  lawn_tractor
+  push_mower
+  hedge_trimmer
+  chainsaw
+  blower
+  trailer
+  utility_vehicle
+}
+
+enum OneOffStatus {
+  pending
+  scheduled
+  completed
+  cancelled
+}
+
+enum SourceType {
+  recurring
+  oneoff
+}
+
+enum WeatherCondition {
+  clear
+  cloudy
+  rain
+  storm
+  snow
 }
