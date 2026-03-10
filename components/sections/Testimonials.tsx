@@ -6,26 +6,34 @@ import Image from "next/image";
 
 const testimonials = [
   {
-    quote: "Avant, je passais mon dimanche soir à planifier la semaine sur Excel. Maintenant j'ai mes tournées en 3 clics.",
+    quote: "Avant, je passais mon dimanche soir à planifier la semaine sur Excel. Maintenant j'ai mes tournées en 3 clics. Mes gars ont même plus besoin de m'appeler pour savoir où aller.",
     author: "Franck Morel",
     role: "Chef d'entreprise",
     company: "7 salariés · Amiens",
-    avatar: "FM"
+    avatar: "FM",
   },
   {
-    quote: "On a récupéré près de 400€ de carburant le premier mois. Quand tu sais que l'entretien c'est 5% de marge, ça change tout.",
+    quote: "On a récupéré près de 400€ de carburant le premier mois. Quand tu sais que l'entretien c'est 5% de marge, ça change tout. Mes clients hebdo restent hebdo, mais j'optimise le trajet.",
     author: "Lucie Garnier",
     role: "Gérante",
     company: "12 salariés · Lyon",
-    avatar: "LG"
+    avatar: "LG",
   },
   {
-    quote: "Le truc qui tue, c'est la météo. Une pluie imprévue et c'est tout le planning qui déraille. Là, ça se décale tout seul.",
+    quote: "Le truc qui tue, c'est la météo. Une pluie imprévue et c'est tout le planning qui déraille. Là, ça se décale tout seul et mon équipe reçoit la tournée à jour le matin.",
     author: "Marc Delacroix",
     role: "Responsable exploitation",
     company: "9 salariés · Nantes",
-    avatar: "MD"
-  }
+    avatar: "MD",
+  },
+];
+
+const trustedBy = [
+  "Espaces Verts 62",
+  "Jardins Moreau",
+  "Vert Service Pro",
+  "Nature et Paysage",
+  "Green Concept",
 ];
 
 export function TestimonialsV2() {
@@ -44,9 +52,9 @@ export function TestimonialsV2() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-muted/30 via-muted/30 to-muted/30" />
       </div>
-      
+
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="mx-auto mb-16 max-w-3xl text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -72,12 +80,12 @@ export function TestimonialsV2() {
             >
               {/* Quote Icon */}
               <div className="mb-4 text-4xl text-forest/20 font-serif">""</div>
-              
+
               {/* Quote */}
               <blockquote className="text-foreground mb-6 leading-relaxed">
                 {testimonial.quote}
               </blockquote>
-              
+
               {/* Author */}
               <div className="flex items-center gap-3">
                 <div className="bg-forest-surface text-forest flex h-12 w-12 items-center justify-center rounded-full font-semibold"
@@ -91,6 +99,23 @@ export function TestimonialsV2() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Trusted By */}
+        <div className="mt-16 text-center">
+          <p className="text-sm text-muted-foreground mb-6">
+            Ils utilisent OptimTournée chaque jour
+          </p>
+          <div className="flex flex-wrap justify-center gap-8 opacity-50">
+            {trustedBy.map((name, index) => (
+              <div
+                key={index}
+                className="text-lg font-semibold text-muted-foreground"
+              >
+                {name}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
