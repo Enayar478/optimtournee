@@ -4,7 +4,6 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
-const jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 
 const planningData = [
   { jour: "Lundi", equipes: 3, clients: 24, km: 142 },
@@ -24,15 +23,17 @@ export default function PlanningPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-transparent">
+            <h1 className="bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-3xl font-bold text-transparent">
               Planning
             </h1>
-            <p className="text-muted-foreground mt-1">Vue hebdomadaire de vos tournées</p>
+            <p className="text-muted-foreground mt-1">
+              Vue hebdomadaire de vos tournées
+            </p>
           </div>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-4 py-2 bg-forest text-white rounded-lg font-medium"
+            className="bg-forest rounded-lg px-4 py-2 font-medium text-white"
           >
             + Nouveau planning
           </motion.button>
@@ -45,26 +46,26 @@ export default function PlanningPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-2xl p-6 shadow-lg"
+              className="rounded-2xl border border-white/50 bg-white/80 p-6 shadow-lg backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-forest/10 text-forest">
-                    <Calendar className="w-6 h-6" />
+                  <div className="bg-forest/10 text-forest rounded-xl p-3">
+                    <Calendar className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">{jour.jour}</h3>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <h3 className="text-lg font-semibold">{jour.jour}</h3>
+                    <div className="text-muted-foreground flex items-center gap-4 text-sm">
                       <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
+                        <Users className="h-4 w-4" />
                         {jour.equipes} équipes
                       </span>
                       <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="h-4 w-4" />
                         {jour.clients} clients
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
+                        <Clock className="h-4 w-4" />
                         {jour.km} km
                       </span>
                     </div>

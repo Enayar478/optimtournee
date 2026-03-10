@@ -12,7 +12,6 @@ import {
   Calendar,
   Settings,
   Menu,
-  X,
   LogOut,
   ChevronRight,
   Bell,

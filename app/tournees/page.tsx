@@ -2,7 +2,7 @@
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { motion } from "framer-motion";
-import { MapPin, Clock, CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import { Clock, CheckCircle2, Circle, ArrowRight } from "lucide-react";
 
 const tournees = [
   { id: 1, nom: "Tournée Nord", equipe: "Équipe A", clients: 8, km: 45, heureDebut: "08:00", statut: "active" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useSpring, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { TrackButton } from "@/components/analytics/TrackButton";
 import { AnalyticsEvents } from "@/lib/analytics/events";

@@ -2,13 +2,10 @@
 
 import { motion } from "framer-motion";
 import {
-  TrendingUp,
   Clock,
   DollarSign,
   MapPin,
   Sun,
-  CloudRain,
-  Wind,
   Calendar,
   ArrowUpRight,
   CheckCircle2,
