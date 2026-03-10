@@ -5,7 +5,6 @@ import {
   Clock,
   DollarSign,
   MapPin,
-  Sun,
   Calendar,
   ArrowUpRight,
   CheckCircle2,
@@ -14,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { WeatherWidget } from "@/components/weather/WeatherWidget";
 
 const stats = [
   {
@@ -257,30 +257,8 @@ export function DashboardV2() {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="rounded-2xl border border-[#4A90A4]/20 bg-gradient-to-br from-[#4A90A4]/10 via-[#E8F4F7] to-white p-6"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Paris</p>
-                <motion.div
-                  className="mt-1 flex items-baseline gap-2"
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.6, type: "spring" }}
-                >
-                  <span className="text-5xl font-bold text-gray-900">18°</span>
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                  >
-                    <Sun className="h-10 w-10 text-[#E07B39]" />
-                  </motion.div>
-                </motion.div>
-                <p className="text-muted-foreground mt-2 text-sm">
-                  Pas de pluie prévue
-                </p>
-              </div>
-            </div>
+            <WeatherWidget />
           </motion.div>
 
           {/* Team */}
