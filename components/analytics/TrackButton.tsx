@@ -1,7 +1,7 @@
 "use client";
 
-import posthog from "posthog-js";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { ReactNode } from "react";
 
 interface TrackButtonBaseProps {
@@ -13,6 +13,7 @@ interface TrackButtonBaseProps {
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "md" | "lg" | "default";
   disabled?: boolean;
+  href?: string;
 }
 
 interface TrackButtonAsButton extends TrackButtonBaseProps {
@@ -65,25 +66,25 @@ export function TrackButton({
     lg: "px-8 py-4 text-lg",
   };
 
-  const classes = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+  const buttonClass = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
-  // Si href est fourni, rendre un Link
-  if (href) {
-    return (
-      <Link href={href} className={classes} onClick={handleClick}>
-        {children}
-      </Link>
-    );
-  }
-
-  // Sinon rendre un button
-  return (
+  const buttonContent = (
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={classes}
+      className={buttonClass}
     >
       {children}
     </button>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="inline-flex">
+        {buttonContent}
+      </Link>
+    );
+  }
+
+  return buttonContent;
 }
