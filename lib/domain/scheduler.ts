@@ -171,7 +171,7 @@ export async function generateSchedule(
   constraints: SchedulingConstraints,
   weatherProvider: (
     date: Date,
-    _loc: GeoLocation
+    loc: GeoLocation
   ) => Promise<WeatherForecast | undefined>
 ): Promise<Schedule> {
   const { startDate, endDate, teams, clients, oneOffRequests } = constraints;
