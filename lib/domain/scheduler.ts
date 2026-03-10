@@ -98,7 +98,7 @@ function isValidEquipmentType(value: string): value is EquipmentType {
 
 /**
  * Génère les dates d'occurrences pour un contrat récurrent
- * FIX: Utilise vrai calcul de mois au lieu de 30j fixes
+ * FIX: Aligne d'abord la date sur le bon jour de la semaine avant d'itérer
  */
 export function generateRecurringOccurrences(
   contract: RecurringContract,
@@ -106,9 +106,14 @@ export function generateRecurringOccurrences(
   endDate: Date
 ): Date[] {
   const dates: Date[] = [];
-  let current = new Date(contract.startDate);
 
-  // Avancer jusqu'à la fenêtre de planification
+  // Trouver la première occurrence du bon jour de semaine depuis le début du contrat
+  let current = new Date(contract.startDate);
+  const targetDay = contract.dayOfWeek;
+  const daysUntilTarget = (targetDay - current.getDay() + 7) % 7;
+  current = addDays(current, daysUntilTarget);
+
+  // Avancer jusqu'à la fenêtre de planification en respectant la récurrence
   while (current < startDate) {
     current = advanceDate(current, contract.recurrence);
   }
@@ -118,9 +123,7 @@ export function generateRecurringOccurrences(
     current <= endDate &&
     (!contract.endDate || current <= contract.endDate)
   ) {
-    if (current.getDay() === contract.dayOfWeek) {
-      dates.push(new Date(current));
-    }
+    dates.push(new Date(current));
     current = advanceDate(current, contract.recurrence);
   }
 
