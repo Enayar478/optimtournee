@@ -104,7 +104,7 @@ export function ROICalculatorV2() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <Calculator className="h-4 w-4" />
-            Calculateur d'économies
+            Calculateur d&apos;économies
             <Sparkles className="h-4 w-4" />
           </motion.div>
 
@@ -369,7 +369,7 @@ export function ROICalculatorV2() {
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Voir le détail de l'offre
+                  Voir le détail de l&apos;offre
                 </motion.button>
               </motion.div>
             </div>

@@ -79,7 +79,7 @@ export function TestimonialsV2() {
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               {/* Quote Icon */}
-              <div className="mb-4 text-4xl text-forest/20 font-serif">""</div>
+              <div className="mb-4 text-4xl text-forest/20 font-serif">&ldquo;&rdquo;</div>
 
               {/* Quote */}
               <blockquote className="text-foreground mb-6 leading-relaxed">

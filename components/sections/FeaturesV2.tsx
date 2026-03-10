@@ -120,7 +120,7 @@ export function FeaturesV2() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            Les outils qu'il vous manquait pour gérer vos tournées d'entretien
+            Les outils qu&apos;il vous manquait pour gérer vos tournées d&apos;entretien
             sans y passer des heures chaque semaine.
           </motion.p>
         </motion.div>

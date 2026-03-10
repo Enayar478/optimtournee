@@ -80,7 +80,7 @@ export function ROICalculatorV2() {
           <div className="bg-economy-surface text-economy-dark mb-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
           >
             <Calculator className="h-4 w-4" />
-            Calculateur d'économies
+            Calculateur d&apos;économies
           </div>
           
           <h2 className="text-foreground mb-4 text-3xl font-bold lg:text-4xl">
@@ -235,7 +235,7 @@ export function ROICalculatorV2() {
                 size="lg"
                 className="text-forest w-full bg-white hover:bg-white/90"
               >
-                Voir le détail de l'offre
+                Voir le détail de l&apos;offre
               </TrackButton>
             </div>
           </motion.div>

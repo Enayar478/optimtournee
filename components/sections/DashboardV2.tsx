@@ -93,7 +93,7 @@ export function DashboardV2() {
             Bonjour, Thomas ! 👋
           </motion.h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Voici ce qui vous attend aujourd'hui
+            Voici ce qui vous attend aujourd&apos;hui
           </p>
         </div>
 
