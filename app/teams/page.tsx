@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { useState, useEffect } from "react";
@@ -20,9 +18,14 @@ function TeamsContent() {
   }, []);
 
   const fetchTeams = async () => {
-    const res = await fetch("/api/teams");
-    const data = await res.json();
-    setTeams(data);
+    try {
+      const res = await fetch("/api/teams");
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setTeams(Array.isArray(data) ? data : []);
+    } catch {
+      setTeams([]);
+    }
   };
 
   const deleteTeam = async (id: string) => {

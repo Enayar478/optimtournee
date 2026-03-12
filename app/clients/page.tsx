@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { ClientModal } from "@/components/clients/ClientModal";
 import { useState, useEffect } from "react";
@@ -43,9 +41,14 @@ function ClientsContent() {
   }, []);
 
   const fetchClients = async () => {
-    const res = await fetch("/api/clients");
-    const data = await res.json();
-    setClients(data);
+    try {
+      const res = await fetch("/api/clients");
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setClients(Array.isArray(data) ? data : []);
+    } catch {
+      setClients([]);
+    }
   };
 
   const deleteClient = async (id: string) => {

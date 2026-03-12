@@ -4,11 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const { userId } = await auth();
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const user = await getOrCreateUser(userId);
 
     const teams = await prisma.team.findMany({
@@ -80,7 +79,8 @@ export async function GET() {
     }));
 
     return NextResponse.json(tournees);
-  } catch {
+  } catch (error) {
+    console.error("[API /tournees GET]", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

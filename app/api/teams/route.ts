@@ -4,25 +4,33 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await getOrCreateUser(userId);
-  const teams = await prisma.team.findMany({
-    where: { userId: user.id },
-    include: { members: true },
-    orderBy: { name: "asc" },
-  });
-  return NextResponse.json(teams);
+    const user = await getOrCreateUser(userId);
+    const teams = await prisma.team.findMany({
+      where: { userId: user.id },
+      include: { members: true },
+      orderBy: { name: "asc" },
+    });
+    return NextResponse.json(teams);
+  } catch (error) {
+    console.error("[API /teams GET]", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const { userId } = await auth();
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const user = await getOrCreateUser(userId);
     const body = await req.json();
     const team = await prisma.team.create({
@@ -49,7 +57,8 @@ export async function POST(req: Request) {
       include: { members: true },
     });
     return NextResponse.json(team, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("[API /teams POST]", error);
     return NextResponse.json(
       { error: "Failed to create team" },
       { status: 500 }
@@ -58,11 +67,11 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const { userId } = await auth();
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const user = await getOrCreateUser(userId);
     const body = await req.json();
     const { id, ...data } = body;
@@ -77,7 +86,8 @@ export async function PUT(req: Request) {
       include: { members: true },
     });
     return NextResponse.json(team);
-  } catch {
+  } catch (error) {
+    console.error("[API /teams PUT]", error);
     return NextResponse.json(
       { error: "Failed to update team" },
       { status: 500 }
@@ -86,11 +96,11 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    const { userId } = await auth();
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const user = await getOrCreateUser(userId);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -98,7 +108,8 @@ export async function DELETE(req: Request) {
 
     await prisma.team.delete({ where: { id, userId: user.id } });
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("[API /teams DELETE]", error);
     return NextResponse.json(
       { error: "Failed to delete team" },
       { status: 500 }
