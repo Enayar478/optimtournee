@@ -26,8 +26,9 @@ function TourneesContent() {
   const fetchTournees = async () => {
     try {
       const res = await fetch("/api/tournees");
+      if (!res.ok) throw new Error("API error");
       const data = await res.json();
-      setTournees(data);
+      setTournees(Array.isArray(data) ? data : []);
     } catch {
       setTournees([]);
     } finally {

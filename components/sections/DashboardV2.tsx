@@ -41,30 +41,34 @@ export function DashboardV2() {
 
   useEffect(() => {
     fetch("/api/dashboard")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("API error");
+        return r.json();
+      })
       .then(setData)
       .catch(() => {});
   }, []);
 
   const userName = data?.userName ?? "Utilisateur";
+  const s = data?.stats;
   const stats = [
     {
       name: "Km parcourus",
-      value: String(data?.stats.kmParcourus ?? 0),
+      value: String(s?.kmParcourus ?? 0),
       unit: "km",
       icon: MapPin,
       gradient: "from-[#2D5A3D] to-[#3D7A52]",
     },
     {
       name: "Interventions",
-      value: String(data?.stats.interventions ?? 0),
+      value: String(s?.interventions ?? 0),
       unit: "aujourd'hui",
       icon: Clock,
       gradient: "from-[#4A90A4] to-[#6BB3C7]",
     },
     {
       name: "Clients",
-      value: String(data?.stats.clientsTotal ?? 0),
+      value: String(s?.clientsTotal ?? 0),
       unit: "total",
       icon: DollarSign,
       gradient: "from-[#E07B39] to-[#F5A572]",
