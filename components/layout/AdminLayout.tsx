@@ -30,9 +30,7 @@ const navigation = [
 
 const bottomNav = [{ name: "Paramètres", href: "/settings", icon: Settings }];
 
-export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
+function ClerkSignOutButton() {
   const { signOut } = useClerk();
   const router = useRouter();
 
@@ -40,6 +38,36 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     await signOut();
     router.push("/");
   };
+
+  return (
+    <motion.button
+      onClick={handleSignOut}
+      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
+      whileHover={{ x: 5 }}
+    >
+      <LogOut className="h-5 w-5" />
+      <span className="font-medium">Déconnexion</span>
+    </motion.button>
+  );
+}
+
+function FallbackSignOutButton() {
+  return (
+    <Link
+      href="/"
+      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
+    >
+      <LogOut className="h-5 w-5" />
+      <span className="font-medium">Déconnexion</span>
+    </Link>
+  );
+}
+
+const clerkEnabled = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+export function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#F8FAFC] via-white to-[#E8F5EC]/30">
@@ -163,14 +191,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </motion.div>
           ))}
 
-          <motion.button
-            onClick={handleSignOut}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
-            whileHover={{ x: 5 }}
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="font-medium">Déconnexion</span>
-          </motion.button>
+          {clerkEnabled ? <ClerkSignOutButton /> : <FallbackSignOutButton />}
         </div>
       </motion.aside>
 
