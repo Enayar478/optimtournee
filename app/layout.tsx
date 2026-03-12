@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://optimtournee.fr"),
   title: "OptimTournée - Optimisez vos itinéraires de chantier",
   description:
     "SaaS d'optimisation d'itinéraires pour les entreprises du paysagisme. Gagnez du temps et réduisez vos coûts de déplacement.",
@@ -33,6 +34,26 @@ export const metadata: Metadata = {
       "Gagnez 2h par jour sur vos tournées d'entretien. Logiciel simple pour les paysagistes.",
     type: "website",
     locale: "fr_FR",
+    url: "https://optimtournee.fr",
+    siteName: "OptimTournée",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OptimTournée - Optimisation d'itinéraires pour paysagistes",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OptimTournée - Optimisez vos itinéraires de chantier",
+    description:
+      "Gagnez 2h par jour sur vos tournées d'entretien. Logiciel simple pour les paysagistes.",
+    images: ["/og-image.svg"],
+  },
+  alternates: {
+    canonical: "https://optimtournee.fr",
   },
   icons: {
     icon: [
