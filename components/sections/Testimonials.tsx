@@ -1,26 +1,29 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import Image from "next/image";
 
 const testimonials = [
   {
-    quote: "Avant, je passais mon dimanche soir à planifier la semaine sur Excel. Maintenant j'ai mes tournées en 3 clics. Mes gars ont même plus besoin de m'appeler pour savoir où aller.",
+    quote:
+      "Avant, je passais mon dimanche soir à planifier la semaine sur Excel. Maintenant j'ai mes tournées en 3 clics. Mes gars ont même plus besoin de m'appeler pour savoir où aller.",
     author: "Franck Morel",
     role: "Chef d'entreprise",
     company: "7 salariés · Amiens",
     avatar: "FM",
   },
   {
-    quote: "On a récupéré près de 400€ de carburant le premier mois. Quand tu sais que l'entretien c'est 5% de marge, ça change tout. Mes clients hebdo restent hebdo, mais j'optimise le trajet.",
+    quote:
+      "On a récupéré près de 400€ de carburant le premier mois. Quand tu sais que l'entretien c'est 5% de marge, ça change tout. Mes clients hebdo restent hebdo, mais j'optimise le trajet.",
     author: "Lucie Garnier",
     role: "Gérante",
     company: "12 salariés · Lyon",
     avatar: "LG",
   },
   {
-    quote: "Le truc qui tue, c'est la météo. Une pluie imprévue et c'est tout le planning qui déraille. Là, ça se décale tout seul et mon équipe reçoit la tournée à jour le matin.",
+    quote:
+      "Le truc qui tue, c'est la météo. Une pluie imprévue et c'est tout le planning qui déraille. Là, ça se décale tout seul et mon équipe reçoit la tournée à jour le matin.",
     author: "Marc Delacroix",
     role: "Responsable exploitation",
     company: "9 salariés · Nantes",
@@ -41,19 +44,19 @@ export function TestimonialsV2() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="relative py-20 overflow-hidden bg-muted/30">
+    <section ref={ref} className="bg-muted/30 relative overflow-hidden py-20">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
           src="/images/team-working-garden.png"
-          alt="Team background"
+          alt="Équipe de paysagistes au travail dans un jardin"
           fill
           className="object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-muted/30 via-muted/30 to-muted/30" />
+        <div className="from-muted/30 via-muted/30 to-muted/30 absolute inset-0 bg-gradient-to-b" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mx-auto mb-16 max-w-3xl text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -64,7 +67,8 @@ export function TestimonialsV2() {
             Ceux qui en ont marre de perdre du temps sur la route
           </h2>
           <p className="text-muted-foreground text-xl">
-            Des paysagistes comme vous qui ont récupéré leurs soirées et leurs marges.
+            Des paysagistes comme vous qui ont récupéré leurs soirées et leurs
+            marges.
           </p>
         </motion.div>
 
@@ -72,14 +76,16 @@ export function TestimonialsV2() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              className="relative rounded-2xl border bg-white/80 backdrop-blur-xl p-6 shadow-lg"
+              className="relative rounded-2xl border bg-white/80 p-6 shadow-lg backdrop-blur-xl"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               {/* Quote Icon */}
-              <div className="mb-4 text-4xl text-forest/20 font-serif">&ldquo;&rdquo;</div>
+              <div className="text-forest/20 mb-4 font-serif text-4xl">
+                &ldquo;&rdquo;
+              </div>
 
               {/* Quote */}
               <blockquote className="text-foreground mb-6 leading-relaxed">
@@ -88,13 +94,16 @@ export function TestimonialsV2() {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="bg-forest-surface text-forest flex h-12 w-12 items-center justify-center rounded-full font-semibold"
-                >
+                <div className="bg-forest-surface text-forest flex h-12 w-12 items-center justify-center rounded-full font-semibold">
                   {testimonial.avatar}
                 </div>
                 <div>
-                  <div className="text-foreground font-semibold">{testimonial.author}</div>
-                  <div className="text-muted-foreground text-sm">{testimonial.role} · {testimonial.company}</div>
+                  <div className="text-foreground font-semibold">
+                    {testimonial.author}
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    {testimonial.role} · {testimonial.company}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -103,14 +112,14 @@ export function TestimonialsV2() {
 
         {/* Trusted By */}
         <div className="mt-16 text-center">
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 text-sm">
             Ils utilisent OptimTournée chaque jour
           </p>
           <div className="flex flex-wrap justify-center gap-8 opacity-50">
             {trustedBy.map((name, index) => (
               <div
                 key={index}
-                className="text-lg font-semibold text-muted-foreground"
+                className="text-muted-foreground text-lg font-semibold"
               >
                 {name}
               </div>
