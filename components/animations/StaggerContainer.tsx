@@ -1,14 +1,17 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { useRef, ReactNode } from 'react';
+import { motion, useInView } from "framer-motion";
+import { useRef, ReactNode } from "react";
 
 interface StaggerContainerProps {
   children: ReactNode;
   staggerDelay?: number;
 }
 
-export function StaggerContainer({ children, staggerDelay = 0.1 }: StaggerContainerProps) {
+export function StaggerContainer({
+  children,
+  staggerDelay = 0.1,
+}: StaggerContainerProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 

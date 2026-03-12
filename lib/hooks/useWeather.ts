@@ -14,7 +14,10 @@ interface UseWeatherReturn {
   error: string | null;
 }
 
-export function useWeather(lat: number | null, lon: number | null): UseWeatherReturn {
+export function useWeather(
+  lat: number | null,
+  lon: number | null
+): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,13 +31,13 @@ export function useWeather(lat: number | null, lon: number | null): UseWeatherRe
 
       try {
         const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
-        
+
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération de la météo");
         }
 
         const data = await response.json();
-        
+
         setWeather({
           temperature: Math.round(data.main.temp),
           description: data.weather[0]?.description || "",

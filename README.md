@@ -76,24 +76,26 @@ optimtournee/
 
 ## 🧞 Commandes Disponibles
 
-| Commande | Description |
-|----------|-------------|
-| `npm run dev` | Développement avec Turbopack |
-| `npm run build` | Build de production |
-| `npm run start` | Démarrer serveur de production |
-| `npm run lint` | Linter ESLint |
-| `npm run type-check` | Vérification TypeScript |
-| `npm run format` | Formater avec Prettier |
+| Commande             | Description                    |
+| -------------------- | ------------------------------ |
+| `npm run dev`        | Développement avec Turbopack   |
+| `npm run build`      | Build de production            |
+| `npm run start`      | Démarrer serveur de production |
+| `npm run lint`       | Linter ESLint                  |
+| `npm run type-check` | Vérification TypeScript        |
+| `npm run format`     | Formater avec Prettier         |
 
 ## 🗺️ Fonctionnalités
 
 ### Landing Page
+
 - Hero avec CTA
 - Présentation des fonctionnalités
 - Témoignages clients
 - Page tarifs
 
 ### Demo Interactive
+
 - Carte OpenStreetMap
 - Ajout de points d'intervention
 - Visualisation d'itinéraire optimisé
@@ -102,6 +104,7 @@ optimtournee/
 ## 📈 Analytics
 
 Événements trackés via PostHog :
+
 - `landing_hero_view` - Vue de la landing
 - `demo_interaction` - Interaction avec la demo
 - `cta_click` - Clic sur bouton CTA

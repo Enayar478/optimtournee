@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { ClientModal } from "@/components/clients/ClientModal";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Client, RecurrenceType } from "@/types/domain";
@@ -205,7 +206,20 @@ function ClientsContent() {
 
       {isModalOpen && (
         <ClientModal
-          client={editingClient}
+          client={
+            editingClient
+              ? {
+                  id: editingClient.id,
+                  name: editingClient.name,
+                  address: editingClient.location.address,
+                  contactPhone: editingClient.contactPhone,
+                  contactEmail: editingClient.contactEmail,
+                  notes: editingClient.notes,
+                  lat: editingClient.location.lat,
+                  lng: editingClient.location.lng,
+                }
+              : null
+          }
           onClose={() => setIsModalOpen(false)}
           onSave={() => {
             fetchClients();
@@ -217,21 +231,6 @@ function ClientsContent() {
   );
 }
 
-// ... garder le ClientModal existant
-function ClientModal({
-  client: _client,
-  onClose: _onClose,
-  onSave: _onSave,
-}: {
-  client: Client | null;
-  onClose: () => void;
-  onSave: () => void;
-}) {
-  // ... même code qu'avant
-  return null; // Simplifié pour l'exemple
-}
-
-// Export with AdminLayout wrapper
 export default function ClientsPage() {
   return (
     <AdminLayout>

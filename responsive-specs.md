@@ -120,26 +120,33 @@ Base: 320px → Scale up
 ## 🎯 Spécifications Techniques
 
 ### Breakpoints CSS (Tailwind par défaut)
+
 ```css
 /* Mobile first - pas de media query nécessaire */
 
 /* sm: 640px */
-@media (min-width: 640px) { }
+@media (min-width: 640px) {
+}
 
 /* md: 768px */
-@media (min-width: 768px) { }
+@media (min-width: 768px) {
+}
 
 /* lg: 1024px */
-@media (min-width: 1024px) { }
+@media (min-width: 1024px) {
+}
 
 /* xl: 1280px */
-@media (min-width: 1280px) { }
+@media (min-width: 1280px) {
+}
 
 /* 2xl: 1536px */
-@media (min-width: 1536px) { }
+@media (min-width: 1536px) {
+}
 ```
 
 ### Grille Adaptative
+
 ```
 Mobile:  1 colonne  (grid-cols-1)
 Tablet:  2 colonnes (sm:grid-cols-2)
@@ -148,46 +155,53 @@ Large:   4 colonnes si besoin (xl:grid-cols-4)
 ```
 
 ### Espacements Responsive
-| Élément | Mobile | Tablet | Desktop |
-|---------|--------|--------|---------|
-| Section padding Y | 48px (py-12) | 64px (py-16) | 80px (py-20) |
-| Container padding X | 16px (px-4) | 24px (px-6) | 32px (px-8) |
-| Card padding | 20px (p-5) | 24px (p-6) | 32px (p-8) |
-| Gap grid | 16px (gap-4) | 24px (gap-6) | 32px (gap-8) |
+
+| Élément             | Mobile       | Tablet       | Desktop      |
+| ------------------- | ------------ | ------------ | ------------ |
+| Section padding Y   | 48px (py-12) | 64px (py-16) | 80px (py-20) |
+| Container padding X | 16px (px-4)  | 24px (px-6)  | 32px (px-8)  |
+| Card padding        | 20px (p-5)   | 24px (p-6)   | 32px (p-8)   |
+| Gap grid            | 16px (gap-4) | 24px (gap-6) | 32px (gap-8) |
 
 ---
 
 ## 📝 Checklist Responsive
 
 ### Navigation
+
 - [ ] Logo centré ou gauche selon breakpoint
 - [ ] Menu hamburger < 768px avec animation
 - [ ] Navigation pleine largeur ou drawer
 - [ ] CTA toujours visible ou dans menu
 
 ### Hero
+
 - [ ] Carte en haut sur mobile (priorité visuelle)
 - [ ] Texte centré sur mobile, gauche sur desktop
 - [ ] CTA full width sur mobile
 - [ ] Trust badges empilés sur mobile
 
 ### Calculateur ROI
+
 - [ ] Sliders full width touch-friendly
 - [ ] Résultats empilés sur mobile
 - [ ] Nombre de véhicules limité à affichage
 - [ ] Scroll horizontal si nécessaire
 
 ### Témoignages
+
 - [ ] Carousel avec swipe sur mobile
 - [ ] Pagination dots visibles
 - [ ] Grille sur desktop
 
 ### Images
+
 - [ ] Lazy loading obligatoire
 - [ ] Srcset pour différentes résolutions
 - [ ] Images compressées WebP avec fallback
 
 ### Performance
+
 - [ ] Pas d'animation lourde sur mobile
 - [ ] Réduire particules/effets visuels
 - [ ] Prioriser le contenu above the fold

@@ -7,12 +7,14 @@ import { UserButton as ClerkUserButton } from "@clerk/nextjs";
 const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 const isClerkConfigured = clerkPubKey && !clerkPubKey.includes("pk_test_");
 
-export function UserButton(props: React.ComponentProps<typeof ClerkUserButton>) {
+export function UserButton(
+  props: React.ComponentProps<typeof ClerkUserButton>
+) {
   if (!isClerkConfigured) {
     return (
       <Link
         href="/sign-in"
-        className="w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center text-forest font-medium text-sm hover:bg-forest/20 transition-colors"
+        className="bg-forest/10 text-forest hover:bg-forest/20 flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition-colors"
       >
         U
       </Link>

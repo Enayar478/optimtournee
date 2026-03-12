@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Clock,
@@ -15,65 +16,64 @@ import {
 import Link from "next/link";
 import { WeatherWidget } from "@/components/weather/WeatherWidget";
 
-const stats = [
-  {
-    name: "Km parcourus",
-    value: "42",
-    unit: "km",
-    change: "-12%",
-    icon: MapPin,
-    gradient: "from-[#2D5A3D] to-[#3D7A52]",
-  },
-  {
-    name: "Temps gagné",
-    value: "3h",
-    unit: "15min",
-    change: "+8%",
-    icon: Clock,
-    gradient: "from-[#4A90A4] to-[#6BB3C7]",
-  },
-  {
-    name: "Économies",
-    value: "-127",
-    unit: "€",
-    change: "+15%",
-    icon: DollarSign,
-    gradient: "from-[#E07B39] to-[#F5A572]",
-  },
-];
-
-const todayStops = [
-  {
-    time: "08:30",
-    client: "Dupont",
-    address: "12 Rue des Lilas",
-    status: "completed",
-    color: "#22C55E",
-  },
-  {
-    time: "09:45",
-    client: "Martin",
-    address: "45 Avenue Victor Hugo",
-    status: "in-progress",
-    color: "#2D5A3D",
-  },
-  {
-    time: "11:00",
-    client: "Bernard",
-    address: "8 Rue de la Paix",
-    status: "pending",
-    color: "#94A3B8",
-  },
-  {
-    time: "14:00",
-    client: "Petit",
-    address: "23 Boulevard Haussmann",
-    status: "pending",
-    color: "#94A3B8",
-  },
-];
+interface DashboardData {
+  userName: string;
+  stats: {
+    kmParcourus: number;
+    interventions: number;
+    clientsTotal: number;
+    equipesTotal: number;
+  };
+  todayStops: {
+    time: string;
+    client: string;
+    address: string;
+    status: "completed" | "in-progress" | "pending";
+  }[];
+  teamOfDay: {
+    name: string;
+    members: string[];
+  } | null;
+}
 
 export function DashboardV2() {
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then((r) => r.json())
+      .then(setData)
+      .catch(() => {});
+  }, []);
+
+  const userName = data?.userName ?? "Utilisateur";
+  const stats = [
+    {
+      name: "Km parcourus",
+      value: String(data?.stats.kmParcourus ?? 0),
+      unit: "km",
+      icon: MapPin,
+      gradient: "from-[#2D5A3D] to-[#3D7A52]",
+    },
+    {
+      name: "Interventions",
+      value: String(data?.stats.interventions ?? 0),
+      unit: "aujourd'hui",
+      icon: Clock,
+      gradient: "from-[#4A90A4] to-[#6BB3C7]",
+    },
+    {
+      name: "Clients",
+      value: String(data?.stats.clientsTotal ?? 0),
+      unit: "total",
+      icon: DollarSign,
+      gradient: "from-[#E07B39] to-[#F5A572]",
+    },
+  ];
+
+  const todayStops = data?.todayStops ?? [];
+  const teamMembers = data?.teamOfDay?.members ?? [];
+
   return (
     <div className="space-y-8 p-6">
       {/* Header */}
@@ -90,7 +90,7 @@ export function DashboardV2() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Bonjour, Thomas ! 👋
+            Bonjour, {userName} !
           </motion.h1>
           <p className="text-muted-foreground mt-2 text-lg">
             Voici ce qui vous attend aujourd&apos;hui
@@ -149,13 +149,6 @@ export function DashboardV2() {
                 <stat.icon className="h-6 w-6 text-white" />
               </motion.div>
             </div>
-
-            <div className="mt-4 flex items-center gap-2">
-              <span className="text-sm font-semibold text-green-600">
-                {stat.change}
-              </span>
-              <span className="text-muted-foreground text-xs">vs hier</span>
-            </div>
           </motion.div>
         ))}
       </div>
@@ -184,70 +177,76 @@ export function DashboardV2() {
             </motion.div>
           </div>
 
-          <div className="space-y-4">
-            {todayStops.map((stop, index) => {
-              const badgeClass =
-                stop.status === "completed"
-                  ? "bg-green-100 text-green-700"
-                  : stop.status === "in-progress"
-                    ? "bg-[#2D5A3D]/10 text-[#2D5A3D]"
-                    : "bg-gray-100 text-gray-500";
-              const badgeLabel =
-                stop.status === "completed"
-                  ? "Terminé"
-                  : stop.status === "in-progress"
-                    ? "En cours"
-                    : "À venir";
-              return (
-                <motion.div
-                  key={stop.client}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  whileHover={{ x: 8, backgroundColor: "#F8FAFC" }}
-                  className="flex cursor-pointer items-center gap-4 rounded-xl border border-gray-100 p-4 transition-all"
-                >
-                  <div className="flex w-16 flex-col items-center">
-                    <span className="text-sm font-semibold text-gray-700">
-                      {stop.time}
-                    </span>
-                    <motion.div
-                      className="mt-2"
-                      animate={
-                        stop.status === "in-progress"
-                          ? { scale: [1, 1.2, 1] }
-                          : {}
-                      }
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      {stop.status === "completed" && (
-                        <CheckCircle2 className="h-6 w-6 text-green-500" />
-                      )}
-                      {stop.status === "in-progress" && (
-                        <Circle className="h-6 w-6 fill-[#2D5A3D]/20 text-[#2D5A3D]" />
-                      )}
-                      {stop.status === "pending" && (
-                        <Clock4 className="h-6 w-6 text-gray-400" />
-                      )}
-                    </motion.div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">
-                      {stop.client}
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      {stop.address}
-                    </p>
-                  </div>
-                  <div
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}`}
+          {todayStops.length === 0 ? (
+            <p className="text-muted-foreground py-8 text-center">
+              Aucune intervention planifiée aujourd&apos;hui
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {todayStops.map((stop, index) => {
+                const badgeClass =
+                  stop.status === "completed"
+                    ? "bg-green-100 text-green-700"
+                    : stop.status === "in-progress"
+                      ? "bg-[#2D5A3D]/10 text-[#2D5A3D]"
+                      : "bg-gray-100 text-gray-500";
+                const badgeLabel =
+                  stop.status === "completed"
+                    ? "Terminé"
+                    : stop.status === "in-progress"
+                      ? "En cours"
+                      : "À venir";
+                return (
+                  <motion.div
+                    key={`${stop.client}-${stop.time}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    whileHover={{ x: 8, backgroundColor: "#F8FAFC" }}
+                    className="flex cursor-pointer items-center gap-4 rounded-xl border border-gray-100 p-4 transition-all"
                   >
-                    {badgeLabel}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                    <div className="flex w-16 flex-col items-center">
+                      <span className="text-sm font-semibold text-gray-700">
+                        {stop.time}
+                      </span>
+                      <motion.div
+                        className="mt-2"
+                        animate={
+                          stop.status === "in-progress"
+                            ? { scale: [1, 1.2, 1] }
+                            : {}
+                        }
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        {stop.status === "completed" && (
+                          <CheckCircle2 className="h-6 w-6 text-green-500" />
+                        )}
+                        {stop.status === "in-progress" && (
+                          <Circle className="h-6 w-6 fill-[#2D5A3D]/20 text-[#2D5A3D]" />
+                        )}
+                        {stop.status === "pending" && (
+                          <Clock4 className="h-6 w-6 text-gray-400" />
+                        )}
+                      </motion.div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">
+                        {stop.client}
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        {stop.address}
+                      </p>
+                    </div>
+                    <div
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}`}
+                    >
+                      {badgeLabel}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </motion.div>
 
         {/* Side Widgets */}
@@ -272,38 +271,44 @@ export function DashboardV2() {
               <div className="rounded-lg bg-white/10 p-2">
                 <Users className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold">Équipe du jour</h3>
+              <h3 className="font-semibold">
+                {data?.teamOfDay ? data.teamOfDay.name : "Équipe du jour"}
+              </h3>
             </div>
 
-            <div className="space-y-3">
-              {["Paul M.", "Jean D.", "Marie L."].map((name, i) => (
-                <motion.div
-                  key={name}
-                  className="flex items-center gap-3 rounded-lg bg-white/5 p-2"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#4A90A4] to-[#2D5A3D] text-xs font-bold">
-                    {name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <span className="text-sm">{name}</span>
+            {teamMembers.length === 0 ? (
+              <p className="text-sm text-white/60">Aucune équipe configurée</p>
+            ) : (
+              <div className="space-y-3">
+                {teamMembers.map((name, i) => (
                   <motion.div
-                    className="ml-auto h-2 w-2 rounded-full bg-green-400"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: i * 0.3,
-                    }}
-                  />
-                </motion.div>
-              ))}
-            </div>
+                    key={name}
+                    className="flex items-center gap-3 rounded-lg bg-white/5 p-2"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 + i * 0.1 }}
+                    whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#4A90A4] to-[#2D5A3D] text-xs font-bold">
+                      {name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </div>
+                    <span className="text-sm">{name}</span>
+                    <motion.div
+                      className="ml-auto h-2 w-2 rounded-full bg-green-400"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.3,
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

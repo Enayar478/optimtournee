@@ -3,6 +3,8 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
+
+const clerkEnabled = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 import {
   User,
   Bell,
@@ -17,7 +19,7 @@ import { useState } from "react";
 
 // ─── Section: Profil utilisateur ─────────────────────────────────────────────
 
-function ProfileSection() {
+function ClerkProfileFields() {
   const { user } = useUser();
   const [name, setName] = useState(user?.fullName ?? "");
   const [saved, setSaved] = useState(false);
@@ -37,75 +39,87 @@ function ProfileSection() {
   };
 
   return (
+    <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+      {/* Avatar */}
+      <div className="flex flex-col items-center gap-2">
+        {user?.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.imageUrl}
+            alt="Avatar"
+            className="h-20 w-20 rounded-2xl object-cover shadow-md"
+          />
+        ) : (
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2D5A3D] to-[#4A90A4] text-2xl font-bold text-white shadow-md">
+            {initials}
+          </div>
+        )}
+        <p className="text-xs text-gray-500">Photo de profil</p>
+      </div>
+
+      {/* Champs */}
+      <div className="flex-1 space-y-4">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Nom complet
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 transition-all outline-none focus:border-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20"
+            placeholder="Votre nom"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            type="email"
+            value={user?.emailAddresses?.[0]?.emailAddress ?? ""}
+            readOnly
+            className="w-full rounded-xl border border-gray-100 bg-gray-50 px-4 py-2.5 text-gray-500 outline-none"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Modifiable via les paramètres Clerk
+          </p>
+        </div>
+        <motion.button
+          onClick={handleSave}
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2D5A3D] to-[#3D7A52] px-5 py-2.5 font-medium text-white shadow-md"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          {saved ? (
+            <>
+              <Check className="h-4 w-4" /> Sauvegardé
+            </>
+          ) : (
+            <>
+              <Save className="h-4 w-4" /> Sauvegarder
+            </>
+          )}
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
+function ProfileSection() {
+  return (
     <SectionCard
       icon={<User className="h-6 w-6" />}
       title="Profil utilisateur"
       description="Gérez vos informations personnelles"
     >
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-        {/* Avatar */}
-        <div className="flex flex-col items-center gap-2">
-          {user?.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.imageUrl}
-              alt="Avatar"
-              className="h-20 w-20 rounded-2xl object-cover shadow-md"
-            />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2D5A3D] to-[#4A90A4] text-2xl font-bold text-white shadow-md">
-              {initials}
-            </div>
-          )}
-          <p className="text-xs text-gray-500">Photo de profil</p>
-        </div>
-
-        {/* Champs */}
-        <div className="flex-1 space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Nom complet
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 transition-all outline-none focus:border-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20"
-              placeholder="Votre nom"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              value={user?.emailAddresses?.[0]?.emailAddress ?? ""}
-              readOnly
-              className="w-full rounded-xl border border-gray-100 bg-gray-50 px-4 py-2.5 text-gray-500 outline-none"
-            />
-            <p className="mt-1 text-xs text-gray-400">
-              Modifiable via les paramètres Clerk
-            </p>
-          </div>
-          <motion.button
-            onClick={handleSave}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2D5A3D] to-[#3D7A52] px-5 py-2.5 font-medium text-white shadow-md"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            {saved ? (
-              <>
-                <Check className="h-4 w-4" /> Sauvegardé
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" /> Sauvegarder
-              </>
-            )}
-          </motion.button>
-        </div>
-      </div>
+      {clerkEnabled ? (
+        <ClerkProfileFields />
+      ) : (
+        <p className="text-sm text-gray-500">
+          Authentification non configurée.
+        </p>
+      )}
     </SectionCard>
   );
 }
@@ -409,7 +423,7 @@ function CompanySection() {
 
 // ─── Section: Danger zone ─────────────────────────────────────────────────────
 
-function DangerZoneSection() {
+function ClerkDeleteButton() {
   const { signOut } = useClerk();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmInput, setConfirmInput] = useState("");
@@ -424,32 +438,25 @@ function DangerZoneSection() {
 
   return (
     <>
-      <SectionCard
-        icon={<AlertTriangle className="h-6 w-6 text-red-500" />}
-        title="Zone de danger"
-        description="Actions irréversibles — procédez avec précaution"
-        danger
-      >
-        <div className="flex items-center justify-between rounded-xl border border-red-100 bg-red-50 p-4">
-          <div>
-            <p className="font-medium text-red-700">Supprimer le compte</p>
-            <p className="text-sm text-red-500">
-              Cette action est permanente et irréversible
-            </p>
-          </div>
-          <motion.button
-            onClick={() => {
-              setConfirmInput("");
-              setIsModalOpen(true);
-            }}
-            className="rounded-xl bg-red-600 px-4 py-2.5 font-medium text-white shadow-md"
-            whileHover={{ scale: 1.03, backgroundColor: "#B91C1C" }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Supprimer le compte
-          </motion.button>
+      <div className="flex items-center justify-between rounded-xl border border-red-100 bg-red-50 p-4">
+        <div>
+          <p className="font-medium text-red-700">Supprimer le compte</p>
+          <p className="text-sm text-red-500">
+            Cette action est permanente et irréversible
+          </p>
         </div>
-      </SectionCard>
+        <motion.button
+          onClick={() => {
+            setConfirmInput("");
+            setIsModalOpen(true);
+          }}
+          className="rounded-xl bg-red-600 px-4 py-2.5 font-medium text-white shadow-md"
+          whileHover={{ scale: 1.03, backgroundColor: "#B91C1C" }}
+          whileTap={{ scale: 0.97 }}
+        >
+          Supprimer le compte
+        </motion.button>
+      </div>
 
       {/* Modal de confirmation */}
       <AnimatePresence>
@@ -526,6 +533,23 @@ function DangerZoneSection() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function DangerZoneSection() {
+  return (
+    <SectionCard
+      icon={<AlertTriangle className="h-6 w-6 text-red-500" />}
+      title="Zone de danger"
+      description="Actions irréversibles — procédez avec précaution"
+      danger
+    >
+      {clerkEnabled ? (
+        <ClerkDeleteButton />
+      ) : (
+        <p className="text-sm text-red-500">Authentification non configurée.</p>
+      )}
+    </SectionCard>
   );
 }
 

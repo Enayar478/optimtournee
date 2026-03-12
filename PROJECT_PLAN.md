@@ -9,18 +9,19 @@
 
 ## 👥 Équipe & Responsabilités
 
-| Agent | Rôle | Username |
-|-------|------|----------|
-| @hephaistos_forge_bot | Développeur / Architecture | Héphaïstos |
-| @apollon_lumiere_bot | Designer / UI-UX | Apollon |
-| @atlas_devopsBot | DevOps / Déploiement | Atlas |
-| @athena_stratege_bot | Chef de projet / Coordination | Athéna |
+| Agent                 | Rôle                          | Username   |
+| --------------------- | ----------------------------- | ---------- |
+| @hephaistos_forge_bot | Développeur / Architecture    | Héphaïstos |
+| @apollon_lumiere_bot  | Designer / UI-UX              | Apollon    |
+| @atlas_devopsBot      | DevOps / Déploiement          | Atlas      |
+| @athena_stratege_bot  | Chef de projet / Coordination | Athéna     |
 
 ---
 
 ## 🎯 Objectifs du Projet
 
 Landing page SaaS pour PME paysagistes avec :
+
 - Landing page complète (SEO-friendly)
 - Démo interactive (carte + optimisation d'itinéraire)
 - Dashboard avec gestion clients/équipes
@@ -33,6 +34,7 @@ Landing page SaaS pour PME paysagistes avec :
 ## ✅ Livrés (Sprint 1-2)
 
 ### Landing Page
+
 - [x] Hero avec CTA
 - [x] Calculateur ROI
 - [x] Section Features
@@ -42,6 +44,7 @@ Landing page SaaS pour PME paysagistes avec :
 - [x] Footer + Navbar
 
 ### Dashboard
+
 - [x] Carte interactive (Leaflet)
 - [x] Gestion clients
 - [x] Gestion équipes
@@ -49,6 +52,7 @@ Landing page SaaS pour PME paysagistes avec :
 - [x] Algorithmes d'optimisation (mock)
 
 ### Architecture
+
 - [x] Next.js 15 + App Router
 - [x] TypeScript
 - [x] Tailwind CSS v4
@@ -64,11 +68,12 @@ Landing page SaaS pour PME paysagistes avec :
 ### Sprint 3 — Stabilisation & Tests
 
 #### @hephaistos_forge_bot — Développeur
+
 **Priorité P0 (Cette semaine)**
+
 - [ ] **TASK-001:** Vérifier build production (`npm run build`)
   - Critère: Build passe sans erreur
   - Deadline: J+1
-  
 - [ ] **TASK-002:** Tester la démo publique sans authentification
   - Vérifier que `/demo` fonctionne pour visiteurs
   - Corriger si besoin
@@ -79,6 +84,7 @@ Landing page SaaS pour PME paysagistes avec :
   - Deadline: J+2
 
 **Priorité P1 (Semaine prochaine)**
+
 - [ ] **TASK-004:** SEO final
   - Sitemap.xml
   - Robots.txt
@@ -91,7 +97,9 @@ Landing page SaaS pour PME paysagistes avec :
   - Deadline: J+6
 
 #### @apollon_lumiere_bot — Designer
+
 **Priorité P1**
+
 - [ ] **TASK-006:** Review design system
   - Vérifier cohérence couleurs/typo sur toutes les pages
   - Dark mode si prévu
@@ -104,7 +112,9 @@ Landing page SaaS pour PME paysagistes avec :
   - Deadline: J+5
 
 #### @atlas_devopsBot — DevOps
+
 **Priorité P1**
+
 - [ ] **TASK-008:** Setup Vercel
   - Connecter repo GitHub
   - Configurer variables d'environnement
@@ -125,12 +135,12 @@ Landing page SaaS pour PME paysagistes avec :
 
 ### Besoins à confirmer avec @nyr_478
 
-| Item | Question | Impact |
-|------|----------|--------|
-| **Clés API** | As-tu les clés OpenWeatherMap, PostHog, Clerk ? | Sans ça, pas de déploiement prod |
-| **Base de données** | Quelle DB en prod ? Supabase, Vercel Postgres, autre ? | Nécessaire pour Prisma |
-| **Domaine** | Quel nom de domaine pour la landing ? | Config Vercel |
-| **Analytics** | Compte PostHog créé ? | Tracking impossible sinon |
+| Item                | Question                                               | Impact                           |
+| ------------------- | ------------------------------------------------------ | -------------------------------- |
+| **Clés API**        | As-tu les clés OpenWeatherMap, PostHog, Clerk ?        | Sans ça, pas de déploiement prod |
+| **Base de données** | Quelle DB en prod ? Supabase, Vercel Postgres, autre ? | Nécessaire pour Prisma           |
+| **Domaine**         | Quel nom de domaine pour la landing ?                  | Config Vercel                    |
+| **Analytics**       | Compte PostHog créé ?                                  | Tracking impossible sinon        |
 
 ---
 
@@ -149,13 +159,13 @@ J+7 (12/03)  → 🚀 LIVRAISON GO/NO-GO
 
 ## 📊 KPIs de Suivi
 
-| Métrique | Cible | Actuel |
-|----------|-------|--------|
-| Build production | ✅ Passe | ⏳ À tester |
-| Pages sans erreur | 100% | ⏳ À tester |
-| Score Lighthouse | >90 | ⏳ À tester |
+| Métrique           | Cible        | Actuel      |
+| ------------------ | ------------ | ----------- |
+| Build production   | ✅ Passe     | ⏳ À tester |
+| Pages sans erreur  | 100%         | ⏳ À tester |
+| Score Lighthouse   | >90          | ⏳ À tester |
 | Démo fonctionnelle | ✅ Sans auth | ⏳ À tester |
-| Déployé sur Vercel | ✅ | ❌ |
+| Déployé sur Vercel | ✅           | ❌          |
 
 ---
 

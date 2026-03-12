@@ -5,9 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
+  Users2,
   MapPin,
   Calendar,
   Settings,
@@ -20,11 +23,47 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Clients", href: "/clients", icon: Users },
+  { name: "Équipes", href: "/teams", icon: Users2 },
   { name: "Tournées", href: "/tournees", icon: MapPin },
   { name: "Planning", href: "/planning", icon: Calendar },
 ];
 
 const bottomNav = [{ name: "Paramètres", href: "/settings", icon: Settings }];
+
+function ClerkSignOutButton() {
+  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
+
+  return (
+    <motion.button
+      onClick={handleSignOut}
+      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
+      whileHover={{ x: 5 }}
+    >
+      <LogOut className="h-5 w-5" />
+      <span className="font-medium">Déconnexion</span>
+    </motion.button>
+  );
+}
+
+function FallbackSignOutButton() {
+  return (
+    <Link
+      href="/"
+      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
+    >
+      <LogOut className="h-5 w-5" />
+      <span className="font-medium">Déconnexion</span>
+    </Link>
+  );
+}
+
+const clerkEnabled = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -152,13 +191,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </motion.div>
           ))}
 
-          <motion.button
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300"
-            whileHover={{ x: 5 }}
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="font-medium">Déconnexion</span>
-          </motion.button>
+          {clerkEnabled ? <ClerkSignOutButton /> : <FallbackSignOutButton />}
         </div>
       </motion.aside>
 

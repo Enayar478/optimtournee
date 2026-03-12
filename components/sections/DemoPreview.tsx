@@ -7,10 +7,10 @@ export function DemoPreview() {
     <section id="demo" className="bg-slate-50 py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="mb-4 text-3xl font-bold text-foreground lg:text-4xl">
+          <h2 className="text-foreground mb-4 text-3xl font-bold lg:text-4xl">
             Essayez par vous-même
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-muted-foreground text-xl">
             Testez notre outil d&apos;optimisation en direct. Ajoutez des points
             sur la carte et voyez l&apos;itinéraire optimal se calculer.
           </p>

@@ -3,6 +3,7 @@
 ## ✅ Livrables créés
 
 ### 1. Stack Technique Validée
+
 - **Framework:** Next.js 15 + React 19 + TypeScript
 - **Styling:** Tailwind CSS v4 + shadcn/ui
 - **Cartographie:** Leaflet + React-Leaflet
@@ -10,6 +11,7 @@
 - **Hébergement:** Vercel
 
 ### 2. Structure du projet
+
 ```
 projects/optimtournee/
 ├── ARCHITECTURE.md          # Documentation complète
@@ -62,12 +64,14 @@ projects/optimtournee/
 ```
 
 ### 3. Intégrations configurées
+
 - ✅ OpenStreetMap (Leaflet)
 - ✅ OpenWeatherMap API (proxy sécurisé)
 - ✅ PostHog analytics
 - ✅ Algorithme d'optimisation TSP (plus proche voisin)
 
 ### 4. CI/CD prêt
+
 - ✅ GitHub Actions workflow
 - ✅ Linting ESLint
 - ✅ TypeScript type checking
@@ -84,10 +88,8 @@ projects/optimtournee/
    - [ ] OpenWeatherMap (gratuit, 1000 req/jour)
    - [ ] PostHog (gratuit, 1M events/mois)
    - [ ] GraphHopper (optionnel, 5000 req/jour)
-   
 3. **Nom de domaine ?**
    - optimtournee.fr disponible ?
-   
 4. **Design System avec @apollon**
    - Palette de couleurs validée ?
    - Composants Figma existants ?
@@ -95,22 +97,23 @@ projects/optimtournee/
 
 ## 📅 Timeline Proposée
 
-| Jour | Tâche | Status |
-|------|-------|--------|
-| J+1 | Setup repo GitHub, CI/CD | ✅ Docs prêtes |
-| J+2 | Validation architecture avec équipe | ⏳ En attente |
-| J+3 | Intégration OSM + carte | 📋 Planifié |
-| J+4 | Intégration météo | 📋 Planifié |
-| J+5 | Demo interactive complète | 📋 Planifié |
-| J+6 | Analytics + tracking | 📋 Planifié |
-| J+7 | Review avec @apollon | 📋 Planifié |
-| J+8-10 | Intégration design | 📋 Planifié |
-| J+11 | Tests + optimisation | 📋 Planifié |
-| J+12 | Livraison | 📋 Planifié |
+| Jour   | Tâche                               | Status         |
+| ------ | ----------------------------------- | -------------- |
+| J+1    | Setup repo GitHub, CI/CD            | ✅ Docs prêtes |
+| J+2    | Validation architecture avec équipe | ⏳ En attente  |
+| J+3    | Intégration OSM + carte             | 📋 Planifié    |
+| J+4    | Intégration météo                   | 📋 Planifié    |
+| J+5    | Demo interactive complète           | 📋 Planifié    |
+| J+6    | Analytics + tracking                | 📋 Planifié    |
+| J+7    | Review avec @apollon                | 📋 Planifié    |
+| J+8-10 | Intégration design                  | 📋 Planifié    |
+| J+11   | Tests + optimisation                | 📋 Planifié    |
+| J+12   | Livraison                           | 📋 Planifié    |
 
 ## 🚀 Prochaines étapes
 
 1. **Créer le repo GitHub**
+
    ```bash
    cd projects/optimtournee
    git init
@@ -136,4 +139,4 @@ projects/optimtournee/
 
 ---
 
-*Héphaïstos - Architecture validée et prête pour développement*
+_Héphaïstos - Architecture validée et prête pour développement_

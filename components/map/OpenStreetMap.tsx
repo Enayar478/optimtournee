@@ -1,13 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import { Waypoint } from "@/types";
 
 // Fix Leaflet default marker icons using data URIs
-const defaultIconUrl = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzIyYzU1ZSI+PHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDljMCA1LjI1IDcgMTMgNyAxM3M3LTcuNzUgNy0xM2MwLTMuODctMy4xMy03LTctN3ptMCA5LjVjLTEuMzggMC0yLjUtMS4xMi0yLjUtMi41czEuMTItMi41IDIuNS0yLjUgMi41IDEuMTIgMi41IDIuNS0xLjEyIDIuNS0yLjUgMi41eiIvPjwvc3ZnPg==";
+const defaultIconUrl =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzIyYzU1ZSI+PHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDljMCA1LjI1IDcgMTMgNyAxM3M3LTcuNzUgNy0xM2MwLTMuODctMy4xMy03LTctN3ptMCA5LjVjLTEuMzggMC0yLjUtMS4xMi0yLjUtMi41czEuMTItMi41IDIuNS0yLjUgMi41IDEuMTIgMi41IDIuNS0xLjEyIDIuNS0yLjUgMi41eiIvPjwvc3ZnPg==";
 
 const DefaultIcon = L.icon({
   iconUrl: defaultIconUrl,
@@ -53,13 +61,13 @@ interface OpenStreetMapProps {
 
 function MapController({ center }: { center?: [number, number] }) {
   const map = useMap();
-  
+
   useEffect(() => {
     if (center) {
       map.setView(center, map.getZoom());
     }
   }, [center, map]);
-  
+
   return null;
 }
 
@@ -92,7 +100,7 @@ export function OpenStreetMap({
     return (
       <div
         style={{ height }}
-        className="bg-muted rounded-lg flex items-center justify-center"
+        className="bg-muted flex items-center justify-center rounded-lg"
       >
         Chargement de la carte...
       </div>
@@ -100,7 +108,7 @@ export function OpenStreetMap({
   }
 
   return (
-    <div style={{ height }} className="rounded-lg overflow-hidden border">
+    <div style={{ height }} className="overflow-hidden rounded-lg border">
       <MapContainer
         center={center}
         zoom={zoom}
@@ -111,11 +119,11 @@ export function OpenStreetMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         <MapController center={center} />
-        
+
         {!readOnly && <MapClickHandler onClick={handleMapClick} />}
-        
+
         {waypoints.map((waypoint, index) => (
           <Marker
             key={waypoint.id}
@@ -137,7 +145,7 @@ export function OpenStreetMap({
             </Popup>
           </Marker>
         ))}
-        
+
         {showRoute && routePositions.length > 1 && (
           <Polyline
             positions={routePositions}
@@ -152,15 +160,19 @@ export function OpenStreetMap({
   );
 }
 
-function MapClickHandler({ onClick }: { onClick: (e: L.LeafletMouseEvent) => void }) {
+function MapClickHandler({
+  onClick,
+}: {
+  onClick: (e: L.LeafletMouseEvent) => void;
+}) {
   const map = useMap();
-  
+
   useEffect(() => {
     map.on("click", onClick);
     return () => {
       map.off("click", onClick);
     };
   }, [map, onClick]);
-  
+
   return null;
 }

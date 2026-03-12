@@ -3,17 +3,37 @@
  * Les entités fondamentales du système de planification paysagiste
  */
 
-export type RecurrenceType = 'weekly' | 'biweekly' | 'monthly' | 'bimonthly' | 'quarterly';
+export type RecurrenceType =
+  | "weekly"
+  | "biweekly"
+  | "monthly"
+  | "bimonthly"
+  | "quarterly";
 
-export type InterventionType = 
-  | 'mowing' | 'hedge_trimming' | 'pruning' | 'weeding' 
-  | 'planting' | 'maintenance' | 'emergency';
+export type InterventionType =
+  | "mowing"
+  | "hedge_trimming"
+  | "pruning"
+  | "weeding"
+  | "planting"
+  | "maintenance"
+  | "emergency";
 
-export type InterventionStatus = 'planned' | 'in_progress' | 'completed' | 'cancelled' | 'postponed';
+export type InterventionStatus =
+  | "planned"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "postponed";
 
-export type EquipmentType = 
-  | 'lawn_tractor' | 'push_mower' | 'hedge_trimmer' | 'chainsaw' 
-  | 'blower' | 'trailer' | 'utility_vehicle';
+export type EquipmentType =
+  | "lawn_tractor"
+  | "push_mower"
+  | "hedge_trimmer"
+  | "chainsaw"
+  | "blower"
+  | "trailer"
+  | "utility_vehicle";
 
 export interface WeatherConstraints {
   maxWindSpeed: number;
@@ -64,7 +84,7 @@ export interface OneOffRequest {
   requiredEquipment: EquipmentType[];
   priority: number;
   weatherConstraints: WeatherConstraints;
-  status: 'pending' | 'scheduled' | 'completed' | 'cancelled';
+  status: "pending" | "scheduled" | "completed" | "cancelled";
 }
 
 export interface Team {
@@ -104,7 +124,7 @@ export interface Equipment {
 
 export interface PlannedIntervention {
   id: string;
-  sourceType: 'recurring' | 'oneoff';
+  sourceType: "recurring" | "oneoff";
   sourceContractId?: string;
   sourceRequestId?: string;
   clientId: string;
@@ -127,7 +147,7 @@ export interface WeatherForecast {
   windSpeed: number;
   rainProbability: number;
   rainMm: number;
-  condition: 'clear' | 'cloudy' | 'rain' | 'storm' | 'snow';
+  condition: "clear" | "cloudy" | "rain" | "storm" | "snow";
   isSuitable: boolean;
 }
 
@@ -171,7 +191,7 @@ export interface SchedulingConstraints {
   equipment: Equipment[];
   clients: Client[];
   oneOffRequests: OneOffRequest[];
-  optimizationCriteria: 'distance' | 'time' | 'balanced';
+  optimizationCriteria: "distance" | "time" | "balanced";
   maxDrivingTimePerDayMinutes: number;
   allowWeekendWork: boolean;
   weatherBufferDays: number;

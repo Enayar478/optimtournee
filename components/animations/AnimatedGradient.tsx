@@ -1,14 +1,15 @@
 "use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export function AnimatedGradientBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden -z-10">
+    <div className="absolute inset-0 -z-10 overflow-hidden">
       <motion.div
-        className="absolute -top-1/2 -left-1/2 w-full h-full rounded-full"
+        className="absolute -top-1/2 -left-1/2 h-full w-full rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(45,90,61,0.15) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(45,90,61,0.15) 0%, transparent 70%)",
         }}
         animate={{
           x: [0, 100, 0],
@@ -22,9 +23,10 @@ export function AnimatedGradientBackground() {
         }}
       />
       <motion.div
-        className="absolute -bottom-1/2 -right-1/2 w-full h-full rounded-full"
+        className="absolute -right-1/2 -bottom-1/2 h-full w-full rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(74,144,164,0.12) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(74,144,164,0.12) 0%, transparent 70%)",
         }}
         animate={{
           x: [0, -100, 0],
