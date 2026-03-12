@@ -11,14 +11,14 @@
 
 ### 🥇 Choix Principal: **Next.js 15 + Vercel**
 
-| Critère | Next.js | Astro | Remarque |
-|---------|---------|-------|----------|
-| **SEO** | ⭐⭐⭐ Excellent | ⭐⭐⭐ Excellent | Les deux génèrent du SSG |
-| **Interactivité** | ⭐⭐⭐ Native | ⭐⭐ Partial Hydration | Demo interactive nécessaire |
-| **Écosystème React** | ⭐⭐⭐ Complet | ⭐⭐ Compatible | Composants réutilisables |
-| **Cartographie** | ⭐⭐⭐ Leaflet/React-Map-GL | ⭐⭐ Wrapper nécessaire | Next.js = intégration directe |
-| **Courbe d'apprentissage** | ⭐⭐ Modérée | ⭐⭐⭐ Simple | Équipe à l'aise avec React |
-| **Vercel Integration** | ⭐⭐⭐ Native | ⭐⭐⭐ Native | Edge functions, analytics |
+| Critère                    | Next.js                     | Astro                   | Remarque                      |
+| -------------------------- | --------------------------- | ----------------------- | ----------------------------- |
+| **SEO**                    | ⭐⭐⭐ Excellent            | ⭐⭐⭐ Excellent        | Les deux génèrent du SSG      |
+| **Interactivité**          | ⭐⭐⭐ Native               | ⭐⭐ Partial Hydration  | Demo interactive nécessaire   |
+| **Écosystème React**       | ⭐⭐⭐ Complet              | ⭐⭐ Compatible         | Composants réutilisables      |
+| **Cartographie**           | ⭐⭐⭐ Leaflet/React-Map-GL | ⭐⭐ Wrapper nécessaire | Next.js = intégration directe |
+| **Courbe d'apprentissage** | ⭐⭐ Modérée                | ⭐⭐⭐ Simple           | Équipe à l'aise avec React    |
+| **Vercel Integration**     | ⭐⭐⭐ Native               | ⭐⭐⭐ Native           | Edge functions, analytics     |
 
 ### Pourquoi Next.js ?
 
@@ -103,6 +103,7 @@ optimtournee/
 ## 📦 Dépendances Critiques
 
 ### Core
+
 ```json
 {
   "next": "^15.x",
@@ -113,6 +114,7 @@ optimtournee/
 ```
 
 ### Styling & UI
+
 ```json
 {
   "tailwindcss": "^4.x",
@@ -126,6 +128,7 @@ optimtournee/
 ```
 
 ### Cartographie
+
 ```json
 {
   "leaflet": "^1.9.x",
@@ -138,6 +141,7 @@ optimtournee/
 > **Alternative cartographie:** `react-map-gl` si besoin WebGL plus tard, mais Leaflet est plus léger pour une landing page.
 
 ### Analytics
+
 ```json
 {
   "posthog-js": "^1.x"
@@ -145,6 +149,7 @@ optimtournee/
 ```
 
 ### Dev Tools
+
 ```json
 {
   "@types/node": "^22.x",
@@ -167,8 +172,8 @@ optimtournee/
 // Utilisation de OSRM (Open Source Routing Machine) via demo server
 // ou GraphHopper pour l'optimisation de tournée
 
-const OSRM_BASE = 'https://router.project-osrm.org';
-const GRAPHHOPPER_API = 'https://graphhopper.com/api/1'; // Nécessite clé gratuite
+const OSRM_BASE = "https://router.project-osrm.org";
+const GRAPHHOPPER_API = "https://graphhopper.com/api/1"; // Nécessite clé gratuite
 
 export interface Waypoint {
   lat: number;
@@ -183,6 +188,7 @@ export async function optimizeRoute(waypoints: Waypoint[]): Promise<Route> {
 ```
 
 **Clés API nécessaires:**
+
 - ✅ OSM: Gratuit, pas de clé requise pour les tuiles (respecter usage policy)
 - ⚠️ GraphHopper: Clé gratuite (5000 requêtes/jour) pour l'optimisation TSP
 
@@ -192,25 +198,26 @@ export async function optimizeRoute(waypoints: Waypoint[]): Promise<Route> {
 
 ```typescript
 // app/api/weather/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const lat = searchParams.get('lat');
-  const lon = searchParams.get('lon');
-  
+  const lat = searchParams.get("lat");
+  const lon = searchParams.get("lon");
+
   const apiKey = process.env.OPENWEATHER_API_KEY;
-  
+
   const response = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=fr`
   );
-  
+
   const data = await response.json();
   return NextResponse.json(data);
 }
 ```
 
 **Clés API nécessaires:**
+
 - ✅ Compte gratuit sur openweathermap.org
 - ✅ Clé API (activation sous 2h après création)
 - ✅ Limites: 1000 requêtes/jour (gratuit)
@@ -218,17 +225,19 @@ export async function GET(request: Request) {
 ### 3. PostHog (Analytics)
 
 **Setup:**
+
 ```typescript
 // lib/analytics/posthog.ts
-import posthog from 'posthog-js';
+import posthog from "posthog-js";
 
 export const initPostHog = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+      api_host:
+        process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
       loaded: (posthog) => {
-        if (process.env.NODE_ENV === 'development') posthog.debug();
-      }
+        if (process.env.NODE_ENV === "development") posthog.debug();
+      },
     });
   }
 };
@@ -240,6 +249,7 @@ export const trackEvent = (event: string, properties?: Record<string, any>) => {
 ```
 
 **Événements à tracker:**
+
 - `landing_hero_view` - Vue de la landing
 - `demo_interaction` - Utilisation de la demo
 - `cta_click` - Clic sur bouton CTA
@@ -251,6 +261,7 @@ export const trackEvent = (event: string, properties?: Record<string, any>) => {
 ## 🔧 Variables d'Environnement
 
 ### Local (.env.local)
+
 ```bash
 # OpenWeatherMap
 OPENWEATHER_API_KEY=your_api_key_here
@@ -264,8 +275,9 @@ GRAPHHOPPER_API_KEY=your_key_here
 ```
 
 ### Production (Vercel)
+
 ```bash
-# Mêmes variables + 
+# Mêmes variables +
 NEXT_PUBLIC_APP_URL=https://optimtournee.fr
 ```
 
@@ -276,6 +288,7 @@ NEXT_PUBLIC_APP_URL=https://optimtournee.fr
 ### Vercel Configuration
 
 **vercel.json:**
+
 ```json
 {
   "framework": "nextjs",
@@ -286,6 +299,7 @@ NEXT_PUBLIC_APP_URL=https://optimtournee.fr
 ```
 
 ### GitHub Actions (/.github/workflows/ci.yml)
+
 ```yaml
 name: CI/CD
 
@@ -302,8 +316,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
       - run: npm ci
       - run: npm run lint
       - run: npm run type-check
@@ -311,6 +325,7 @@ jobs:
 ```
 
 ### Branches Git
+
 ```
 main       → Production (Vercel auto-deploy)
 develop    → Staging (preview Vercel)
@@ -321,18 +336,18 @@ feature/*  → Branches de features (preview Vercel PR)
 
 ## 📅 Timeline Technique
 
-| Jour | Livrable | Responsable |
-|------|----------|-------------|
-| **J+1** | Setup repo, CI/CD, déploiement initial | @hephaistos |
-| **J+2** | Architecture validée, structure composants | @hephaistos |
-| **J+3** | Intégration OSM + carte fonctionnelle | @hephaistos |
-| **J+4** | Intégration météo + overlay | @hephaistos |
-| **J+5** | Demo interactive (ajout points, optimisation) | @hephaistos |
-| **J+6** | Setup analytics + tracking | @hephaistos |
-| **J+7** | Review avec @apollon, ajustements | Both |
-| **J+8-10** | Intégration maquettes @apollon | @apollon + @hephaistos |
-| **J+11** | Tests, optimisation perf | @hephaistos |
-| **J+12** | Livraison finale | Both |
+| Jour       | Livrable                                      | Responsable            |
+| ---------- | --------------------------------------------- | ---------------------- |
+| **J+1**    | Setup repo, CI/CD, déploiement initial        | @hephaistos            |
+| **J+2**    | Architecture validée, structure composants    | @hephaistos            |
+| **J+3**    | Intégration OSM + carte fonctionnelle         | @hephaistos            |
+| **J+4**    | Intégration météo + overlay                   | @hephaistos            |
+| **J+5**    | Demo interactive (ajout points, optimisation) | @hephaistos            |
+| **J+6**    | Setup analytics + tracking                    | @hephaistos            |
+| **J+7**    | Review avec @apollon, ajustements             | Both                   |
+| **J+8-10** | Intégration maquettes @apollon                | @apollon + @hephaistos |
+| **J+11**   | Tests, optimisation perf                      | @hephaistos            |
+| **J+12**   | Livraison finale                              | Both                   |
 
 ---
 
@@ -399,4 +414,4 @@ feature/*  → Branches de features (preview Vercel PR)
 
 ---
 
-*Document créé par Héphaïstos - Dernière mise à jour: 2025-02-27*
+_Document créé par Héphaïstos - Dernière mise à jour: 2025-02-27_

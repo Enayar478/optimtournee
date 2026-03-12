@@ -38,22 +38,23 @@ function TourneesContent() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-transparent">
+        <h1 className="bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-3xl font-bold text-transparent">
           Tournées
         </h1>
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <div className="text-muted-foreground flex items-center justify-center py-20">
           Chargement...
         </div>
       ) : tournees.length === 0 ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-lg">
-          <p className="text-lg text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Aucune tournée planifiée pour aujourd&apos;hui.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Les tournées apparaissent ici lorsque des interventions sont planifiées.
+          <p className="text-muted-foreground mt-2 text-sm">
+            Les tournées apparaissent ici lorsque des interventions sont
+            planifiées.
           </p>
         </div>
       ) : (
@@ -64,12 +65,12 @@ function TourneesContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-2xl p-6 shadow-lg"
+              className="rounded-2xl border border-white/50 bg-white/80 p-6 shadow-lg backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`p-3 rounded-xl ${
+                    className={`rounded-xl p-3 ${
                       tournee.statut === "active"
                         ? "bg-forest/10 text-forest"
                         : tournee.statut === "terminee"
@@ -78,15 +79,15 @@ function TourneesContent() {
                     }`}
                   >
                     {tournee.statut === "active" ? (
-                      <Circle className="w-6 h-6 animate-pulse" />
+                      <Circle className="h-6 w-6 animate-pulse" />
                     ) : tournee.statut === "terminee" ? (
-                      <CheckCircle2 className="w-6 h-6" />
+                      <CheckCircle2 className="h-6 w-6" />
                     ) : (
-                      <Clock className="w-6 h-6" />
+                      <Clock className="h-6 w-6" />
                     )}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">{tournee.nom}</h3>
+                    <h3 className="text-lg font-semibold">{tournee.nom}</h3>
                     <p className="text-muted-foreground">
                       {tournee.equipe} · {tournee.heureDebut}
                     </p>
@@ -96,14 +97,14 @@ function TourneesContent() {
                 <div className="flex items-center gap-6">
                   <div className="text-center">
                     <p className="text-2xl font-bold">{tournee.clients}</p>
-                    <p className="text-sm text-muted-foreground">clients</p>
+                    <p className="text-muted-foreground text-sm">clients</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold">{tournee.km} km</p>
-                    <p className="text-sm text-muted-foreground">distance</p>
+                    <p className="text-muted-foreground text-sm">distance</p>
                   </div>
-                  <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                    <ArrowRight className="w-5 h-5" />
+                  <button className="hover:bg-muted rounded-lg p-2 transition-colors">
+                    <ArrowRight className="h-5 w-5" />
                   </button>
                 </div>
               </div>

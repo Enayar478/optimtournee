@@ -7,10 +7,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-forest-surface via-white to-sky-surface/30 flex flex-col">
+    <div className="from-forest-surface to-sky-surface/30 flex min-h-screen flex-col bg-gradient-to-br via-white">
       {/* Header */}
       <header className="p-6">
-        <Link href="/" className="flex items-center gap-2 w-fit">
+        <Link href="/" className="flex w-fit items-center gap-2">
           <div className="bg-forest flex h-10 w-10 items-center justify-center rounded-lg">
             <Leaf className="h-6 w-6 text-white" />
           </div>
@@ -21,14 +21,12 @@ export default function AuthLayout({
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          {children}
-        </div>
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">{children}</div>
       </main>
 
       {/* Footer */}
-      <footer className="p-6 text-center text-sm text-muted-foreground">
+      <footer className="text-muted-foreground p-6 text-center text-sm">
         <p>© 2025 OptimTournée. Tous droits réservés.</p>
       </footer>
     </div>

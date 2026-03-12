@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 interface TextRevealProps {
   text: string;
@@ -9,7 +9,11 @@ interface TextRevealProps {
   delay?: number;
 }
 
-export function TextReveal({ text, className = "", delay = 0 }: TextRevealProps) {
+export function TextReveal({
+  text,
+  className = "",
+  delay = 0,
+}: TextRevealProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -18,7 +22,7 @@ export function TextReveal({ text, className = "", delay = 0 }: TextRevealProps)
   return (
     <motion.span ref={ref} className={className}>
       {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden mr-[0.25em]">
+        <span key={i} className="mr-[0.25em] inline-block overflow-hidden">
           <motion.span
             className="inline-block"
             initial={{ y: "100%" }}

@@ -3,6 +3,7 @@
 ## Vue d'ensemble
 
 Cette évolution repousse les limites de l'UI/UX actuelle avec :
+
 - **Animations cinématiques** au scroll et au hover
 - **Effets visuels audacieux** (glassmorphism, particules, gradients dynamiques)
 - **Interactions fluides** avec smooth scroll et parallax
@@ -14,7 +15,9 @@ Cette évolution repousse les limites de l'UI/UX actuelle avec :
 ## 🎯 Pages à capturer (pour @apollon_lumiere_bot)
 
 ### 1. Landing Page (`/`)
+
 **Éléments à capturer :**
+
 - Hero avec mockup animé de l'app
 - Calculateur d'économies interactif
 - Grille de fonctionnalités avec hover effects
@@ -23,32 +26,41 @@ Cette évolution repousse les limites de l'UI/UX actuelle avec :
 - CTA finale
 
 **Zones clés en screenshots :**
+
 - Hero entier (1920x1080)
 - Section calculateur (focus sur les résultats)
 - Cards fonctionnalités
 - Section témoignages
 
 ### 2. Dashboard (`/dashboard`)
+
 **Éléments à capturer :**
+
 - Vue d'ensemble avec métriques
 - Carte des tournées
 - Liste des interventions
 - Widgets météo
 
 ### 3. Demo (`/demo`)
+
 **Éléments à capturer :**
+
 - Interface complète de l'app
 - Carte interactive
 - Panneau latéral
 
 ### 4. Clients (`/clients`)
+
 **Éléments à capturer :**
+
 - Liste des clients
 - Fiche client détaillée
 - Carte avec localisation
 
 ### 5. Équipes (`/teams`)
+
 **Éléments à capturer :**
+
 - Planning d'équipe
 - Vue calendrier
 - Assignation des tournées
@@ -58,37 +70,39 @@ Cette évolution repousse les limites de l'UI/UX actuelle avec :
 ## ✨ Nouvelles Animations & Effets
 
 ### 1. Smooth Scroll Global
+
 ```typescript
 // hooks/useSmoothScroll.ts
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export function useSmoothScroll() {
   useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth';
-    
+    document.documentElement.style.scrollBehavior = "smooth";
+
     // Easing personnalisé pour les ancres
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a[href^="#"]');
       if (anchor) {
         e.preventDefault();
-        const id = anchor.getAttribute('href')?.slice(1);
-        const element = document.getElementById(id || '');
+        const id = anchor.getAttribute("href")?.slice(1);
+        const element = document.getElementById(id || "");
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
     };
 
-    document.addEventListener('click', handleAnchorClick);
-    return () => document.removeEventListener('click', handleAnchorClick);
+    document.addEventListener("click", handleAnchorClick);
+    return () => document.removeEventListener("click", handleAnchorClick);
   }, []);
 }
 ```
 
 ### 2. Scroll-Triggered Animations (Framer Motion)
+
 ```typescript
 // components/animations/FadeInWhenVisible.tsx
 "use client";
@@ -103,11 +117,11 @@ interface FadeInWhenVisibleProps {
   duration?: number;
 }
 
-export function FadeInWhenVisible({ 
-  children, 
-  delay = 0, 
+export function FadeInWhenVisible({
+  children,
+  delay = 0,
   direction = 'up',
-  duration = 0.6 
+  duration = 0.6
 }: FadeInWhenVisibleProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -122,17 +136,17 @@ export function FadeInWhenVisible({
   return (
     <motion.div
       ref={ref}
-      initial={{ 
-        opacity: 0, 
-        ...directions[direction] 
+      initial={{
+        opacity: 0,
+        ...directions[direction]
       }}
-      animate={isInView ? { 
-        opacity: 1, 
-        x: 0, 
-        y: 0 
+      animate={isInView ? {
+        opacity: 1,
+        x: 0,
+        y: 0
       } : {}}
-      transition={{ 
-        duration, 
+      transition={{
+        duration,
         delay,
         ease: [0.22, 1, 0.36, 1] // ease-out-expo
       }}
@@ -144,6 +158,7 @@ export function FadeInWhenVisible({
 ```
 
 ### 3. Parallax Hero Effect
+
 ```typescript
 // components/animations/ParallaxHero.tsx
 "use client";
@@ -170,6 +185,7 @@ export function ParallaxHero({ children }: { children: React.ReactNode }) {
 ```
 
 ### 4. Staggered Grid Animation
+
 ```typescript
 // components/animations/StaggerContainer.tsx
 "use client";
@@ -210,9 +226,9 @@ export function StaggerItem({ children }: { children: ReactNode }) {
     <motion.div
       variants={{
         hidden: { opacity: 0, y: 30, scale: 0.95 },
-        visible: { 
-          opacity: 1, 
-          y: 0, 
+        visible: {
+          opacity: 1,
+          y: 0,
           scale: 1,
           transition: {
             duration: 0.5,
@@ -228,6 +244,7 @@ export function StaggerItem({ children }: { children: ReactNode }) {
 ```
 
 ### 5. Magnetic Button Effect
+
 ```typescript
 // components/animations/MagneticButton.tsx
 "use client";
@@ -241,10 +258,10 @@ interface MagneticButtonProps {
   strength?: number;
 }
 
-export function MagneticButton({ 
-  children, 
-  className = "", 
-  strength = 0.3 
+export function MagneticButton({
+  children,
+  className = "",
+  strength = 0.3
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -277,6 +294,7 @@ export function MagneticButton({
 ```
 
 ### 6. Text Reveal Animation
+
 ```typescript
 // components/animations/TextReveal.tsx
 "use client";
@@ -320,6 +338,7 @@ export function TextReveal({ text, className = "", delay = 0 }: TextRevealProps)
 ```
 
 ### 7. Gradient Background Animation
+
 ```typescript
 // components/animations/AnimatedGradient.tsx
 "use client";
@@ -367,6 +386,7 @@ export function AnimatedGradientBackground() {
 ```
 
 ### 8. Floating Card Animation
+
 ```typescript
 // components/animations/FloatingCard.tsx
 "use client";
@@ -406,6 +426,7 @@ export function FloatingCard({ children, className = "", delay = 0 }: FloatingCa
 ```
 
 ### 9. Counter Animation
+
 ```typescript
 // components/animations/AnimatedCounter.tsx
 "use client";
@@ -421,22 +442,22 @@ interface AnimatedCounterProps {
   duration?: number;
 }
 
-export function AnimatedCounter({ 
-  value, 
-  suffix = "", 
+export function AnimatedCounter({
+  value,
+  suffix = "",
   prefix = "",
   className = "",
   duration = 2
 }: AnimatedCounterProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  
+
   const spring = useSpring(0, {
     duration: duration * 1000,
     bounce: 0,
   });
-  
-  const display = useTransform(spring, (current) => 
+
+  const display = useTransform(spring, (current) =>
     Math.round(current).toLocaleString('fr-FR')
   );
 
@@ -457,6 +478,7 @@ export function AnimatedCounter({
 ```
 
 ### 10. Glassmorphism Card
+
 ```typescript
 // components/ui/GlassCard.tsx
 "use client";
@@ -488,7 +510,7 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
     >
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-transparent to-forest-surface/30 pointer-events-none" />
-      
+
       {/* Shine effect */}
       <motion.div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
@@ -499,7 +521,7 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
         whileHover={{ x: "200%" }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
       />
-      
+
       <div className="relative z-10">{children}</div>
     </motion.div>
   );
@@ -511,42 +533,48 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
 ## 🎨 Classes TailwindCSS Avancées
 
 ### Gradients Animés
+
 ```css
 /* globals.css additions */
 @layer utilities {
   /* Gradient text animé */
   .gradient-text-animated {
-    @apply bg-gradient-to-r from-forest via-sky to-economy bg-clip-text text-transparent;
+    @apply from-forest via-sky to-economy bg-gradient-to-r bg-clip-text text-transparent;
     background-size: 200% auto;
     animation: gradient-shift 3s ease infinite;
   }
 
   @keyframes gradient-shift {
-    0%, 100% { background-position: 0% center; }
-    50% { background-position: 100% center; }
+    0%,
+    100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
   }
 
   /* Mesh gradient background */
   .mesh-gradient {
-    background-color: #E8F5EC;
-    background-image: 
-      radial-gradient(at 40% 20%, hsla(145,60%,70%,1) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(189,60%,75%,1) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsla(340,60%,85%,1) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, hsla(145,60%,70%,1) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(22,60%,75%,1) 0px, transparent 50%),
-      radial-gradient(at 80% 100%, hsla(189,60%,70%,1) 0px, transparent 50%),
-      radial-gradient(at 0% 0%, hsla(340,60%,80%,1) 0px, transparent 50%);
+    background-color: #e8f5ec;
+    background-image:
+      radial-gradient(at 40% 20%, hsla(145, 60%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(189, 60%, 75%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(340, 60%, 85%, 1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(145, 60%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(22, 60%, 75%, 1) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsla(189, 60%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 0%, hsla(340, 60%, 80%, 1) 0px, transparent 50%);
   }
 
   /* Glass effect */
   .glass {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50;
+    @apply border border-white/50 bg-white/70 backdrop-blur-xl;
     box-shadow: 0 8px 32px rgba(45, 90, 61, 0.1);
   }
 
   .glass-dark {
-    @apply bg-forest/80 backdrop-blur-xl border border-forest-light/30;
+    @apply bg-forest/80 border-forest-light/30 border backdrop-blur-xl;
     box-shadow: 0 8px 32px rgba(31, 61, 41, 0.3);
   }
 
@@ -567,12 +595,12 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
   .animated-underline {
     @apply relative;
   }
-  
+
   .animated-underline::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-forest transition-all duration-300;
+    content: "";
+    @apply bg-forest absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300;
   }
-  
+
   .animated-underline:hover::after {
     @apply w-full;
   }
@@ -581,13 +609,17 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
   .spotlight {
     @apply relative overflow-hidden;
   }
-  
+
   .spotlight::before {
-    content: '';
+    content: "";
     @apply absolute inset-0 opacity-0 transition-opacity duration-500;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(45,90,61,0.15) 0%, transparent 50%);
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(45, 90, 61, 0.15) 0%,
+      transparent 50%
+    );
   }
-  
+
   .spotlight:hover::before {
     @apply opacity-100;
   }
@@ -596,14 +628,19 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
   .card-shine {
     @apply relative overflow-hidden;
   }
-  
+
   .card-shine::after {
-    content: '';
+    content: "";
     @apply absolute inset-0 -translate-x-full;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
     transition: transform 0.6s;
   }
-  
+
   .card-shine:hover::after {
     @apply translate-x-full;
   }
@@ -614,8 +651,13 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
   }
 
   /* Pulse glow */
@@ -624,8 +666,13 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(224, 123, 57, 0.4); }
-    50% { box-shadow: 0 0 40px rgba(224, 123, 57, 0.6); }
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(224, 123, 57, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(224, 123, 57, 0.6);
+    }
   }
 
   /* Smooth scroll container */
@@ -638,17 +685,27 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
   /* Stagger animation delays */
-  .stagger-1 { animation-delay: 0.1s; }
-  .stagger-2 { animation-delay: 0.2s; }
-  .stagger-3 { animation-delay: 0.3s; }
-  .stagger-4 { animation-delay: 0.4s; }
-  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-1 {
+    animation-delay: 0.1s;
+  }
+  .stagger-2 {
+    animation-delay: 0.2s;
+  }
+  .stagger-3 {
+    animation-delay: 0.3s;
+  }
+  .stagger-4 {
+    animation-delay: 0.4s;
+  }
+  .stagger-5 {
+    animation-delay: 0.5s;
+  }
 }
 ```
 
@@ -679,6 +736,7 @@ export function GlassCard({ children, className = "", hoverEffect = true }: Glas
    - Témoignages vidéo
 
 ### Optimisation :
+
 ```typescript
 // next.config.ts addition
 images: {
@@ -695,19 +753,20 @@ images: {
 // hooks/useReducedMotion.ts
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function useReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mediaQuery.matches);
 
-    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    
-    return () => mediaQuery.removeEventListener('change', handler);
+    const handler = (e: MediaQueryListEvent) =>
+      setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
   return prefersReducedMotion;

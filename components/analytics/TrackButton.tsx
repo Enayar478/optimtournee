@@ -53,8 +53,7 @@ export function TrackButton({
     "font-medium rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2";
 
   const variantStyles = {
-    primary:
-      "bg-forest hover:bg-forest-dark text-white shadow-sm hover:shadow",
+    primary: "bg-forest hover:bg-forest-dark text-white shadow-sm hover:shadow",
     secondary: "bg-forest-surface hover:bg-forest-surface/80 text-forest-dark",
     outline: "border-2 border-forest text-forest hover:bg-forest/5",
   };
@@ -69,11 +68,7 @@ export function TrackButton({
   const buttonClass = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
   const buttonContent = (
-    <button
-      onClick={handleClick}
-      disabled={disabled}
-      className={buttonClass}
-    >
+    <button onClick={handleClick} disabled={disabled} className={buttonClass}>
       {children}
     </button>
   );

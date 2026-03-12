@@ -7,11 +7,13 @@ _Faites votre première planification optimisée avant votre prochain café._
 ## Avant de commencer
 
 ### Ce qu'il vous faut
+
 - Votre fichier Excel client (même s'il est bancal)
 - 10 minutes devant vous
 - Votre téléphone pour tester la vue terrain
 
 ### Ce que vous n'avez PAS besoin de faire
+
 - ❌ Tout recopier à la main
 - ❌ Créer des formules compliquées
 - ❌ Apprendre un nouveau logiciel pendant des heures
@@ -21,11 +23,13 @@ _Faites votre première planification optimisée avant votre prochain café._
 ## Étape 1 : Importez vos clients (2 min)
 
 **Si vous avez un Excel :**
+
 1. Allez dans **Clients** > **Importer**
 2. Collez vos données (nom, adresse, fréquence d'entretien)
 3. OptimTournée détecte automatiquement les colonnes
 
 **Si vous partez de zéro :**
+
 1. Cliquez **Nouveau client**
 2. Renseignez : nom, adresse, type d'entretien (pelouse, haies, jardin complet)
 3. Définissez la récurrence : hebdo, bi-hebdo, mensuel
@@ -52,6 +56,7 @@ _Faites votre première planification optimisée avant votre prochain café._
 3. Cliquez **Générer les tournées**
 
 **Ce qui se passe automatiquement :**
+
 - ✅ Les clients sont regroupés par zone géographique
 - ✅ Les trajets sont optimisés (moins d'essence)
 - ✅ La météo est vérifiée (pluie = pelouse reportée)
@@ -64,12 +69,15 @@ _Faites votre première planification optimisée avant votre prochain café._
 L'algo propose, vous décidez.
 
 **Pour modifier l'ordre :**
+
 - Glissez-déposez les interventions dans la liste
 
 **Pour changer d'équipe :**
+
 - Cliquez sur une intervention > **Attribuer à** > choisissez l'équipe
 
 **Pour décaler à cause de la météo :**
+
 - Cochez les interventions concernées
 - Cliquez **Reporter** > choisissez le nouveau jour
 
@@ -84,6 +92,7 @@ L'algo propose, vous décidez.
 3. Ils voient : la liste des clients, l'ordre, les adresses cliquables pour GPS
 
 **Ce que voit votre équipe sur le terrain :**
+
 ```
 08:30 — Dupont (15 rue des Lilas)
 09:45 — Martin (8 avenue Verte)
@@ -96,12 +105,12 @@ Chaque adresse est cliquable = ouverture directe dans Google Maps ou Waze.
 
 ## Vos premiers gains (dès la première semaine)
 
-| Avant | Après |
-|-------|-------|
-| Dimanche soir à planifier sur Excel | 3 clics le vendredi |
-| Appels "où je vais déjà ?" | Tournée sur le téléphone des équipes |
-| Trajets en zigzag | Itinéraire optimisé |
-| Oubli des contraintes météo | Décalage auto si pluie |
+| Avant                                       | Après                                   |
+| ------------------------------------------- | --------------------------------------- |
+| Dimanche soir à planifier sur Excel         | 3 clics le vendredi                     |
+| Appels "où je vais déjà ?"                  | Tournée sur le téléphone des équipes    |
+| Trajets en zigzag                           | Itinéraire optimisé                     |
+| Oubli des contraintes météo                 | Décalage auto si pluie                  |
 | Planning qui déraille à la première urgence | Insertion intelligente sans tout casser |
 
 ---

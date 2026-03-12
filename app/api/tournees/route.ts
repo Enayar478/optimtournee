@@ -72,16 +72,18 @@ export async function GET() {
       clients: g.interventions.length,
       km: Math.round(g.totalDistanceKm * 10) / 10,
       heureDebut: g.interventions[0]?.estimatedStartTime ?? "08:00",
-      statut:
-        g.interventions.every((i) => i.status === "completed")
-          ? "terminee"
-          : g.interventions.some((i) => i.status === "in_progress")
-            ? "active"
-            : "planifiee",
+      statut: g.interventions.every((i) => i.status === "completed")
+        ? "terminee"
+        : g.interventions.some((i) => i.status === "in_progress")
+          ? "active"
+          : "planifiee",
     }));
 
     return NextResponse.json(tournees);
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

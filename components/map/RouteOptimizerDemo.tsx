@@ -85,7 +85,9 @@ export default function RouteOptimizerDemo() {
             1
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Vos clients sur la carte</h3>
+            <h3 className="font-semibold text-gray-900">
+              Vos clients sur la carte
+            </h3>
             <p className="text-sm text-gray-500">
               {DEMO_CLIENTS.length} clients avec contrats récurrents
             </p>
@@ -173,9 +175,12 @@ export default function RouteOptimizerDemo() {
             2
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Génération automatique</h3>
+            <h3 className="font-semibold text-gray-900">
+              Génération automatique
+            </h3>
             <p className="text-sm text-gray-500">
-              L&apos;algorithme optimise les trajets en tenant compte de la météo, des compétences et de la proximité
+              L&apos;algorithme optimise les trajets en tenant compte de la
+              météo, des compétences et de la proximité
             </p>
           </div>
         </div>
@@ -301,9 +306,8 @@ export default function RouteOptimizerDemo() {
                       <h4 className="text-lg font-bold">{team?.name}</h4>
                       <span className="ml-auto text-sm text-gray-500">
                         {route.totalDistanceKm}km ·{" "}
-                        {Math.round(
-                          (route.totalWorkTimeMinutes / 60) * 10
-                        ) / 10}
+                        {Math.round((route.totalWorkTimeMinutes / 60) * 10) /
+                          10}
                         h travail
                       </span>
                     </div>
@@ -321,19 +325,13 @@ export default function RouteOptimizerDemo() {
                               {idx + 1}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium">
-                                {client?.name}
-                              </div>
+                              <div className="font-medium">{client?.name}</div>
                               <div className="text-sm text-gray-500">
                                 {intervention.estimatedStartTime} ·{" "}
                                 {intervention.estimatedDurationMinutes}min
-                                {intervention.estimatedTravelDistanceKm >
-                                  0 && (
+                                {intervention.estimatedTravelDistanceKm > 0 && (
                                   <span className="ml-2 text-blue-600">
-                                    (
-                                    {
-                                      intervention.estimatedTravelDistanceKm
-                                    }
+                                    ({intervention.estimatedTravelDistanceKm}
                                     km)
                                   </span>
                                 )}
@@ -345,14 +343,11 @@ export default function RouteOptimizerDemo() {
                                     <span className="text-orange-600">
                                       Pluie prévue
                                     </span>
-                                  ) : intervention.weatherForecast
-                                      .windSpeed > 25 ? (
+                                  ) : intervention.weatherForecast.windSpeed >
+                                    25 ? (
                                     <span className="text-orange-600">
                                       Vent{" "}
-                                      {
-                                        intervention.weatherForecast
-                                          .windSpeed
-                                      }
+                                      {intervention.weatherForecast.windSpeed}
                                       km/h
                                     </span>
                                   ) : (

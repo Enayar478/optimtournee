@@ -222,24 +222,28 @@
 ## 📐 Spécifications Techniques
 
 ### Grille & Layout
+
 - **Container max-width:** 1200px (desktop), 100% avec padding 16-24px (mobile)
 - **Grid système:** 12 colonnes
 - **Gouttières:** 24px (desktop), 16px (mobile)
 - **Section padding:** 80px vertical (desktop), 48px (mobile)
 
 ### Points de Rupture (Breakpoints)
-| Breakpoint | Largeur | Usage |
-|------------|---------|-------|
-| Mobile | < 640px | 1 colonne, empilé |
-| Tablet | 640px - 1024px | 2 colonnes |
-| Desktop | > 1024px | 3-4 colonnes |
+
+| Breakpoint | Largeur        | Usage             |
+| ---------- | -------------- | ----------------- |
+| Mobile     | < 640px        | 1 colonne, empilé |
+| Tablet     | 640px - 1024px | 2 colonnes        |
+| Desktop    | > 1024px       | 3-4 colonnes      |
 
 ### Hiérarchie Z-index
+
 - Navbar: 1000
 - Modales: 1100
 - Tooltips: 1200
 
 ### Composants Clés à Développer
+
 1. **Hero avec carte interactive** (Lottie ou SVG animé)
 2. **Calculateur ROI** (JavaScript interactif)
 3. **Carousel témoignages** (swiper ou custom)

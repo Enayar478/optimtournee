@@ -3,9 +3,11 @@
 ## 🎨 Identité Visuelle
 
 ### Positionnement Émotionnel
+
 > **"Le professionnalisme technique au service de l'artisanat"**
 
 Pas de tech froide et corporate. On parle à des artisans de terrain qui valorisent :
+
 - La **fiabilité** (ça marche, point)
 - L'**efficacité** (gain de temps concret)
 - Le **contact humain** (support accessible)
@@ -72,6 +74,7 @@ Pas de tech froide et corporate. On parle à des artisans de terrain qui valoris
 ```
 
 ### Gradients Utilisés
+
 ```css
 /* Hero background subtil */
 linear-gradient(135deg, #E8F5EC 0%, #E8F4F7 100%)
@@ -92,12 +95,12 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 
 ### Choix des Fonts
 
-| Rôle | Police | Fallback | Usage |
-|------|--------|----------|-------|
-| **Titres** | Inter | system-ui, sans-serif | H1-H6, boutons, navigation |
-| **Corps** | Inter | system-ui, sans-serif | Paragraphes, descriptions |
-| **Chiffres/Data** | JetBrains Mono | monospace | Stats, prix, calculateur |
-| **Accent** | (optionnel) | - | Citations témoignages |
+| Rôle              | Police         | Fallback              | Usage                      |
+| ----------------- | -------------- | --------------------- | -------------------------- |
+| **Titres**        | Inter          | system-ui, sans-serif | H1-H6, boutons, navigation |
+| **Corps**         | Inter          | system-ui, sans-serif | Paragraphes, descriptions  |
+| **Chiffres/Data** | JetBrains Mono | monospace             | Stats, prix, calculateur   |
+| **Accent**        | (optionnel)    | -                     | Citations témoignages      |
 
 ### Échelle Typographique
 
@@ -165,6 +168,7 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 ```
 
 ### Mots-Clés Visuels
+
 - **Clair** (pas de fouillis, informations digestes)
 - **Respirant** (beaucoup d'air, espaces généreux)
 - **Organique** (formes douces, pas de coins trop agressifs)
@@ -172,12 +176,14 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 - **Chaleureux** (photos de vraies personnes, pas de stock corporate)
 
 ### Style d'Illustrations
+
 - **Icônes:** Line icons, stroke 1.5-2px, style Fluent ou Phosphor
 - **Illustrations:** Flat design subtil, pas de 3D tape-à-l'œil
 - **Cartes:** OpenStreetMap customisée (thème vert/forêt)
 - **Photos:** Vrais paysagistes au travail, pas de stock généric
 
 ### Photographie
+
 - **Style:** Documentaire, naturel, en plein air
 - **Lumière:** Lumière naturelle, golden hour préféré
 - **Sujets:** Équipes en action, véhicules d'entreprise, équipement pro
@@ -289,16 +295,17 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 
 ### Adaptations Mobile
 
-| Élément | Desktop | Mobile |
-|---------|---------|--------|
-| Navigation | Horizontal + CTA | Hamburger menu |
-| Hero | 2 colonnes | Empilé, carte en haut |
-| Features Grid | 3 colonnes | 1 colonne scrollable |
-| Calculateur | Large | Empilé, sliders full-width |
-| Pricing | 2 cartes côte à côte | Empilé, Pro en premier |
-| Témoignages | 3 colonnes | Carousel swipe |
+| Élément       | Desktop              | Mobile                     |
+| ------------- | -------------------- | -------------------------- |
+| Navigation    | Horizontal + CTA     | Hamburger menu             |
+| Hero          | 2 colonnes           | Empilé, carte en haut      |
+| Features Grid | 3 colonnes           | 1 colonne scrollable       |
+| Calculateur   | Large                | Empilé, sliders full-width |
+| Pricing       | 2 cartes côte à côte | Empilé, Pro en premier     |
+| Témoignages   | 3 colonnes           | Carousel swipe             |
 
 ### Touch Targets
+
 - **Minimum:** 44x44px pour tous les éléments interactifs
 - **Boutons principaux:** 48px de haut minimum
 - **Espacement entre liens:** 16px minimum
@@ -308,25 +315,28 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 ## 🎭 Animations & Micro-interactions
 
 ### Principes
+
 - **Durée:** 200-300ms (rapide mais perceptible)
 - **Easing:** ease-out pour entrées, ease-in-out pour transitions
 - **Performance:** utilise transform et opacity uniquement
 
 ### Déclencheurs
-| Élément | Animation | Déclencheur |
-|---------|-----------|-------------|
-| Boutons | Scale 1.02 + shadow | Hover |
-| Cards | TranslateY -4px + shadow | Hover |
-| Sections | Fade up (opacity 0→1, translateY 20→0) | Scroll into view |
-| Calculateur | Number count up | Slider change |
-| Carte | Path draw | Page load |
-| CTA | Pulse subtil (shadow) | Toutes les 5s |
+
+| Élément     | Animation                              | Déclencheur      |
+| ----------- | -------------------------------------- | ---------------- |
+| Boutons     | Scale 1.02 + shadow                    | Hover            |
+| Cards       | TranslateY -4px + shadow               | Hover            |
+| Sections    | Fade up (opacity 0→1, translateY 20→0) | Scroll into view |
+| Calculateur | Number count up                        | Slider change    |
+| Carte       | Path draw                              | Page load        |
+| CTA         | Pulse subtil (shadow)                  | Toutes les 5s    |
 
 ---
 
 ## 📝 Notes d'Application
 
 ### Do's ✅
+
 - Utiliser le vert comme couleur de confiance principale
 - Mettre en avant les chiffres d'économies (orange)
 - Photos de vrais paysagistes si possible
@@ -334,6 +344,7 @@ radial-gradient(circle at 30% 70%, #E8F5EC 0%, #D4E8DB 100%)
 - Typos lisibles, tailles généreuses
 
 ### Don'ts ❌
+
 - Pas de dégradés flashy sur les textes
 - Pas d'ombres trop marquées (flat design)
 - Pas d'iconographie trop "tech" ou abstraite

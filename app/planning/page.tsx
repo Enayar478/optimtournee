@@ -4,7 +4,6 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
-
 const planningData = [
   { jour: "Lundi", equipes: 3, clients: 24, km: 142 },
   { jour: "Mardi", equipes: 3, clients: 26, km: 158 },

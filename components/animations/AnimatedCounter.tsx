@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView, useSpring, useTransform } from 'framer-motion';
-import { useRef, useEffect } from 'react';
+import { motion, useInView, useSpring, useTransform } from "framer-motion";
+import { useRef, useEffect } from "react";
 
 interface AnimatedCounterProps {
   value: number;
@@ -27,7 +27,7 @@ export function AnimatedCounter({
   });
 
   const display = useTransform(spring, (current) =>
-    Math.round(current).toLocaleString('fr-FR')
+    Math.round(current).toLocaleString("fr-FR")
   );
 
   useEffect(() => {

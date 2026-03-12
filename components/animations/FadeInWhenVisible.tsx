@@ -1,19 +1,19 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { useRef, ReactNode } from 'react';
+import { motion, useInView } from "framer-motion";
+import { useRef, ReactNode } from "react";
 
 interface FadeInWhenVisibleProps {
   children: ReactNode;
   delay?: number;
-  direction?: 'up' | 'down' | 'left' | 'right';
+  direction?: "up" | "down" | "left" | "right";
   duration?: number;
 }
 
 export function FadeInWhenVisible({
   children,
   delay = 0,
-  direction = 'up',
+  direction = "up",
   duration = 0.6,
 }: FadeInWhenVisibleProps) {
   const ref = useRef(null);

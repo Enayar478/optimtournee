@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface FloatingCardProps {
   children: ReactNode;
@@ -9,7 +9,11 @@ interface FloatingCardProps {
   delay?: number;
 }
 
-export function FloatingCard({ children, className = "", delay = 0 }: FloatingCardProps) {
+export function FloatingCard({
+  children,
+  className = "",
+  delay = 0,
+}: FloatingCardProps) {
   return (
     <motion.div
       className={className}

@@ -15,7 +15,11 @@ export async function GET() {
       prisma.client.count({ where: { userId: user.id } }),
       prisma.team.findMany({
         where: { userId: user.id },
-        select: { id: true, name: true, members: { select: { firstName: true, lastName: true } } },
+        select: {
+          id: true,
+          name: true,
+          members: { select: { firstName: true, lastName: true } },
+        },
       }),
     ]);
 
@@ -60,12 +64,13 @@ export async function GET() {
     );
 
     const clientIds = todayInterventions.map((i) => i.clientId);
-    const clients = clientIds.length > 0
-      ? await prisma.client.findMany({
-          where: { id: { in: clientIds } },
-          select: { id: true, name: true, address: true },
-        })
-      : [];
+    const clients =
+      clientIds.length > 0
+        ? await prisma.client.findMany({
+            where: { id: { in: clientIds } },
+            select: { id: true, name: true, address: true },
+          })
+        : [];
     const clientMap = new Map(clients.map((c) => [c.id, c]));
 
     const todayStops = todayInterventions.map((i) => {
@@ -104,6 +109,9 @@ export async function GET() {
       teamOfDay,
     });
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

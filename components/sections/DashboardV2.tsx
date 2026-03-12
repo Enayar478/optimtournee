@@ -178,7 +178,7 @@ export function DashboardV2() {
           </div>
 
           {todayStops.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">
+            <p className="text-muted-foreground py-8 text-center">
               Aucune intervention planifiée aujourd&apos;hui
             </p>
           ) : (

@@ -7,9 +7,7 @@ const footerLinks = {
     { label: "Tarifs", href: "/#pricing" },
     { label: "Démo", href: "/demo" },
   ],
-  entreprise: [
-    { label: "Contact", href: "mailto:contact@optimtournee.fr" },
-  ],
+  entreprise: [{ label: "Contact", href: "mailto:contact@optimtournee.fr" }],
 };
 
 export function Footer() {
@@ -69,7 +67,8 @@ export function Footer() {
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
           <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} OptimTournée — Conçu pour les paysagistes
+            © {new Date().getFullYear()} OptimTournée — Conçu pour les
+            paysagistes
           </p>
           <div className="flex gap-6 text-sm">
             <Link
