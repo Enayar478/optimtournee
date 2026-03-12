@@ -44,51 +44,58 @@ const plans = [
     ],
     cta: "Nous contacter",
     popular: false,
+    href: "mailto:contact@optimtournee.fr",
   },
 ];
 
 export function Pricing() {
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="bg-white py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <h2 className="text-foreground mb-4 text-3xl font-bold lg:text-4xl">
             Tarifs simples et transparents
           </h2>
-          <p className="text-xl text-muted-foreground">
-            Commencez gratuitement, évoluez selon vos besoins. 
-            Sans engagement, résiliez à tout moment.
+          <p className="text-muted-foreground text-xl">
+            Commencez gratuitement, évoluez selon vos besoins. Sans engagement,
+            résiliez à tout moment.
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
           {plans.map((plan, index) => (
             <div
               key={index}
               className={`relative rounded-2xl p-8 ${
                 plan.popular
-                  ? "bg-forest text-white shadow-xl scale-105 border-2 border-forest"
-                  : "bg-muted/30 text-foreground border border-border hover:border-forest/30 transition-colors"
+                  ? "bg-forest border-forest scale-105 border-2 text-white shadow-xl"
+                  : "bg-muted/30 text-foreground border-border hover:border-forest/30 border transition-colors"
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-economy text-white text-sm font-bold px-4 py-1 rounded-full">
+                <div className="bg-economy absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-bold text-white">
                   Le plus populaire
                 </div>
               )}
-              
+
               <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <p className={`text-sm ${plan.popular ? "text-white/80" : "text-muted-foreground"}`}>
+                <h3 className="mb-2 text-xl font-semibold">{plan.name}</h3>
+                <p
+                  className={`text-sm ${plan.popular ? "text-white/80" : "text-muted-foreground"}`}
+                >
                   {plan.description}
                 </p>
               </div>
-              
+
               <div className="mb-6">
                 {plan.price !== "Sur mesure" ? (
                   <div className="flex items-baseline">
-                    <span className="text-4xl font-bold font-mono">{plan.price}€</span>
-                    <span className={`ml-2 ${plan.popular ? "text-white/80" : "text-muted-foreground"}`}>
+                    <span className="font-mono text-4xl font-bold">
+                      {plan.price}€
+                    </span>
+                    <span
+                      className={`ml-2 ${plan.popular ? "text-white/80" : "text-muted-foreground"}`}
+                    >
                       /mois
                     </span>
                   </div>
@@ -96,23 +103,25 @@ export function Pricing() {
                   <span className="text-2xl font-bold">{plan.price}</span>
                 )}
               </div>
-              
-              <ul className="space-y-3 mb-8">
+
+              <ul className="mb-8 space-y-3">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-center gap-3">
-                    <Check className={`w-5 h-5 ${plan.popular ? "text-economy-light" : "text-forest"}`} />
+                    <Check
+                      className={`h-5 w-5 ${plan.popular ? "text-economy-light" : "text-forest"}`}
+                    />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
-              
+
               <TrackButton
                 event={AnalyticsEvents.CTA_PRICING_CLICK}
                 properties={{ plan: plan.name }}
                 variant={plan.popular ? "secondary" : "primary"}
                 size="md"
                 className="w-full"
-                href="/sign-up"
+                href={plan.href ?? "/sign-up"}
               >
                 {plan.cta}
               </TrackButton>
