@@ -39,10 +39,9 @@ export async function PUT(req: Request) {
     });
   } catch (error) {
     console.error("[API /onboarding/company PUT]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
