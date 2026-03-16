@@ -54,6 +54,7 @@ export default function SignUpPage() {
         </p>
       </div>
       <ClerkSignUp
+        forceRedirectUrl="/onboarding"
         appearance={{
           elements: {
             formButtonPrimary: "bg-forest hover:bg-forest-dark text-white",

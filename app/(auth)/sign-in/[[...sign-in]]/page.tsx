@@ -50,6 +50,7 @@ export default function SignInPage() {
         </p>
       </div>
       <ClerkSignIn
+        forceRedirectUrl="/dashboard"
         appearance={{
           elements: {
             formButtonPrimary: "bg-forest hover:bg-forest-dark text-white",
