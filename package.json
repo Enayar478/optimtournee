@@ -5,6 +5,7 @@
   "description": "Landing page SaaS pour l'optimisation d'itinéraires - PME paysagistes",
   "scripts": {
     "dev": "next dev --turbopack",
+    "postinstall": "prisma generate",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",

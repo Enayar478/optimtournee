@@ -1,9 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider      = "prisma-client"
-  output        = "../lib/generated/prisma"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -13,33 +9,24 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ─────────────────────────────────────────────
-// User — lié à Clerk via clerkId
-// ─────────────────────────────────────────────
-
 model User {
   id                  String   @id @default(cuid())
   clerkId             String   @unique
   email               String   @unique
   name                String?
-  onboardingCompleted Boolean  @default(false)
-  companyName         String?
-  companySiret        String?
+  createdAt           DateTime @default(now())
   companyAddress      String?
+  companyName         String?
   companyPhone        String?
+  companySiret        String?
+  onboardingCompleted Boolean  @default(false)
   clients             Client[]
   teams               Team[]
-  createdAt           DateTime @default(now())
 }
-
-// ─────────────────────────────────────────────
-// Client
-// ─────────────────────────────────────────────
 
 model Client {
   id           String             @id @default(cuid())
   userId       String
-  user         User               @relation(fields: [userId], references: [id])
   name         String
   address      String
   lat          Float
@@ -47,22 +34,17 @@ model Client {
   contactPhone String?
   contactEmail String?
   notes        String?
-  contract     RecurringContract?
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
+  user         User               @relation(fields: [userId], references: [id])
+  contract     RecurringContract?
 }
-
-// ─────────────────────────────────────────────
-// Team
-// ─────────────────────────────────────────────
 
 model Team {
   id                  String             @id @default(cuid())
   userId              String
-  user                User               @relation(fields: [userId], references: [id])
   name                String
   color               String             @default("#2D5A3D")
-  members             TeamMember[]
   defaultStartAddress String?
   defaultStartLat     Float?
   defaultStartLng     Float?
@@ -73,21 +55,19 @@ model Team {
   unavailableDates    DateTime[]
   skills              InterventionType[]
   assignedEquipment   EquipmentType[]
+  user                User               @relation(fields: [userId], references: [id])
+  members             TeamMember[]
 }
 
 model TeamMember {
   id           String   @id @default(cuid())
   teamId       String
-  team         Team     @relation(fields: [teamId], references: [id])
   firstName    String
   lastName     String
   phone        String?
   licenseTypes String[]
+  team         Team     @relation(fields: [teamId], references: [id])
 }
-
-// ─────────────────────────────────────────────
-// Equipment
-// ─────────────────────────────────────────────
 
 model Equipment {
   id               String        @id @default(cuid())
@@ -97,14 +77,9 @@ model Equipment {
   maintenanceDates DateTime[]
 }
 
-// ─────────────────────────────────────────────
-// Recurring Contract
-// ─────────────────────────────────────────────
-
 model RecurringContract {
   id                String           @id @default(cuid())
   clientId          String           @unique
-  client            Client           @relation(fields: [clientId], references: [id])
   recurrence        RecurrenceType
   dayOfWeek         Int
   interventionType  InterventionType
@@ -114,16 +89,12 @@ model RecurringContract {
   startDate         DateTime
   endDate           DateTime?
   notes             String?
-  // WeatherConstraints (inline)
   maxWindSpeed      Float            @default(50)
   noRainForecast    Boolean          @default(false)
   minTemperature    Float            @default(-5)
   maxTemperature    Float            @default(40)
+  client            Client           @relation(fields: [clientId], references: [id])
 }
-
-// ─────────────────────────────────────────────
-// One-Off Request
-// ─────────────────────────────────────────────
 
 model OneOffRequest {
   id                 String           @id @default(cuid())
@@ -137,7 +108,6 @@ model OneOffRequest {
   requiredEquipment  EquipmentType[]
   priority           Int              @default(1)
   status             OneOffStatus     @default(pending)
-  // WeatherConstraints (inline)
   maxWindSpeed       Float            @default(50)
   noRainForecast     Boolean          @default(false)
   minTemperature     Float            @default(-5)
@@ -145,10 +115,6 @@ model OneOffRequest {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 }
-
-// ─────────────────────────────────────────────
-// Planned Intervention
-// ─────────────────────────────────────────────
 
 model PlannedIntervention {
   id                         String             @id @default(cuid())
@@ -166,7 +132,6 @@ model PlannedIntervention {
   routeOrder                 Int                @default(0)
   estimatedTravelTimeMinutes Int                @default(0)
   estimatedTravelDistanceKm  Float              @default(0)
-  // WeatherForecast (inline, optional)
   weatherDate                DateTime?
   weatherTemperature         Float?
   weatherWindSpeed           Float?
@@ -178,10 +143,6 @@ model PlannedIntervention {
   updatedAt                  DateTime           @updatedAt
 }
 
-// ─────────────────────────────────────────────
-// Schedule
-// ─────────────────────────────────────────────
-
 model Schedule {
   id                       String   @id @default(cuid())
   name                     String
@@ -189,7 +150,6 @@ model Schedule {
   endDate                  DateTime
   generatedAt              DateTime @default(now())
   version                  Int      @default(1)
-  // Stats (inline)
   totalInterventions       Int      @default(0)
   totalDistanceKm          Float    @default(0)
   totalDrivingTimeHours    Float    @default(0)
@@ -200,10 +160,6 @@ model Schedule {
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 }
-
-// ─────────────────────────────────────────────
-// Enums
-// ─────────────────────────────────────────────
 
 enum RecurrenceType {
   weekly
