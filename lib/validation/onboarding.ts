@@ -8,7 +8,10 @@ export const companySchema = z.object({
   companyAddress: z.string().max(500).optional().or(z.literal("")),
   companySiret: z
     .string()
-    .regex(/^\d{14}$/, "Le SIRET doit contenir 14 chiffres")
+    .regex(
+      /^\d{9}(\d{5})?$/,
+      "Entrez un SIREN (9 chiffres) ou SIRET (14 chiffres)"
+    )
     .optional()
     .or(z.literal("")),
   companyPhone: z.string().max(20).optional().or(z.literal("")),

@@ -6,12 +6,45 @@ import { companySchema } from "@/lib/validation/onboarding";
 
 export async function PUT(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let userId: string | null = null;
+    try {
+      const authResult = await auth();
+      userId = authResult.userId;
+    } catch (authError) {
+      console.error("[API /onboarding/company PUT] auth() failed:", authError);
+      return NextResponse.json(
+        { error: "Erreur d'authentification" },
+        { status: 401 }
+      );
+    }
 
-    const user = await getOrCreateUser(userId);
-    const body = await req.json();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let user;
+    try {
+      user = await getOrCreateUser(userId);
+    } catch (dbError) {
+      console.error("[API /onboarding/company PUT] getOrCreateUser failed:", dbError);
+      const message = dbError instanceof Error ? dbError.message : "DB error";
+      return NextResponse.json(
+        { error: `Erreur utilisateur: ${message}` },
+        { status: 500 }
+      );
+    }
+
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error("[API /onboarding/company PUT] JSON parse failed:", parseError);
+      return NextResponse.json(
+        { error: "Corps de requête invalide" },
+        { status: 400 }
+      );
+    }
+
     const result = companySchema.safeParse(body);
 
     if (!result.success) {
@@ -21,15 +54,24 @@ export async function PUT(req: Request) {
       );
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        companyName: result.data.companyName,
-        companySiret: result.data.companySiret || null,
-        companyAddress: result.data.companyAddress || null,
-        companyPhone: result.data.companyPhone || null,
-      },
-    });
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          companyName: result.data.companyName,
+          companySiret: result.data.companySiret || null,
+          companyAddress: result.data.companyAddress || null,
+          companyPhone: result.data.companyPhone || null,
+        },
+      });
+    } catch (updateError) {
+      console.error("[API /onboarding/company PUT] prisma.user.update failed:", updateError);
+      const message = updateError instanceof Error ? updateError.message : "Update error";
+      return NextResponse.json(
+        { error: `Erreur mise à jour: ${message}` },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       companyName: result.data.companyName,
@@ -38,7 +80,7 @@ export async function PUT(req: Request) {
       companyPhone: result.data.companyPhone ?? "",
     });
   } catch (error) {
-    console.error("[API /onboarding/company PUT]", error);
+    console.error("[API /onboarding/company PUT] Unexpected error:", error);
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json({ error: message }, { status: 500 });
