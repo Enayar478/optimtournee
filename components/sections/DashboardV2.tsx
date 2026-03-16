@@ -15,9 +15,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { WeatherWidget } from "@/components/weather/WeatherWidget";
+import { OnboardingBanner } from "@/components/onboarding/OnboardingBanner";
 
 interface DashboardData {
   userName: string;
+  onboardingCompleted?: boolean;
   stats: {
     kmParcourus: number;
     interventions: number;
@@ -78,8 +80,16 @@ export function DashboardV2() {
   const todayStops = data?.todayStops ?? [];
   const teamMembers = data?.teamOfDay?.members ?? [];
 
+  const showOnboarding =
+    data &&
+    !data.onboardingCompleted &&
+    data.stats.clientsTotal === 0 &&
+    data.stats.equipesTotal === 0;
+
   return (
     <div className="space-y-8 p-6">
+      {showOnboarding && <OnboardingBanner />}
+
       {/* Header */}
       <motion.div
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"

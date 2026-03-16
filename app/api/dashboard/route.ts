@@ -98,6 +98,7 @@ export async function GET() {
 
     return NextResponse.json({
       userName: user.name ?? "Utilisateur",
+      onboardingCompleted: user.onboardingCompleted,
       stats: {
         kmParcourus: Math.round(totalKm * 10) / 10,
         interventions: todayInterventions.length,
