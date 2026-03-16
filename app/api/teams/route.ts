@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
+import { teamSchema } from "@/lib/validation/team";
 
 export async function GET() {
   try {
@@ -33,25 +34,35 @@ export async function POST(req: Request) {
 
     const user = await getOrCreateUser(userId);
     const body = await req.json();
+    const result = teamSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: result.error.issues },
+        { status: 400 }
+      );
+    }
+    const v = result.data;
     const team = await prisma.team.create({
       data: {
         userId: user.id,
-        name: body.name,
-        color: body.color ?? "#2D5A3D",
+        name: v.name,
+        color: v.color,
+        defaultStartAddress: v.defaultStartAddress || null,
+        defaultStartLat: v.defaultStartLat ?? null,
+        defaultStartLng: v.defaultStartLng ?? null,
+        workScheduleStart: v.workScheduleStart,
+        workScheduleEnd: v.workScheduleEnd,
+        lunchBreakMinutes: v.lunchBreakMinutes,
+        workingDays: v.workingDays,
+        assignedEquipment: v.assignedEquipment,
+        skills: v.skills,
         members: {
-          create: (body.members ?? []).map(
-            (m: {
-              firstName: string;
-              lastName: string;
-              phone?: string;
-              licenseTypes?: string[];
-            }) => ({
-              firstName: m.firstName,
-              lastName: m.lastName,
-              phone: m.phone ?? null,
-              licenseTypes: m.licenseTypes ?? [],
-            })
-          ),
+          create: v.members.map((m) => ({
+            firstName: m.firstName,
+            lastName: m.lastName,
+            phone: m.phone ?? null,
+            licenseTypes: [],
+          })),
         },
       },
       include: { members: true },
@@ -74,14 +85,31 @@ export async function PUT(req: Request) {
 
     const user = await getOrCreateUser(userId);
     const body = await req.json();
-    const { id, ...data } = body;
+    const { id, ...rest } = body;
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
+    const result = teamSchema.safeParse(rest);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: result.error.issues },
+        { status: 400 }
+      );
+    }
+    const v = result.data;
     const team = await prisma.team.update({
       where: { id, userId: user.id },
       data: {
-        name: data.name,
-        color: data.color,
+        name: v.name,
+        color: v.color,
+        defaultStartAddress: v.defaultStartAddress || null,
+        defaultStartLat: v.defaultStartLat ?? null,
+        defaultStartLng: v.defaultStartLng ?? null,
+        workScheduleStart: v.workScheduleStart,
+        workScheduleEnd: v.workScheduleEnd,
+        lunchBreakMinutes: v.lunchBreakMinutes,
+        workingDays: v.workingDays,
+        assignedEquipment: v.assignedEquipment,
+        skills: v.skills,
       },
       include: { members: true },
     });

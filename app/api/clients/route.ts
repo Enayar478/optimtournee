@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
+import { clientSchema } from "@/lib/validation/client";
 
 export async function GET() {
   try {
@@ -33,16 +34,24 @@ export async function POST(req: Request) {
 
     const user = await getOrCreateUser(userId);
     const body = await req.json();
+    const result = clientSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: result.error.issues },
+        { status: 400 }
+      );
+    }
+    const v = result.data;
     const client = await prisma.client.create({
       data: {
         userId: user.id,
-        name: body.name,
-        address: body.address,
-        lat: body.lat ?? 0,
-        lng: body.lng ?? 0,
-        contactPhone: body.contactPhone ?? null,
-        contactEmail: body.contactEmail ?? null,
-        notes: body.notes ?? null,
+        name: v.name,
+        address: v.address,
+        lat: v.lat ?? 0,
+        lng: v.lng ?? 0,
+        contactPhone: v.contactPhone ?? null,
+        contactEmail: v.contactEmail ?? null,
+        notes: v.notes ?? null,
       },
     });
     return NextResponse.json(client, { status: 201 });
@@ -63,19 +72,27 @@ export async function PUT(req: Request) {
 
     const user = await getOrCreateUser(userId);
     const body = await req.json();
-    const { id, ...data } = body;
+    const { id, ...rest } = body;
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
+    const result = clientSchema.safeParse(rest);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: result.error.issues },
+        { status: 400 }
+      );
+    }
+    const v = result.data;
     const client = await prisma.client.update({
       where: { id, userId: user.id },
       data: {
-        name: data.name,
-        address: data.address,
-        lat: data.lat,
-        lng: data.lng,
-        contactPhone: data.contactPhone ?? null,
-        contactEmail: data.contactEmail ?? null,
-        notes: data.notes ?? null,
+        name: v.name,
+        address: v.address,
+        lat: v.lat,
+        lng: v.lng,
+        contactPhone: v.contactPhone ?? null,
+        contactEmail: v.contactEmail ?? null,
+        notes: v.notes ?? null,
       },
     });
     return NextResponse.json(client);

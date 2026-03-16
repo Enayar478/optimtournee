@@ -8,6 +8,7 @@ import {
   type TeamFormData,
   type TeamMemberFormData,
 } from "@/lib/validation/team";
+import { EQUIPMENT_LABELS, SKILL_LABELS } from "@/lib/validation/onboarding";
 
 interface TeamModalProps {
   team: {
@@ -20,6 +21,15 @@ interface TeamModalProps {
       lastName: string;
       phone?: string;
     }[];
+    defaultStartAddress?: string;
+    defaultStartLat?: number;
+    defaultStartLng?: number;
+    workScheduleStart?: string;
+    workScheduleEnd?: string;
+    lunchBreakMinutes?: number;
+    workingDays?: number[];
+    assignedEquipment?: string[];
+    skills?: string[];
   } | null;
   onClose: () => void;
   onSave: () => void;
@@ -51,7 +61,18 @@ export function TeamModal({ team, onClose, onSave }: TeamModalProps) {
       lastName: m.lastName,
       phone: m.phone ?? "",
     })) ?? [{ ...emptyMember }],
+    defaultStartAddress: team?.defaultStartAddress ?? "",
+    defaultStartLat: team?.defaultStartLat,
+    defaultStartLng: team?.defaultStartLng,
+    workScheduleStart: team?.workScheduleStart ?? "08:00",
+    workScheduleEnd: team?.workScheduleEnd ?? "17:00",
+    lunchBreakMinutes: team?.lunchBreakMinutes ?? 60,
+    workingDays: team?.workingDays ?? [1, 2, 3, 4, 5],
+    assignedEquipment: (team?.assignedEquipment ??
+      []) as TeamFormData["assignedEquipment"],
+    skills: (team?.skills ?? []) as TeamFormData["skills"],
   });
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -250,6 +271,196 @@ export function TeamModal({ team, onClose, onSave }: TeamModalProps) {
                 Ajouter un membre
               </button>
             </div>
+
+            {/* Advanced settings toggle */}
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              className="text-sm font-medium text-[#4A90A4] hover:underline"
+            >
+              {showAdvanced ? "Masquer" : "Afficher"} les paramètres avancés
+            </button>
+
+            {showAdvanced && (
+              <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                {/* Depot */}
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Adresse dépôt (départ)
+                  </label>
+                  <input
+                    type="text"
+                    value={form.defaultStartAddress ?? ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        defaultStartAddress: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 outline-none focus:border-[#2D5A3D]"
+                    placeholder="Adresse de départ des tournées"
+                  />
+                </div>
+
+                {/* Schedule */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">
+                      Début
+                    </label>
+                    <input
+                      type="time"
+                      value={form.workScheduleStart}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          workScheduleStart: e.target.value,
+                        }))
+                      }
+                      className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">
+                      Fin
+                    </label>
+                    <input
+                      type="time"
+                      value={form.workScheduleEnd}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          workScheduleEnd: e.target.value,
+                        }))
+                      }
+                      className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">
+                      Pause (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={form.lunchBreakMinutes}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          lunchBreakMinutes: parseInt(e.target.value) || 0,
+                        }))
+                      }
+                      className="w-20 rounded-lg border border-gray-200 px-2 py-1.5 text-center text-sm"
+                      min={0}
+                      max={120}
+                    />
+                  </div>
+                </div>
+
+                {/* Working days */}
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Jours travaillés
+                  </label>
+                  <div className="flex gap-1.5">
+                    {["D", "L", "M", "Me", "J", "V", "S"].map((label, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            workingDays: prev.workingDays.includes(i)
+                              ? prev.workingDays.filter((d) => d !== i)
+                              : [...prev.workingDays, i],
+                          }))
+                        }
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                          form.workingDays.includes(i)
+                            ? "bg-[#2D5A3D] text-white"
+                            : "bg-white text-gray-400"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Equipment */}
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Équipements
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(EQUIPMENT_LABELS).map(([key, label]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            assignedEquipment: prev.assignedEquipment.includes(
+                              key as TeamFormData["assignedEquipment"][number]
+                            )
+                              ? prev.assignedEquipment.filter((v) => v !== key)
+                              : [
+                                  ...prev.assignedEquipment,
+                                  key as TeamFormData["assignedEquipment"][number],
+                                ],
+                          }))
+                        }
+                        className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${
+                          form.assignedEquipment.includes(
+                            key as TeamFormData["assignedEquipment"][number]
+                          )
+                            ? "bg-[#E07B39] text-white"
+                            : "bg-white text-gray-600"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Skills */}
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Compétences
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(SKILL_LABELS).map(([key, label]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            skills: prev.skills.includes(
+                              key as TeamFormData["skills"][number]
+                            )
+                              ? prev.skills.filter((v) => v !== key)
+                              : [
+                                  ...prev.skills,
+                                  key as TeamFormData["skills"][number],
+                                ],
+                          }))
+                        }
+                        className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${
+                          form.skills.includes(
+                            key as TeamFormData["skills"][number]
+                          )
+                            ? "bg-[#4A90A4] text-white"
+                            : "bg-white text-gray-600"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3 pt-2">
               <button
