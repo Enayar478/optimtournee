@@ -12,6 +12,12 @@ import {
 } from "@/lib/validation/onboarding";
 import { CsvImportBlock } from "./CsvImportBlock";
 import { CLIENT_COLUMNS, parseClientRow } from "@/lib/import/csv-templates";
+import {
+  AddressInput,
+  EMPTY_ADDRESS,
+  type AddressData,
+} from "@/components/ui/AddressInput";
+import { geocodeAddress } from "@/lib/services/geocoding";
 
 interface ClientWithContract {
   id?: string;
@@ -22,6 +28,7 @@ interface ClientWithContract {
   lat?: number;
   lng?: number;
   contract?: ContractFormData;
+  addressData?: AddressData;
 }
 
 interface StepClientsProps {
@@ -29,23 +36,7 @@ interface StepClientsProps {
   onClientsChange: (clients: ClientWithContract[]) => void;
 }
 
-async function geocodeAddress(
-  address: string
-): Promise<{ lat: number; lng: number } | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
-      { headers: { "User-Agent": "OptimTournee/1.0" } }
-    );
-    const data = await res.json();
-    if (data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
+// geocodeAddress imported from lib/services/geocoding
 
 const defaultContract: ContractFormData = {
   interventionType: "mowing",
@@ -72,26 +63,41 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
   const [error, setError] = useState<string | null>(null);
 
   const startAdd = () => {
-    setForm({ name: "", address: "", contract: { ...defaultContract } });
+    setForm({
+      name: "",
+      address: "",
+      addressData: { ...EMPTY_ADDRESS },
+      contract: { ...defaultContract },
+    });
     setEditingIndex(null);
     setError(null);
     setShowForm(true);
   };
 
   const startEdit = (index: number) => {
-    setForm({ ...clients[index] });
+    const c = clients[index];
+    setForm({
+      ...c,
+      addressData: c.addressData ?? {
+        ...EMPTY_ADDRESS,
+        street: c.address,
+        fullAddress: c.address,
+      },
+    });
     setEditingIndex(index);
     setShowForm(true);
   };
 
   const saveClient = async () => {
-    if (!form.name.trim() || !form.address.trim()) return;
+    const fullAddress = form.addressData?.fullAddress ?? form.address;
+    if (!form.name.trim() || !fullAddress.trim()) return;
 
     setSaving(true);
     try {
-      let { lat, lng } = form;
+      let lat = form.addressData?.lat ?? form.lat;
+      let lng = form.addressData?.lng ?? form.lng;
       if (!lat || !lng) {
-        const coords = await geocodeAddress(form.address);
+        const coords = await geocodeAddress(fullAddress);
         if (coords) {
           lat = coords.lat;
           lng = coords.lng;
@@ -100,7 +106,7 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
 
       const clientPayload = {
         name: form.name,
-        address: form.address,
+        address: fullAddress,
         contactPhone: form.contactPhone || null,
         contactEmail: form.contactEmail || null,
         lat: lat ?? 0,
@@ -150,6 +156,7 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
       const saved: ClientWithContract = {
         ...form,
         id: clientId,
+        address: fullAddress,
         lat,
         lng,
       };
@@ -336,18 +343,17 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
                 placeholder="M. Dupont"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Adresse *
-              </label>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, address: e.target.value }))
+            <div className="md:col-span-2">
+              <AddressInput
+                value={form.addressData ?? { ...EMPTY_ADDRESS }}
+                onChange={(addr) =>
+                  setForm((p) => ({
+                    ...p,
+                    addressData: addr,
+                    address: addr.fullAddress,
+                  }))
                 }
-                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 outline-none focus:border-[#2D5A3D]"
-                placeholder="12 Rue des Lilas, 75001 Paris"
+                required
               />
             </div>
             <div>
@@ -535,7 +541,11 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
             </button>
             <button
               onClick={saveClient}
-              disabled={saving || !form.name.trim() || !form.address.trim()}
+              disabled={
+                saving ||
+                !form.name.trim() ||
+                !(form.addressData?.fullAddress ?? form.address).trim()
+              }
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E07B39] to-[#F5A572] px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}

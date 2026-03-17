@@ -4,6 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { clientSchema, type ClientFormData } from "@/lib/validation/client";
+import {
+  AddressInput,
+  EMPTY_ADDRESS,
+  type AddressData,
+} from "@/components/ui/AddressInput";
+import { geocodeAddress } from "@/lib/services/geocoding";
 
 interface ClientModalProps {
   client: {
@@ -20,28 +26,39 @@ interface ClientModalProps {
   onSave: () => void;
 }
 
-async function geocodeAddress(
-  address: string
-): Promise<{ lat: number; lng: number } | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
-      { headers: { "User-Agent": "OptimTournee/1.0" } }
-    );
-    const data = await res.json();
-    if (data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+function parseExistingAddress(address: string): AddressData {
+  // Try to parse "street, postcode city, country" format
+  const parts = address.split(",").map((s) => s.trim());
+  if (parts.length >= 2) {
+    const street = parts[0];
+    const cityPart = parts[1];
+    const postcodeMatch = cityPart.match(/^(\d{4,5})\s+(.+)/);
+    if (postcodeMatch) {
+      return {
+        street,
+        postcode: postcodeMatch[1],
+        city: postcodeMatch[2],
+        country: parts[2] ?? "France",
+        fullAddress: address,
+      };
     }
-    return null;
-  } catch {
-    return null;
+    return {
+      street,
+      city: cityPart,
+      postcode: "",
+      country: parts[2] ?? "France",
+      fullAddress: address,
+    };
   }
+  return { ...EMPTY_ADDRESS, street: address, fullAddress: address };
 }
 
 export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
-  const [form, setForm] = useState<ClientFormData>({
+  const [form, setForm] = useState<Omit<ClientFormData, "address"> & { addressData: AddressData }>({
     name: client?.name ?? "",
-    address: client?.address ?? "",
+    addressData: client?.address
+      ? { ...parseExistingAddress(client.address), lat: client.lat, lng: client.lng }
+      : { ...EMPTY_ADDRESS },
     contactPhone: client?.contactPhone ?? "",
     contactEmail: client?.contactEmail ?? "",
     notes: client?.notes ?? "",
@@ -51,7 +68,7 @@ export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
-  const updateField = (field: keyof ClientFormData, value: string) => {
+  const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => {
       const next = { ...prev };
@@ -62,7 +79,18 @@ export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = clientSchema.safeParse(form);
+    const fullAddress = form.addressData.fullAddress;
+    const formData: ClientFormData = {
+      name: form.name,
+      address: fullAddress,
+      contactPhone: form.contactPhone,
+      contactEmail: form.contactEmail,
+      notes: form.notes,
+      lat: form.addressData.lat ?? form.lat,
+      lng: form.addressData.lng ?? form.lng,
+    };
+
+    const result = clientSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       for (const issue of result.error.issues) {
@@ -74,9 +102,10 @@ export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
 
     setSaving(true);
     try {
-      let { lat, lng } = form;
+      let lat = form.addressData.lat ?? form.lat;
+      let lng = form.addressData.lng ?? form.lng;
       if (!lat || !lng) {
-        const coords = await geocodeAddress(form.address);
+        const coords = await geocodeAddress(fullAddress);
         if (coords) {
           lat = coords.lat;
           lng = coords.lng;
@@ -124,7 +153,7 @@ export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
         onClick={onClose}
       >
         <motion.div
-          className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl"
+          className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -159,21 +188,14 @@ export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
               )}
             </div>
 
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Adresse *
-              </label>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => updateField("address", e.target.value)}
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20"
-                placeholder="12 Rue des Lilas, 75001 Paris"
-              />
-              {errors.address && (
-                <p className="mt-1 text-sm text-red-500">{errors.address}</p>
-              )}
-            </div>
+            <AddressInput
+              value={form.addressData}
+              onChange={(addr) =>
+                setForm((prev) => ({ ...prev, addressData: addr }))
+              }
+              required
+              error={errors.address}
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <div>

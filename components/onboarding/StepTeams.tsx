@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, Users, Loader2, MapPin, Clock } from "lucide-react";
+import { Plus, Trash2, Users, Loader2, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EQUIPMENT_LABELS, SKILL_LABELS } from "@/lib/validation/onboarding";
 import type { TeamFormData } from "@/lib/validation/team";
 import { CsvImportBlock } from "./CsvImportBlock";
 import { TEAM_COLUMNS, parseTeamRow } from "@/lib/import/csv-templates";
+import {
+  AddressInput,
+  EMPTY_ADDRESS,
+  type AddressData,
+} from "@/components/ui/AddressInput";
+import { geocodeAddress } from "@/lib/services/geocoding";
 
 type TeamData = TeamFormData & { id?: string };
 
@@ -28,25 +34,7 @@ const COLORS = [
 
 const DAY_SHORT = ["D", "L", "M", "Me", "J", "V", "S"];
 
-async function geocodeAddress(
-  address: string
-): Promise<{ lat: number; lng: number } | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
-      { headers: { "User-Agent": "OptimTournee/1.0" } }
-    );
-    const data = await res.json();
-    if (data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-const emptyTeam: TeamData = {
+const emptyTeam: TeamData & { depotAddress?: AddressData } = {
   name: "",
   color: COLORS[0],
   members: [{ firstName: "", lastName: "" }],
@@ -61,7 +49,9 @@ const emptyTeam: TeamData = {
 
 export function StepTeams({ teams, onTeamsChange }: StepTeamsProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [form, setForm] = useState<TeamData>({ ...emptyTeam });
+  const [form, setForm] = useState<TeamData & { depotAddress?: AddressData }>({
+    ...emptyTeam,
+  });
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,18 +79,24 @@ export function StepTeams({ teams, onTeamsChange }: StepTeamsProps) {
 
     setSaving(true);
     try {
-      let lat = form.defaultStartLat;
-      let lng = form.defaultStartLng;
-      if (form.defaultStartAddress && (!lat || !lng)) {
-        const coords = await geocodeAddress(form.defaultStartAddress);
+      const depotAddr = form.depotAddress;
+      const fullAddress =
+        depotAddr?.fullAddress ?? form.defaultStartAddress ?? "";
+      let lat = depotAddr?.lat ?? form.defaultStartLat;
+      let lng = depotAddr?.lng ?? form.defaultStartLng;
+      if (fullAddress && (!lat || !lng)) {
+        const coords = await geocodeAddress(fullAddress);
         if (coords) {
           lat = coords.lat;
           lng = coords.lng;
         }
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { depotAddress: _da, ...formWithoutDepot } = form;
       let payload: TeamData = {
-        ...form,
+        ...formWithoutDepot,
+        defaultStartAddress: fullAddress,
         defaultStartLat: lat,
         defaultStartLng: lng,
       };
@@ -370,20 +366,24 @@ export function StepTeams({ teams, onTeamsChange }: StepTeamsProps) {
           </div>
 
           {/* Depot address */}
-          <div>
-            <label className="mb-1 flex items-center gap-1 text-sm font-medium text-gray-700">
-              <MapPin className="h-4 w-4" /> Adresse dépôt (départ)
-            </label>
-            <input
-              type="text"
-              value={form.defaultStartAddress ?? ""}
-              onChange={(e) =>
-                updateFormField("defaultStartAddress", e.target.value)
+          <AddressInput
+            value={
+              form.depotAddress ?? {
+                ...EMPTY_ADDRESS,
+                street: form.defaultStartAddress ?? "",
+                fullAddress: form.defaultStartAddress ?? "",
               }
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 outline-none focus:border-[#2D5A3D]"
-              placeholder="Adresse de départ des tournées"
-            />
-          </div>
+            }
+            onChange={(addr) =>
+              setForm((prev) => ({
+                ...prev,
+                depotAddress: addr,
+                defaultStartAddress: addr.fullAddress,
+              }))
+            }
+            label="Adresse dépôt (départ)"
+            placeholder="Adresse de départ des tournées"
+          />
 
           {/* Schedule */}
           <div>

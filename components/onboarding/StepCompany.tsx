@@ -3,14 +3,47 @@
 import { useState } from "react";
 import { Building2 } from "lucide-react";
 import type { CompanyFormData } from "@/lib/validation/onboarding";
+import {
+  AddressInput,
+  EMPTY_ADDRESS,
+  type AddressData,
+} from "@/components/ui/AddressInput";
 
 interface StepCompanyProps {
   data: CompanyFormData;
   onChange: (data: CompanyFormData) => void;
 }
 
+function parseCompanyAddress(address: string): AddressData {
+  if (!address) return { ...EMPTY_ADDRESS };
+  const parts = address.split(",").map((s) => s.trim());
+  if (parts.length >= 2) {
+    const postcodeMatch = parts[1].match(/^(\d{4,5})\s+(.+)/);
+    if (postcodeMatch) {
+      return {
+        street: parts[0],
+        postcode: postcodeMatch[1],
+        city: postcodeMatch[2],
+        country: parts[2] ?? "France",
+        fullAddress: address,
+      };
+    }
+    return {
+      street: parts[0],
+      city: parts[1],
+      postcode: "",
+      country: parts[2] ?? "France",
+      fullAddress: address,
+    };
+  }
+  return { ...EMPTY_ADDRESS, street: address, fullAddress: address };
+}
+
 export function StepCompany({ data, onChange }: StepCompanyProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [addressData, setAddressData] = useState<AddressData>(
+    parseCompanyAddress(data.companyAddress ?? "")
+  );
 
   const updateField = (field: keyof CompanyFormData, value: string) => {
     const updated = { ...data, [field]: value };
@@ -20,6 +53,11 @@ export function StepCompany({ data, onChange }: StepCompanyProps) {
       delete next[field];
       return next;
     });
+  };
+
+  const handleAddressChange = (addr: AddressData) => {
+    setAddressData(addr);
+    onChange({ ...data, companyAddress: addr.fullAddress });
   };
 
   return (
@@ -51,30 +89,24 @@ export function StepCompany({ data, onChange }: StepCompanyProps) {
           )}
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Adresse (siège / dépôt)
-          </label>
-          <input
-            type="text"
-            value={data.companyAddress ?? ""}
-            onChange={(e) => updateField("companyAddress", e.target.value)}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20"
-            placeholder="12 Rue des Lilas, 75001 Paris"
-          />
-        </div>
+        <AddressInput
+          value={addressData}
+          onChange={handleAddressChange}
+          label="Adresse (siège / dépôt)"
+          placeholder="Rechercher votre adresse..."
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              SIRET
+              SIRET / SIREN
             </label>
             <input
               type="text"
               value={data.companySiret ?? ""}
               onChange={(e) => updateField("companySiret", e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-[#2D5A3D] focus:ring-2 focus:ring-[#2D5A3D]/20"
-              placeholder="14 chiffres"
+              placeholder="9 ou 14 chiffres"
               maxLength={14}
             />
             {errors.companySiret && (

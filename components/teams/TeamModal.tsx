@@ -8,6 +8,11 @@ import {
   type TeamFormData,
   type TeamMemberFormData,
 } from "@/lib/validation/team";
+import {
+  AddressInput,
+  EMPTY_ADDRESS,
+  type AddressData,
+} from "@/components/ui/AddressInput";
 import { EQUIPMENT_LABELS, SKILL_LABELS } from "@/lib/validation/onboarding";
 
 interface TeamModalProps {
@@ -284,23 +289,23 @@ export function TeamModal({ team, onClose, onSave }: TeamModalProps) {
             {showAdvanced && (
               <div className="space-y-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
                 {/* Depot */}
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
-                    Adresse dépôt (départ)
-                  </label>
-                  <input
-                    type="text"
-                    value={form.defaultStartAddress ?? ""}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        defaultStartAddress: e.target.value,
-                      }))
-                    }
-                    className="w-full rounded-xl border border-gray-200 px-4 py-2.5 outline-none focus:border-[#2D5A3D]"
-                    placeholder="Adresse de départ des tournées"
-                  />
-                </div>
+                <AddressInput
+                  value={{
+                    ...EMPTY_ADDRESS,
+                    street: form.defaultStartAddress ?? "",
+                    fullAddress: form.defaultStartAddress ?? "",
+                  }}
+                  onChange={(addr: AddressData) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      defaultStartAddress: addr.fullAddress,
+                      defaultStartLat: addr.lat,
+                      defaultStartLng: addr.lng,
+                    }))
+                  }
+                  label="Adresse dépôt (départ)"
+                  placeholder="Adresse de départ des tournées"
+                />
 
                 {/* Schedule */}
                 <div className="flex flex-wrap items-center gap-3">
