@@ -4,7 +4,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { ClientModal } from "@/components/clients/ClientModal";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Client, RecurrenceType } from "@/types/domain";
+import type { RecurrenceType } from "@/types/domain";
 import {
   Plus,
   Search,
@@ -13,6 +13,24 @@ import {
   MapPin,
   Phone,
 } from "lucide-react";
+
+interface ApiClient {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  contactPhone?: string;
+  contactEmail?: string;
+  notes?: string;
+  contract?: {
+    id: string;
+    recurrence: RecurrenceType;
+    interventionType: string;
+    durationMinutes: number;
+    dayOfWeek: number;
+  };
+}
 
 const RECURRENCE_LABELS: Record<RecurrenceType, string> = {
   weekly: "Hebdo",
@@ -31,9 +49,9 @@ const RECURRENCE_COLORS: Record<RecurrenceType, string> = {
 };
 
 function ClientsContent() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<ApiClient[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [editingClient, setEditingClient] = useState<ApiClient | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -60,7 +78,7 @@ function ClientsContent() {
   const filteredClients = clients.filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.location.address.toLowerCase().includes(searchTerm.toLowerCase())
+      (c.address ?? "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -145,8 +163,10 @@ function ClientsContent() {
                   <div>
                     <h3 className="text-lg font-bold">{client.name}</h3>
                     <div className="text-muted-foreground flex items-center gap-1 text-sm">
-                      <MapPin className="h-4 w-4" />
-                      {client.location.address.slice(0, 30)}...
+                      <MapPin className="h-4 w-4 shrink-0" />
+                      <span className="truncate max-w-[180px]">
+                        {client.address}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -160,12 +180,14 @@ function ClientsContent() {
                 </motion.button>
               </div>
 
-              <div className="mb-4 flex items-center gap-2">
-                <div className="text-muted-foreground flex items-center gap-1 text-sm">
-                  <Phone className="h-4 w-4" />
-                  {client.contactPhone}
+              {client.contactPhone && (
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="text-muted-foreground flex items-center gap-1 text-sm">
+                    <Phone className="h-4 w-4" />
+                    {client.contactPhone}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {client.contract ? (
                 <motion.div
@@ -207,6 +229,19 @@ function ClientsContent() {
         </AnimatePresence>
       </div>
 
+      {filteredClients.length === 0 && clients.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="py-12 text-center"
+        >
+          <p className="text-lg text-gray-500">Aucun client pour le moment</p>
+          <p className="mt-1 text-sm text-gray-400">
+            Ajoutez votre premier client pour commencer
+          </p>
+        </motion.div>
+      )}
+
       {isModalOpen && (
         <ClientModal
           client={
@@ -214,12 +249,12 @@ function ClientsContent() {
               ? {
                   id: editingClient.id,
                   name: editingClient.name,
-                  address: editingClient.location.address,
+                  address: editingClient.address,
                   contactPhone: editingClient.contactPhone,
                   contactEmail: editingClient.contactEmail,
                   notes: editingClient.notes,
-                  lat: editingClient.location.lat,
-                  lng: editingClient.location.lng,
+                  lat: editingClient.lat,
+                  lng: editingClient.lng,
                 }
               : null
           }
