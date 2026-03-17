@@ -8,10 +8,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { RecurrenceType } from "@/types/domain";
 import type { ContractFormData } from "@/lib/validation/onboarding";
-import {
-  INTERVENTION_LABELS,
-  DAY_LABELS,
-} from "@/lib/validation/onboarding";
+import { INTERVENTION_LABELS, DAY_LABELS } from "@/lib/validation/onboarding";
 import {
   Plus,
   Search,
@@ -40,6 +37,12 @@ interface ApiClient {
     interventionType: string;
     durationMinutes: number;
     dayOfWeek: number;
+    requiredEquipment: string[];
+    priority: number;
+    maxWindSpeed: number;
+    noRainForecast: boolean;
+    minTemperature: number;
+    maxTemperature: number;
   };
 }
 
@@ -64,7 +67,8 @@ function ClientsContent() {
   const [clients, setClients] = useState<ApiClient[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ApiClient | null>(null);
-  const [contractModalClient, setContractModalClient] = useState<ApiClient | null>(null);
+  const [contractModalClient, setContractModalClient] =
+    useState<ApiClient | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -84,8 +88,14 @@ function ClientsContent() {
 
   const deleteClient = async (id: string) => {
     if (!confirm("Supprimer ce client ?")) return;
-    await fetch(`/api/clients?id=${id}`, { method: "DELETE" });
-    fetchClients();
+    try {
+      const res = await fetch(`/api/clients?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur serveur");
+      toast.success("Client supprimé");
+      fetchClients();
+    } catch {
+      toast.error("Erreur lors de la suppression du client");
+    }
   };
 
   const deleteContract = async (client: ApiClient) => {
@@ -116,16 +126,18 @@ function ClientsContent() {
     if (!client.contract) return null;
     return {
       id: client.contract.id,
-      interventionType: client.contract.interventionType as ContractFormData["interventionType"],
+      interventionType: client.contract
+        .interventionType as ContractFormData["interventionType"],
       durationMinutes: client.contract.durationMinutes,
       recurrence: client.contract.recurrence as ContractFormData["recurrence"],
       dayOfWeek: client.contract.dayOfWeek,
-      requiredEquipment: [],
-      priority: 1,
-      maxWindSpeed: 50,
-      noRainForecast: false,
-      minTemperature: -5,
-      maxTemperature: 40,
+      requiredEquipment: (client.contract.requiredEquipment ??
+        []) as ContractFormData["requiredEquipment"],
+      priority: client.contract.priority ?? 1,
+      maxWindSpeed: client.contract.maxWindSpeed ?? 50,
+      noRainForecast: client.contract.noRainForecast ?? false,
+      minTemperature: client.contract.minTemperature ?? -5,
+      maxTemperature: client.contract.maxTemperature ?? 40,
     };
   };
 
@@ -212,7 +224,7 @@ function ClientsContent() {
                     <h3 className="text-lg font-bold">{client.name}</h3>
                     <div className="text-muted-foreground flex items-center gap-1 text-sm">
                       <MapPin className="h-4 w-4 shrink-0" />
-                      <span className="truncate max-w-[180px]">
+                      <span className="max-w-[180px] truncate">
                         {client.address}
                       </span>
                     </div>
@@ -249,7 +261,8 @@ function ClientsContent() {
                   <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <FileText className="h-3.5 w-3.5" />
-                      {INTERVENTION_LABELS[client.contract.interventionType] ?? client.contract.interventionType}
+                      {INTERVENTION_LABELS[client.contract.interventionType] ??
+                        client.contract.interventionType}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
@@ -284,7 +297,11 @@ function ClientsContent() {
                   className="flex items-center justify-center gap-1 rounded-lg bg-[#4A90A4]/10 px-3 py-2 text-sm font-medium text-[#4A90A4] transition-colors hover:bg-[#4A90A4]/20"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  title={client.contract ? "Modifier le contrat" : "Ajouter un contrat"}
+                  title={
+                    client.contract
+                      ? "Modifier le contrat"
+                      : "Ajouter un contrat"
+                  }
                 >
                   <FileText className="h-4 w-4" />
                   {client.contract ? "Contrat" : "Contrat +"}

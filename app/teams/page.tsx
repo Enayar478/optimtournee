@@ -4,6 +4,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamMemberModal } from "@/components/teams/TeamMemberModal";
 import { UnavailableDatesModal } from "@/components/teams/UnavailableDatesModal";
+import { useToast } from "@/components/ui/Toast";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Team, TeamMember } from "@/types/domain";
@@ -18,10 +19,14 @@ import {
   Shield,
   Wrench,
 } from "lucide-react";
-import { LICENSE_LABELS, MEMBER_SKILL_LABELS } from "@/lib/validation/team-member";
+import {
+  LICENSE_LABELS,
+  MEMBER_SKILL_LABELS,
+} from "@/lib/validation/team-member";
 
 function hasUpcomingUnavailableDates(team: Team): boolean {
-  if (!team.unavailableDates || team.unavailableDates.length === 0) return false;
+  if (!team.unavailableDates || team.unavailableDates.length === 0)
+    return false;
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   return team.unavailableDates.some((d) => {
@@ -37,7 +42,9 @@ function TeamsContent() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // Member modal state
-  const [memberModalTeamId, setMemberModalTeamId] = useState<string | null>(null);
+  const [memberModalTeamId, setMemberModalTeamId] = useState<string | null>(
+    null
+  );
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
 
   // Unavailable dates modal state
@@ -58,11 +65,19 @@ function TeamsContent() {
     }
   };
 
+  const toast = useToast();
+
   const deleteTeam = async (id: string) => {
     if (!confirm("Supprimer cette équipe ?")) return;
-    await fetch(`/api/teams?id=${id}`, { method: "DELETE" });
-    setOpenMenuId(null);
-    fetchTeams();
+    try {
+      const res = await fetch(`/api/teams?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur serveur");
+      toast.success("Équipe supprimée");
+      setOpenMenuId(null);
+      fetchTeams();
+    } catch {
+      toast.error("Erreur lors de la suppression de l'équipe");
+    }
   };
 
   const openMemberModal = (teamId: string, member?: TeamMember) => {
@@ -224,7 +239,7 @@ function TeamsContent() {
                     <span className="text-sm font-medium">
                       {m.firstName} {m.lastName}
                     </span>
-                    <div className="flex flex-wrap gap-1 mt-0.5">
+                    <div className="mt-0.5 flex flex-wrap gap-1">
                       {(m.licenseTypes ?? []).slice(0, 2).map((l) => (
                         <span
                           key={l}
@@ -243,9 +258,13 @@ function TeamsContent() {
                           {MEMBER_SKILL_LABELS[s] ?? s}
                         </span>
                       ))}
-                      {((m.licenseTypes?.length ?? 0) + (m.skills?.length ?? 0)) > 4 && (
+                      {(m.licenseTypes?.length ?? 0) + (m.skills?.length ?? 0) >
+                        4 && (
                         <span className="text-[10px] text-gray-400">
-                          +{(m.licenseTypes?.length ?? 0) + (m.skills?.length ?? 0) - 4}
+                          +
+                          {(m.licenseTypes?.length ?? 0) +
+                            (m.skills?.length ?? 0) -
+                            4}
                         </span>
                       )}
                     </div>
