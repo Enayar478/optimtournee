@@ -10,6 +10,8 @@ import {
   DAY_LABELS,
   type ContractFormData,
 } from "@/lib/validation/onboarding";
+import { CsvImportBlock } from "./CsvImportBlock";
+import { CLIENT_COLUMNS, parseClientRow } from "@/lib/import/csv-templates";
 
 interface ClientWithContract {
   id?: string;
@@ -206,6 +208,51 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
     });
   };
 
+  const handleCsvImport = (rows: Record<string, string>[]) => {
+    const errors: string[] = [];
+    const imported: ClientWithContract[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const { data, error } = parseClientRow(rows[i], i);
+      if (error) {
+        errors.push(error);
+        continue;
+      }
+      if (data) {
+        const hasContract =
+          data.interventionType && data.durationMinutes && data.recurrence;
+
+        imported.push({
+          name: data.name,
+          address: data.address,
+          contactPhone: data.contactPhone,
+          contactEmail: data.contactEmail,
+          contract: hasContract
+            ? {
+                interventionType:
+                  data.interventionType as ContractFormData["interventionType"],
+                durationMinutes: data.durationMinutes!,
+                dayOfWeek: data.dayOfWeek ?? 1,
+                recurrence: data.recurrence as ContractFormData["recurrence"],
+                requiredEquipment: [],
+                priority: data.priority ?? 1,
+                maxWindSpeed: 50,
+                noRainForecast: false,
+                minTemperature: -5,
+                maxTemperature: 40,
+              }
+            : { ...defaultContract },
+        });
+      }
+    }
+
+    if (imported.length > 0) {
+      onClientsChange([...clients, ...imported]);
+    }
+
+    return { imported: imported.length, errors };
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -218,6 +265,14 @@ export function StepClients({ clients, onClientsChange }: StepClientsProps) {
           récurrent.
         </p>
       </div>
+
+      {/* CSV Import */}
+      <CsvImportBlock
+        columns={CLIENT_COLUMNS}
+        templateFilename="optimtournee-clients-template.csv"
+        onImport={handleCsvImport}
+        entityLabel="clients"
+      />
 
       {/* List */}
       <div className="space-y-3">

@@ -5,6 +5,8 @@ import { Plus, Trash2, Users, Loader2, MapPin, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EQUIPMENT_LABELS, SKILL_LABELS } from "@/lib/validation/onboarding";
 import type { TeamFormData } from "@/lib/validation/team";
+import { CsvImportBlock } from "./CsvImportBlock";
+import { TEAM_COLUMNS, parseTeamRow } from "@/lib/import/csv-templates";
 
 type TeamData = TeamFormData & { id?: string };
 
@@ -181,6 +183,37 @@ export function StepTeams({ teams, onTeamsChange }: StepTeamsProps) {
     }));
   };
 
+  const handleCsvImport = (rows: Record<string, string>[]) => {
+    const errors: string[] = [];
+    const imported: TeamData[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const { data, error } = parseTeamRow(rows[i], i, COLORS);
+      if (error) {
+        errors.push(error);
+        continue;
+      }
+      if (data) {
+        imported.push({
+          ...data,
+          members:
+            data.members.length > 0
+              ? data.members
+              : [{ firstName: "", lastName: "" }],
+          assignedEquipment:
+            data.assignedEquipment as TeamFormData["assignedEquipment"],
+          skills: data.skills as TeamFormData["skills"],
+        });
+      }
+    }
+
+    if (imported.length > 0) {
+      onTeamsChange([...teams, ...imported]);
+    }
+
+    return { imported: imported.length, errors };
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -192,6 +225,14 @@ export function StepTeams({ teams, onTeamsChange }: StepTeamsProps) {
           Créez au moins une équipe avec ses membres, horaires et équipements.
         </p>
       </div>
+
+      {/* CSV Import */}
+      <CsvImportBlock
+        columns={TEAM_COLUMNS}
+        templateFilename="optimtournee-equipes-template.csv"
+        onImport={handleCsvImport}
+        entityLabel="équipes"
+      />
 
       {/* List of existing teams */}
       <div className="space-y-3">
