@@ -3,21 +3,67 @@
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Clock, CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import {
+  Clock,
+  CheckCircle2,
+  Circle,
+  MapPin,
+  Phone,
+  ChevronDown,
+  ChevronUp,
+  Play,
+  Pause,
+  SkipForward,
+  Loader2,
+} from "lucide-react";
+
+const TYPE_LABELS: Record<string, string> = {
+  mowing: "Tonte",
+  hedge_trimming: "Taille de haies",
+  pruning: "Élagage",
+  weeding: "Désherbage",
+  planting: "Plantation",
+  maintenance: "Entretien",
+  emergency: "Urgence",
+};
+
+const STATUS_BADGE: Record<string, { label: string; class: string }> = {
+  planned: { label: "Planifié", class: "bg-blue-100 text-blue-700" },
+  in_progress: { label: "En cours", class: "bg-amber-100 text-amber-700" },
+  completed: { label: "Terminé", class: "bg-green-100 text-green-700" },
+  cancelled: { label: "Annulé", class: "bg-red-100 text-red-700" },
+  postponed: { label: "Reporté", class: "bg-gray-100 text-gray-700" },
+};
+
+interface TourneeIntervention {
+  id: string;
+  clientName: string;
+  clientAddress: string;
+  clientPhone: string | null;
+  interventionType: string;
+  estimatedStartTime: string;
+  estimatedDurationMinutes: number;
+  status: string;
+  routeOrder: number;
+}
 
 interface Tournee {
   id: string;
   nom: string;
   equipe: string;
+  couleur: string;
   clients: number;
   km: number;
   heureDebut: string;
   statut: string;
+  interventions: TourneeIntervention[];
 }
 
 function TourneesContent() {
   const [tournees, setTournees] = useState<Tournee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTournees();
@@ -36,81 +82,231 @@ function TourneesContent() {
     }
   };
 
+  const updateStatus = async (interventionId: string, status: string) => {
+    setUpdatingStatus(interventionId);
+    try {
+      const res = await fetch(`/api/interventions/${interventionId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        await fetchTournees();
+      }
+    } catch {
+      // Silent
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
         <h1 className="bg-gradient-to-r from-[#2D5A3D] to-[#4A90A4] bg-clip-text text-3xl font-bold text-transparent">
-          Tournées
+          Tournées du jour
         </h1>
-      </div>
+        <p className="text-muted-foreground mt-1">
+          {new Date().toLocaleDateString("fr-FR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
+      </motion.div>
 
       {loading ? (
-        <div className="text-muted-foreground flex items-center justify-center py-20">
-          Chargement...
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-[#4A90A4]" />
         </div>
       ) : tournees.length === 0 ? (
         <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-lg">
-          <p className="text-muted-foreground text-lg">
-            Aucune tournée planifiée pour aujourd&apos;hui.
+          <MapPin className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+          <p className="text-lg font-medium text-gray-900">
+            Aucune tournée planifiée pour aujourd&apos;hui
           </p>
           <p className="text-muted-foreground mt-2 text-sm">
-            Les tournées apparaissent ici lorsque des interventions sont
-            planifiées.
+            Les tournées apparaissent ici lorsque des interventions sont planifiées.
           </p>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {tournees.map((tournee, index) => (
-            <motion.div
-              key={tournee.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="rounded-2xl border border-white/50 bg-white/80 p-6 shadow-lg backdrop-blur-xl"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`rounded-xl p-3 ${
-                      tournee.statut === "active"
-                        ? "bg-forest/10 text-forest"
-                        : tournee.statut === "terminee"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-slate-100 text-slate-600"
-                    }`}
-                  >
-                    {tournee.statut === "active" ? (
-                      <Circle className="h-6 w-6 animate-pulse" />
-                    ) : tournee.statut === "terminee" ? (
-                      <CheckCircle2 className="h-6 w-6" />
+        <div className="space-y-4">
+          {tournees.map((tournee, index) => {
+            const isExpanded = expandedTeam === tournee.id;
+            return (
+              <motion.div
+                key={tournee.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="overflow-hidden rounded-2xl border border-white/50 bg-white/80 shadow-lg backdrop-blur-xl"
+              >
+                {/* Team header */}
+                <button
+                  onClick={() =>
+                    setExpandedTeam(isExpanded ? null : tournee.id)
+                  }
+                  className="flex w-full items-center justify-between p-6"
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="rounded-xl p-3"
+                      style={{
+                        backgroundColor: `${tournee.couleur}15`,
+                        color: tournee.couleur,
+                      }}
+                    >
+                      {tournee.statut === "active" ? (
+                        <Circle className="h-6 w-6 animate-pulse" />
+                      ) : tournee.statut === "terminee" ? (
+                        <CheckCircle2 className="h-6 w-6" />
+                      ) : (
+                        <Clock className="h-6 w-6" />
+                      )}
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-semibold">{tournee.nom}</h3>
+                      <p className="text-muted-foreground text-sm">
+                        {tournee.equipe} · {tournee.heureDebut}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-6">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{tournee.clients}</p>
+                      <p className="text-muted-foreground text-xs">clients</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold">{tournee.km} km</p>
+                      <p className="text-muted-foreground text-xs">distance</p>
+                    </div>
+                    {isExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-gray-400" />
                     ) : (
-                      <Clock className="h-6 w-6" />
+                      <ChevronDown className="h-5 w-5 text-gray-400" />
                     )}
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">{tournee.nom}</h3>
-                    <p className="text-muted-foreground">
-                      {tournee.equipe} · {tournee.heureDebut}
-                    </p>
-                  </div>
-                </div>
+                </button>
 
-                <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{tournee.clients}</p>
-                    <p className="text-muted-foreground text-sm">clients</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">{tournee.km} km</p>
-                    <p className="text-muted-foreground text-sm">distance</p>
-                  </div>
-                  <button className="hover:bg-muted rounded-lg p-2 transition-colors">
-                    <ArrowRight className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                {/* Expanded interventions */}
+                {isExpanded && tournee.interventions && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    className="border-t border-gray-100"
+                  >
+                    <div className="divide-y divide-gray-50">
+                      {tournee.interventions
+                        .sort((a, b) => a.routeOrder - b.routeOrder)
+                        .map((intervention, idx) => {
+                          const badge = STATUS_BADGE[intervention.status];
+                          const isUpdating = updatingStatus === intervention.id;
+                          return (
+                            <div
+                              key={intervention.id}
+                              className="flex items-center gap-4 px-6 py-4"
+                            >
+                              {/* Route number */}
+                              <div
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                                style={{ backgroundColor: tournee.couleur }}
+                              >
+                                {idx + 1}
+                              </div>
+
+                              {/* Info */}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-gray-900">
+                                    {intervention.clientName}
+                                  </span>
+                                  <span
+                                    className={`rounded-md px-1.5 py-0.5 text-[10px] font-medium ${badge?.class}`}
+                                  >
+                                    {badge?.label}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-3 text-xs text-gray-500">
+                                  <span>
+                                    {intervention.estimatedStartTime} -{" "}
+                                    {TYPE_LABELS[intervention.interventionType] ?? intervention.interventionType}
+                                  </span>
+                                  <span>{intervention.estimatedDurationMinutes} min</span>
+                                </div>
+                                <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
+                                  <span className="flex items-center gap-1">
+                                    <MapPin className="h-3 w-3" />
+                                    {intervention.clientAddress}
+                                  </span>
+                                  {intervention.clientPhone && (
+                                    <span className="flex items-center gap-1">
+                                      <Phone className="h-3 w-3" />
+                                      {intervention.clientPhone}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Quick status buttons */}
+                              <div className="flex shrink-0 gap-1">
+                                {isUpdating ? (
+                                  <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                                ) : (
+                                  <>
+                                    {intervention.status === "planned" && (
+                                      <button
+                                        onClick={() => updateStatus(intervention.id, "in_progress")}
+                                        className="rounded-lg bg-amber-50 p-1.5 text-amber-600 hover:bg-amber-100"
+                                        title="Démarrer"
+                                      >
+                                        <Play className="h-4 w-4" />
+                                      </button>
+                                    )}
+                                    {intervention.status === "in_progress" && (
+                                      <>
+                                        <button
+                                          onClick={() => updateStatus(intervention.id, "completed")}
+                                          className="rounded-lg bg-green-50 p-1.5 text-green-600 hover:bg-green-100"
+                                          title="Terminer"
+                                        >
+                                          <CheckCircle2 className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                          onClick={() => updateStatus(intervention.id, "postponed")}
+                                          className="rounded-lg bg-gray-50 p-1.5 text-gray-600 hover:bg-gray-100"
+                                          title="Reporter"
+                                        >
+                                          <SkipForward className="h-4 w-4" />
+                                        </button>
+                                      </>
+                                    )}
+                                    {(intervention.status === "completed" ||
+                                      intervention.status === "postponed") && (
+                                      <button
+                                        onClick={() => updateStatus(intervention.id, "planned")}
+                                        className="rounded-lg bg-blue-50 p-1.5 text-blue-600 hover:bg-blue-100"
+                                        title="Replanifier"
+                                      >
+                                        <Pause className="h-4 w-4" />
+                                      </button>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </div>
