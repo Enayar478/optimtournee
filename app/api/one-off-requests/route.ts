@@ -50,6 +50,9 @@ export async function GET(request: Request) {
         userId: user.id,
         ...statusFilter,
       },
+      include: {
+        client: { select: { name: true, address: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
 

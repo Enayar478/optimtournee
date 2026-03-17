@@ -96,22 +96,43 @@ export async function PUT(req: Request) {
       );
     }
     const v = result.data;
-    const team = await prisma.team.update({
+
+    // Verify ownership BEFORE entering the transaction
+    const existingTeam = await prisma.team.findFirst({
       where: { id, userId: user.id },
-      data: {
-        name: v.name,
-        color: v.color,
-        defaultStartAddress: v.defaultStartAddress || null,
-        defaultStartLat: v.defaultStartLat ?? null,
-        defaultStartLng: v.defaultStartLng ?? null,
-        workScheduleStart: v.workScheduleStart,
-        workScheduleEnd: v.workScheduleEnd,
-        lunchBreakMinutes: v.lunchBreakMinutes,
-        workingDays: v.workingDays,
-        assignedEquipment: v.assignedEquipment,
-        skills: v.skills,
-      },
-      include: { members: true },
+    });
+    if (!existingTeam) {
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
+    }
+
+    const team = await prisma.$transaction(async (tx) => {
+      await tx.teamMember.deleteMany({ where: { teamId: id } });
+      await tx.teamMember.createMany({
+        data: v.members.map((m) => ({
+          teamId: id,
+          firstName: m.firstName,
+          lastName: m.lastName,
+          phone: m.phone ?? null,
+          licenseTypes: [],
+        })),
+      });
+      return tx.team.update({
+        where: { id },
+        data: {
+          name: v.name,
+          color: v.color,
+          defaultStartAddress: v.defaultStartAddress || null,
+          defaultStartLat: v.defaultStartLat ?? null,
+          defaultStartLng: v.defaultStartLng ?? null,
+          workScheduleStart: v.workScheduleStart,
+          workScheduleEnd: v.workScheduleEnd,
+          lunchBreakMinutes: v.lunchBreakMinutes,
+          workingDays: v.workingDays,
+          assignedEquipment: v.assignedEquipment,
+          skills: v.skills,
+        },
+        include: { members: true },
+      });
     });
     return NextResponse.json(team);
   } catch (error) {

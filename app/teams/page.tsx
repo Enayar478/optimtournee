@@ -2,16 +2,46 @@
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { TeamModal } from "@/components/teams/TeamModal";
+import { TeamMemberModal } from "@/components/teams/TeamMemberModal";
+import { UnavailableDatesModal } from "@/components/teams/UnavailableDatesModal";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Team } from "@/types/domain";
-import { Users, Plus, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Team, TeamMember } from "@/types/domain";
+import {
+  Users,
+  Plus,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  CalendarOff,
+  UserPlus,
+  Shield,
+  Wrench,
+} from "lucide-react";
+import { LICENSE_LABELS, MEMBER_SKILL_LABELS } from "@/lib/validation/team-member";
+
+function hasUpcomingUnavailableDates(team: Team): boolean {
+  if (!team.unavailableDates || team.unavailableDates.length === 0) return false;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return team.unavailableDates.some((d) => {
+    const date = typeof d === "string" ? new Date(d) : d;
+    return date >= now;
+  });
+}
 
 function TeamsContent() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  // Member modal state
+  const [memberModalTeamId, setMemberModalTeamId] = useState<string | null>(null);
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+
+  // Unavailable dates modal state
+  const [unavailTeamId, setUnavailTeamId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTeams();
@@ -34,6 +64,20 @@ function TeamsContent() {
     setOpenMenuId(null);
     fetchTeams();
   };
+
+  const openMemberModal = (teamId: string, member?: TeamMember) => {
+    setMemberModalTeamId(teamId);
+    setEditingMember(member ?? null);
+  };
+
+  const closeMemberModal = () => {
+    setMemberModalTeamId(null);
+    setEditingMember(null);
+  };
+
+  const unavailTeam = unavailTeamId
+    ? teams.find((t) => t.id === unavailTeamId)
+    : null;
 
   return (
     <div className="space-y-6 p-6">
@@ -94,6 +138,12 @@ function TeamsContent() {
                   <div className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Users className="h-4 w-4" />
                     {team.members.length} membres
+                    {hasUpcomingUnavailableDates(team) && (
+                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                        <CalendarOff className="h-3 w-3" />
+                        Indispo.
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -111,7 +161,7 @@ function TeamsContent() {
                 </motion.button>
 
                 {openMenuId === team.id && (
-                  <div className="absolute top-10 right-0 z-10 w-40 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+                  <div className="absolute top-10 right-0 z-10 w-48 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
                     <button
                       onClick={() => {
                         setEditingTeam(team);
@@ -122,6 +172,26 @@ function TeamsContent() {
                     >
                       <Pencil className="h-4 w-4" />
                       Modifier
+                    </button>
+                    <button
+                      onClick={() => {
+                        openMemberModal(team.id);
+                        setOpenMenuId(null);
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Ajouter membre
+                    </button>
+                    <button
+                      onClick={() => {
+                        setUnavailTeamId(team.id);
+                        setOpenMenuId(null);
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <CalendarOff className="h-4 w-4" />
+                      Disponibilité
                     </button>
                     <button
                       onClick={() => deleteTeam(team.id)}
@@ -137,21 +207,50 @@ function TeamsContent() {
 
             <div className="space-y-2">
               {team.members.slice(0, 3).map((m, i) => (
-                <motion.div
+                <motion.button
                   key={m.id}
-                  className="flex items-center gap-3 rounded-lg bg-gray-50 p-2"
+                  type="button"
+                  onClick={() => openMemberModal(team.id, m)}
+                  className="flex w-full items-center gap-3 rounded-lg bg-gray-50 p-2 text-left transition-colors hover:bg-gray-100"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + i * 0.05 }}
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#2D5A3D] to-[#4A90A4] text-xs font-bold text-white">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2D5A3D] to-[#4A90A4] text-xs font-bold text-white">
                     {m.firstName.charAt(0)}
                     {m.lastName.charAt(0)}
                   </div>
-                  <span className="text-sm">
-                    {m.firstName} {m.lastName}
-                  </span>
-                </motion.div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium">
+                      {m.firstName} {m.lastName}
+                    </span>
+                    <div className="flex flex-wrap gap-1 mt-0.5">
+                      {(m.licenseTypes ?? []).slice(0, 2).map((l) => (
+                        <span
+                          key={l}
+                          className="inline-flex items-center gap-0.5 rounded-full bg-orange-50 px-1.5 py-0.5 text-[10px] font-medium text-orange-700"
+                        >
+                          <Shield className="h-2.5 w-2.5" />
+                          {LICENSE_LABELS[l] ?? l}
+                        </span>
+                      ))}
+                      {(m.skills ?? []).slice(0, 2).map((s) => (
+                        <span
+                          key={s}
+                          className="inline-flex items-center gap-0.5 rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700"
+                        >
+                          <Wrench className="h-2.5 w-2.5" />
+                          {MEMBER_SKILL_LABELS[s] ?? s}
+                        </span>
+                      ))}
+                      {((m.licenseTypes?.length ?? 0) + (m.skills?.length ?? 0)) > 4 && (
+                        <span className="text-[10px] text-gray-400">
+                          +{(m.licenseTypes?.length ?? 0) + (m.skills?.length ?? 0) - 4}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </motion.button>
               ))}
 
               {team.members.length > 3 && (
@@ -159,6 +258,24 @@ function TeamsContent() {
                   +{team.members.length - 3} autres
                 </div>
               )}
+            </div>
+
+            {/* Quick action buttons */}
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => openMemberModal(team.id)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Ajouter membre
+              </button>
+              <button
+                onClick={() => setUnavailTeamId(team.id)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                <CalendarOff className="h-3.5 w-3.5" />
+                Disponibilité
+              </button>
             </div>
           </motion.div>
         ))}
@@ -185,6 +302,33 @@ function TeamsContent() {
           onSave={() => {
             fetchTeams();
             setIsModalOpen(false);
+          }}
+        />
+      )}
+
+      {memberModalTeamId && (
+        <TeamMemberModal
+          teamId={memberModalTeamId}
+          member={editingMember}
+          onClose={closeMemberModal}
+          onSave={() => {
+            closeMemberModal();
+            fetchTeams();
+          }}
+        />
+      )}
+
+      {unavailTeam && (
+        <UnavailableDatesModal
+          teamId={unavailTeam.id}
+          teamName={unavailTeam.name}
+          currentDates={(unavailTeam.unavailableDates ?? []).map((d) =>
+            typeof d === "string" ? d : new Date(d).toISOString()
+          )}
+          onClose={() => setUnavailTeamId(null)}
+          onSave={() => {
+            setUnavailTeamId(null);
+            fetchTeams();
           }}
         />
       )}

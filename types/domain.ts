@@ -104,7 +104,12 @@ export interface TeamMember {
   firstName: string;
   lastName: string;
   phone?: string;
+  email?: string;
+  emergencyContact?: string;
   licenseTypes?: string[];
+  skills?: InterventionType[];
+  unavailableDates?: (string | Date)[];
+  notes?: string;
 }
 
 export interface WorkSchedule {

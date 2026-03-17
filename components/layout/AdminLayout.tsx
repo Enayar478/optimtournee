@@ -13,6 +13,7 @@ import {
   Users2,
   MapPin,
   Calendar,
+  ClipboardList,
   Settings,
   Menu,
   LogOut,
@@ -23,6 +24,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Clients", href: "/clients", icon: Users },
+  { name: "Demandes", href: "/demandes", icon: ClipboardList },
   { name: "Équipes", href: "/teams", icon: Users2 },
   { name: "Tournées", href: "/tournees", icon: MapPin },
   { name: "Planning", href: "/planning", icon: Calendar },
