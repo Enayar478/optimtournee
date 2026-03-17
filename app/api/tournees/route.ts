@@ -90,6 +90,7 @@ export async function GET() {
           : "planifiee",
       interventions: g.interventions.map((i) => ({
         id: i.id,
+        scheduleId: i.scheduleId,
         clientName: i.client.name,
         clientAddress: i.client.address,
         clientPhone: i.client.contactPhone,
@@ -100,6 +101,8 @@ export async function GET() {
         estimatedDurationMinutes: i.estimatedDurationMinutes,
         status: i.status,
         routeOrder: i.routeOrder,
+        weatherCondition: i.weatherCondition,
+        weatherTemperature: i.weatherTemperature,
       })),
     }));
 

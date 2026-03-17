@@ -233,14 +233,14 @@ export function TeamModal({ team, onClose, onSave }: TeamModalProps) {
                     key={index}
                     className="flex items-start gap-2 rounded-xl border border-gray-100 bg-gray-50 p-3"
                   >
-                    <div className="flex flex-1 gap-2">
+                    <div className="flex flex-1 flex-wrap gap-2">
                       <input
                         type="text"
                         value={member.firstName}
                         onChange={(e) =>
                           updateMember(index, "firstName", e.target.value)
                         }
-                        className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#2D5A3D]"
+                        className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#2D5A3D]"
                         placeholder="Prénom"
                       />
                       <input
@@ -249,8 +249,17 @@ export function TeamModal({ team, onClose, onSave }: TeamModalProps) {
                         onChange={(e) =>
                           updateMember(index, "lastName", e.target.value)
                         }
-                        className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#2D5A3D]"
+                        className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#2D5A3D]"
                         placeholder="Nom"
+                      />
+                      <input
+                        type="tel"
+                        value={member.phone ?? ""}
+                        onChange={(e) =>
+                          updateMember(index, "phone", e.target.value)
+                        }
+                        className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#2D5A3D]"
+                        placeholder="Téléphone"
                       />
                     </div>
                     <button
