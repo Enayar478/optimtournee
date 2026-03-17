@@ -311,6 +311,225 @@ function PreferencesSection() {
   );
 }
 
+// ─── Section: Préférences de planification ───────────────────────────────────
+
+import { Calendar, Loader2 } from "lucide-react";
+import { useEffect, useCallback } from "react";
+
+interface SchedulingPrefs {
+  optimizationCriteria: string;
+  maxDrivingTimePerDay: number;
+  allowWeekendWork: boolean;
+  weatherBufferDays: number;
+  planningHorizonDays: number;
+}
+
+function SchedulingPreferencesSection() {
+  const [prefs, setPrefs] = useState<SchedulingPrefs>({
+    optimizationCriteria: "balanced",
+    maxDrivingTimePerDay: 120,
+    allowWeekendWork: false,
+    weatherBufferDays: 1,
+    planningHorizonDays: 7,
+  });
+  const [loadingPrefs, setLoadingPrefs] = useState(true);
+  const [savingPrefs, setSavingPrefs] = useState(false);
+  const [savedPrefs, setSavedPrefs] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/preferences")
+      .then((r) => r.json())
+      .then((data) => setPrefs(data))
+      .catch(() => {})
+      .finally(() => setLoadingPrefs(false));
+  }, []);
+
+  const handleSavePrefs = useCallback(async () => {
+    setSavingPrefs(true);
+    setSavedPrefs(false);
+    try {
+      const res = await fetch("/api/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(prefs),
+      });
+      if (res.ok) {
+        setSavedPrefs(true);
+        setTimeout(() => setSavedPrefs(false), 2000);
+      }
+    } catch {
+      // Silent
+    } finally {
+      setSavingPrefs(false);
+    }
+  }, [prefs]);
+
+  if (loadingPrefs) {
+    return (
+      <SectionCard
+        icon={<Calendar className="h-6 w-6" />}
+        title="Planification"
+        description="Paramètres de génération de planning"
+      >
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-[#4A90A4]" />
+        </div>
+      </SectionCard>
+    );
+  }
+
+  return (
+    <SectionCard
+      icon={<Calendar className="h-6 w-6" />}
+      title="Planification"
+      description="Paramètres de génération de planning"
+    >
+      <div className="space-y-5">
+        {/* Optimization criteria */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-gray-700">
+            Critère d&apos;optimisation
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { value: "distance", label: "Distance", desc: "Minimise les km" },
+              { value: "time", label: "Temps", desc: "Minimise le temps" },
+              {
+                value: "balanced",
+                label: "Équilibré",
+                desc: "Compromis optimal",
+              },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() =>
+                  setPrefs({ ...prefs, optimizationCriteria: opt.value })
+                }
+                className={`rounded-xl border-2 p-3 text-left transition-all ${
+                  prefs.optimizationCriteria === opt.value
+                    ? "border-[#2D5A3D] bg-[#2D5A3D]/5"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <div className="text-sm font-medium">{opt.label}</div>
+                <div className="text-xs text-gray-500">{opt.desc}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Max driving time */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-gray-700">
+            Temps de conduite max/jour : {prefs.maxDrivingTimePerDay} min
+          </label>
+          <input
+            type="range"
+            min={60}
+            max={240}
+            step={15}
+            value={prefs.maxDrivingTimePerDay}
+            onChange={(e) =>
+              setPrefs({
+                ...prefs,
+                maxDrivingTimePerDay: Number(e.target.value),
+              })
+            }
+            className="w-full accent-[#2D5A3D]"
+          />
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>1h</span>
+            <span>2h</span>
+            <span>3h</span>
+            <span>4h</span>
+          </div>
+        </div>
+
+        {/* Weekend + horizon in row */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex items-center justify-between rounded-xl border border-gray-100 p-4">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Weekend</p>
+              <p className="text-xs text-gray-500">Planifier le week-end</p>
+            </div>
+            <Toggle
+              enabled={prefs.allowWeekendWork}
+              onToggle={() =>
+                setPrefs({
+                  ...prefs,
+                  allowWeekendWork: !prefs.allowWeekendWork,
+                })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Horizon
+            </label>
+            <div className="flex gap-1">
+              {[5, 7, 10, 14].map((days) => (
+                <button
+                  key={days}
+                  onClick={() =>
+                    setPrefs({ ...prefs, planningHorizonDays: days })
+                  }
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
+                    prefs.planningHorizonDays === days
+                      ? "bg-[#4A90A4] text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {days}j
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Weather buffer */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Jours tampons météo
+          </label>
+          <div className="flex gap-2">
+            {[0, 1, 2, 3].map((days) => (
+              <button
+                key={days}
+                onClick={() => setPrefs({ ...prefs, weatherBufferDays: days })}
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
+                  prefs.weatherBufferDays === days
+                    ? "bg-[#4A90A4] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {days}j
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <motion.button
+          onClick={handleSavePrefs}
+          disabled={savingPrefs}
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2D5A3D] to-[#3D7A52] px-5 py-2.5 font-medium text-white shadow-md"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          {savingPrefs ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : savedPrefs ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {savedPrefs ? "Sauvegardé" : "Sauvegarder"}
+        </motion.button>
+      </div>
+    </SectionCard>
+  );
+}
+
 // ─── Section: Informations entreprise ────────────────────────────────────────
 
 interface CompanyInfo {
@@ -623,6 +842,7 @@ export default function SettingsPage() {
         <div className="space-y-6">
           <ProfileSection />
           <NotificationsSection />
+          <SchedulingPreferencesSection />
           <PreferencesSection />
           <CompanySection />
           <DangerZoneSection />

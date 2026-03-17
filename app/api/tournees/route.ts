@@ -31,6 +31,18 @@ export async function GET() {
         scheduledDate: { gte: today, lt: tomorrow },
       },
       orderBy: [{ assignedTeamId: "asc" }, { routeOrder: "asc" }],
+      include: {
+        client: {
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            lat: true,
+            lng: true,
+            contactPhone: true,
+          },
+        },
+      },
     });
 
     const teamMap = new Map(teams.map((t) => [t.id, t]));
@@ -76,6 +88,19 @@ export async function GET() {
         : g.interventions.some((i) => i.status === "in_progress")
           ? "active"
           : "planifiee",
+      interventions: g.interventions.map((i) => ({
+        id: i.id,
+        clientName: i.client.name,
+        clientAddress: i.client.address,
+        clientPhone: i.client.contactPhone,
+        clientLat: i.client.lat,
+        clientLng: i.client.lng,
+        interventionType: i.interventionType,
+        estimatedStartTime: i.estimatedStartTime,
+        estimatedDurationMinutes: i.estimatedDurationMinutes,
+        status: i.status,
+        routeOrder: i.routeOrder,
+      })),
     }));
 
     return NextResponse.json(tournees);

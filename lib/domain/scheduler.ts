@@ -257,22 +257,24 @@ export async function generateSchedule(
       continue;
     }
 
+    // Date cible séparée pour éviter la mutation de task.date (immutabilité)
+    const targetDate = new Date(task.date);
+
     // Filtrer les équipes disponibles ce jour-là
     const availableTeams = teams.filter((t) => {
-      if (!t.workSchedule.workingDays.includes(task.date.getDay()))
+      if (!t.workSchedule.workingDays.includes(targetDate.getDay()))
         return false;
-      if (t.unavailableDates.some((d) => isSameDay(d, task.date))) return false;
+      if (t.unavailableDates.some((d) => isSameDay(d, targetDate)))
+        return false;
       return true;
     });
 
     if (availableTeams.length === 0) {
-      // NOTE: Mutation de task.date — à améliorer pour immutabilité
-      task.date = addDays(task.date, 1);
       continue;
     }
 
     // Vérifier la météo
-    const weather = await weatherProvider(task.date, client.location);
+    const weather = await weatherProvider(targetDate, client.location);
     const wc = task.weatherConstraints;
     if (
       weather &&
@@ -281,8 +283,6 @@ export async function generateSchedule(
         weather.temperature > wc.maxTemperature ||
         weather.temperature < wc.minTemperature)
     ) {
-      // NOTE: Mutation de task.date — à améliorer pour immutabilité
-      task.date = addDays(task.date, 1);
       continue;
     }
 
@@ -299,7 +299,7 @@ export async function generateSchedule(
         continue;
       }
 
-      const route = getRoute(task.date, team);
+      const route = getRoute(targetDate, team);
       const availableMins =
         timeToMinutes(team.workSchedule.endTime) -
         timeToMinutes(team.workSchedule.startTime) -
@@ -319,7 +319,7 @@ export async function generateSchedule(
           )?.location
         : team.defaultStartLocation;
 
-      if (!lastLoc) continue; // FIX: Null safety
+      if (!lastLoc) continue;
 
       const dist = calculateDistance(lastLoc, client.location);
       if (dist < minDistance) {
@@ -329,13 +329,13 @@ export async function generateSchedule(
     }
 
     if (bestTeam) {
-      const route = getRoute(task.date, bestTeam);
+      const route = getRoute(targetDate, bestTeam);
       const lastInt = route.interventions[route.interventions.length - 1];
       const prevLoc = lastInt
         ? clientMap.get(lastInt.clientId)?.location
         : bestTeam.defaultStartLocation;
 
-      if (!prevLoc) continue; // FIX: Null safety
+      if (!prevLoc) continue;
 
       const travelDist = calculateDistance(prevLoc, client.location);
       const travelTime = estimateTravelTime(travelDist);
@@ -349,12 +349,10 @@ export async function generateSchedule(
           lastInt.estimatedTravelTimeMinutes;
       }
 
-      // Validation du type d'intervention
       if (!isValidInterventionType(task.interventionType)) {
         console.warn(`Type d'intervention invalide: ${task.interventionType}`);
       }
 
-      // Validation des équipements
       const validEquipment = task.requiredEquipment.filter((eq) =>
         isValidEquipmentType(eq)
       );
@@ -366,7 +364,7 @@ export async function generateSchedule(
         sourceRequestId: task.type === "oneoff" ? task.sourceId : undefined,
         clientId: task.clientId,
         interventionType: task.interventionType,
-        scheduledDate: new Date(task.date),
+        scheduledDate: new Date(targetDate),
         estimatedStartTime: minutesToTime(startMins),
         estimatedDurationMinutes: task.duration,
         assignedTeamId: bestTeam.id,
