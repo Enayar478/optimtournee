@@ -35,7 +35,10 @@ export async function GET() {
     );
   } catch (error) {
     console.error("[API /preferences GET]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -64,6 +67,9 @@ export async function PUT(request: Request) {
     return NextResponse.json(prefs);
   } catch (error) {
     console.error("[API /preferences PUT]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

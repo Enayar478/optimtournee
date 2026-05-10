@@ -7,7 +7,10 @@ import { StepCompany } from "@/components/onboarding/StepCompany";
 import { StepTeams } from "@/components/onboarding/StepTeams";
 import { StepClients } from "@/components/onboarding/StepClients";
 import { StepRecap } from "@/components/onboarding/StepRecap";
-import type { CompanyFormData, ContractFormData } from "@/lib/validation/onboarding";
+import type {
+  CompanyFormData,
+  ContractFormData,
+} from "@/lib/validation/onboarding";
 import type { TeamFormData } from "@/lib/validation/team";
 
 type TeamData = TeamFormData & { id?: string };

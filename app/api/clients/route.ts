@@ -116,7 +116,24 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-    await prisma.client.delete({ where: { id, userId: user.id } });
+    // Cascade dependents explicitly: the DB schema uses ON DELETE RESTRICT,
+    // so a plain client.delete() crashes with a FK violation as soon as the
+    // client has any contract / one-off request / planned intervention.
+    // We wrap the cascade in a transaction so a failure leaves no orphans.
+    const owned = await prisma.client.findFirst({
+      where: { id, userId: user.id },
+      select: { id: true },
+    });
+    if (!owned) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    await prisma.$transaction([
+      prisma.recurringContract.deleteMany({ where: { clientId: id } }),
+      prisma.oneOffRequest.deleteMany({ where: { clientId: id } }),
+      prisma.plannedIntervention.deleteMany({ where: { clientId: id } }),
+      prisma.client.delete({ where: { id } }),
+    ]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[API /clients DELETE]", error);

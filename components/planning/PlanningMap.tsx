@@ -13,14 +13,12 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((m) => m.TileLayer),
   { ssr: false }
 );
-const Marker = dynamic(
-  () => import("react-leaflet").then((m) => m.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(
-  () => import("react-leaflet").then((m) => m.Popup),
-  { ssr: false }
-);
+const Marker = dynamic(() => import("react-leaflet").then((m) => m.Marker), {
+  ssr: false,
+});
+const Popup = dynamic(() => import("react-leaflet").then((m) => m.Popup), {
+  ssr: false,
+});
 const Polyline = dynamic(
   () => import("react-leaflet").then((m) => m.Polyline),
   { ssr: false }
@@ -81,7 +79,9 @@ export function PlanningMap({ interventions, className }: Props) {
   if (typeof window === "undefined") return null;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-gray-100 ${className ?? ""}`}>
+    <div
+      className={`overflow-hidden rounded-xl border border-gray-100 ${className ?? ""}`}
+    >
       <MapContainer
         center={center}
         zoom={11}
@@ -122,7 +122,8 @@ export function PlanningMap({ interventions, className }: Props) {
                   </div>
                   <div className="text-gray-500">
                     {intervention.estimatedStartTime} -{" "}
-                    {TYPE_LABELS[intervention.interventionType] ?? intervention.interventionType}
+                    {TYPE_LABELS[intervention.interventionType] ??
+                      intervention.interventionType}
                   </div>
                   <div className="text-gray-500">
                     {intervention.estimatedDurationMinutes} min

@@ -54,10 +54,16 @@ function parseExistingAddress(address: string): AddressData {
 }
 
 export function ClientModal({ client, onClose, onSave }: ClientModalProps) {
-  const [form, setForm] = useState<Omit<ClientFormData, "address"> & { addressData: AddressData }>({
+  const [form, setForm] = useState<
+    Omit<ClientFormData, "address"> & { addressData: AddressData }
+  >({
     name: client?.name ?? "",
     addressData: client?.address
-      ? { ...parseExistingAddress(client.address), lat: client.lat, lng: client.lng }
+      ? {
+          ...parseExistingAddress(client.address),
+          lat: client.lat,
+          lng: client.lng,
+        }
       : { ...EMPTY_ADDRESS },
     contactPhone: client?.contactPhone ?? "",
     contactEmail: client?.contactEmail ?? "",

@@ -7,7 +7,11 @@ import { X, Sparkles, Loader2 } from "lucide-react";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onGenerate: (startDate: string, endDate: string, name?: string) => Promise<void>;
+  onGenerate: (
+    startDate: string,
+    endDate: string,
+    name?: string
+  ) => Promise<void>;
 }
 
 function getNextMonday(): string {
@@ -40,7 +44,9 @@ export function GenerateScheduleModal({ open, onClose, onGenerate }: Props) {
       await onGenerate(startDate, endDate, name || undefined);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la génération");
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la génération"
+      );
     } finally {
       setLoading(false);
     }
@@ -65,8 +71,13 @@ export function GenerateScheduleModal({ open, onClose, onGenerate }: Props) {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Générer un planning</h2>
-            <button onClick={onClose} className="rounded-lg p-1 hover:bg-gray-100">
+            <h2 className="text-xl font-bold text-gray-900">
+              Générer un planning
+            </h2>
+            <button
+              onClick={onClose}
+              className="rounded-lg p-1 hover:bg-gray-100"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -110,9 +121,7 @@ export function GenerateScheduleModal({ open, onClose, onGenerate }: Props) {
               </div>
             </div>
 
-            {error && (
-              <p className="text-sm text-red-600">{error}</p>
-            )}
+            {error && <p className="text-sm text-red-600">{error}</p>}
 
             <motion.button
               whileHover={{ scale: 1.02 }}

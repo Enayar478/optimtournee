@@ -19,7 +19,10 @@ export async function POST(
       where: { id, userId: user.id },
     });
     if (!schedule) {
-      return NextResponse.json({ error: "Schedule non trouvé" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Schedule non trouvé" },
+        { status: 404 }
+      );
     }
 
     const body = await request.json();
@@ -31,7 +34,15 @@ export async function POST(
       );
     }
 
-    const { clientId, scheduledDate, estimatedStartTime, interventionType, estimatedDurationMinutes, assignedTeamId, notes } = parsed.data;
+    const {
+      clientId,
+      scheduledDate,
+      estimatedStartTime,
+      interventionType,
+      estimatedDurationMinutes,
+      assignedTeamId,
+      notes,
+    } = parsed.data;
 
     // Vérifier que le client et l'équipe appartiennent à l'utilisateur
     const [client, team] = await Promise.all([
@@ -43,12 +54,19 @@ export async function POST(
       return NextResponse.json({ error: "Client non trouvé" }, { status: 404 });
     }
     if (!team) {
-      return NextResponse.json({ error: "Équipe non trouvée" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Équipe non trouvée" },
+        { status: 404 }
+      );
     }
 
     // Compter les interventions existantes pour le routeOrder
     const existingCount = await prisma.plannedIntervention.count({
-      where: { scheduleId: id, scheduledDate: new Date(scheduledDate), assignedTeamId },
+      where: {
+        scheduleId: id,
+        scheduledDate: new Date(scheduledDate),
+        assignedTeamId,
+      },
     });
 
     const intervention = await prisma.plannedIntervention.create({
@@ -79,6 +97,9 @@ export async function POST(
     return NextResponse.json(intervention, { status: 201 });
   } catch (error) {
     console.error("[API interventions POST]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

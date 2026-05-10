@@ -67,19 +67,32 @@ interface Tournee {
   interventions: TourneeIntervention[];
 }
 
-function ProgressBar({ interventions, color }: { interventions: TourneeIntervention[]; color: string }) {
+function ProgressBar({
+  interventions,
+  color,
+}: {
+  interventions: TourneeIntervention[];
+  color: string;
+}) {
   const total = interventions.length;
-  const completed = interventions.filter((i) => i.status === "completed").length;
-  const inProgress = interventions.filter((i) => i.status === "in_progress").length;
+  const completed = interventions.filter(
+    (i) => i.status === "completed"
+  ).length;
+  const inProgress = interventions.filter(
+    (i) => i.status === "in_progress"
+  ).length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
     <div className="px-6 pb-3">
-      <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-        <span>{completed}/{total} terminés{inProgress > 0 ? ` · ${inProgress} en cours` : ""}</span>
+      <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
+        <span>
+          {completed}/{total} terminés
+          {inProgress > 0 ? ` · ${inProgress} en cours` : ""}
+        </span>
         <span className="font-medium">{pct}%</span>
       </div>
-      <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
         <motion.div
           className="h-full rounded-full"
           style={{ backgroundColor: color }}
@@ -125,8 +138,10 @@ function TourneesContent() {
   };
 
   const updateStatus = async (interventionId: string, status: string) => {
-    if (status === "postponed" && !confirm("Reporter cette intervention ?")) return;
-    if (status === "cancelled" && !confirm("Annuler cette intervention ?")) return;
+    if (status === "postponed" && !confirm("Reporter cette intervention ?"))
+      return;
+    if (status === "cancelled" && !confirm("Annuler cette intervention ?"))
+      return;
 
     setUpdatingStatus(interventionId);
     try {
@@ -142,7 +157,9 @@ function TourneesContent() {
       toast.success("Statut mis à jour");
       await fetchTournees();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erreur mise à jour statut");
+      toast.error(
+        err instanceof Error ? err.message : "Erreur mise à jour statut"
+      );
     } finally {
       setUpdatingStatus(null);
     }
@@ -176,7 +193,9 @@ function TourneesContent() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+          />
           Rafraîchir
         </motion.button>
       </motion.div>
@@ -192,7 +211,8 @@ function TourneesContent() {
             Aucune tournée planifiée pour aujourd&apos;hui
           </p>
           <p className="text-muted-foreground mt-2 text-sm">
-            Les tournées apparaissent ici lorsque des interventions sont planifiées.
+            Les tournées apparaissent ici lorsque des interventions sont
+            planifiées.
           </p>
           <Link
             href="/planning"
@@ -263,7 +283,10 @@ function TourneesContent() {
                 </button>
 
                 {/* Progress bar */}
-                <ProgressBar interventions={tournee.interventions} color={tournee.couleur} />
+                <ProgressBar
+                  interventions={tournee.interventions}
+                  color={tournee.couleur}
+                />
 
                 {/* Expanded interventions */}
                 {isExpanded && tournee.interventions && (
@@ -306,9 +329,13 @@ function TourneesContent() {
                                 <div className="flex items-center gap-3 text-xs text-gray-500">
                                   <span>
                                     {intervention.estimatedStartTime} -{" "}
-                                    {TYPE_LABELS[intervention.interventionType] ?? intervention.interventionType}
+                                    {TYPE_LABELS[
+                                      intervention.interventionType
+                                    ] ?? intervention.interventionType}
                                   </span>
-                                  <span>{intervention.estimatedDurationMinutes} min</span>
+                                  <span>
+                                    {intervention.estimatedDurationMinutes} min
+                                  </span>
                                 </div>
                                 <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
                                   <span className="flex items-center gap-1">
@@ -333,14 +360,24 @@ function TourneesContent() {
                                     {intervention.status === "planned" && (
                                       <>
                                         <button
-                                          onClick={() => updateStatus(intervention.id, "in_progress")}
+                                          onClick={() =>
+                                            updateStatus(
+                                              intervention.id,
+                                              "in_progress"
+                                            )
+                                          }
                                           className="rounded-lg bg-amber-50 p-1.5 text-amber-600 hover:bg-amber-100"
                                           title="Démarrer"
                                         >
                                           <Play className="h-4 w-4" />
                                         </button>
                                         <button
-                                          onClick={() => updateStatus(intervention.id, "cancelled")}
+                                          onClick={() =>
+                                            updateStatus(
+                                              intervention.id,
+                                              "cancelled"
+                                            )
+                                          }
                                           className="rounded-lg bg-red-50 p-1.5 text-red-600 hover:bg-red-100"
                                           title="Annuler"
                                         >
@@ -351,14 +388,24 @@ function TourneesContent() {
                                     {intervention.status === "in_progress" && (
                                       <>
                                         <button
-                                          onClick={() => updateStatus(intervention.id, "completed")}
+                                          onClick={() =>
+                                            updateStatus(
+                                              intervention.id,
+                                              "completed"
+                                            )
+                                          }
                                           className="rounded-lg bg-green-50 p-1.5 text-green-600 hover:bg-green-100"
                                           title="Terminer"
                                         >
                                           <CheckCircle2 className="h-4 w-4" />
                                         </button>
                                         <button
-                                          onClick={() => updateStatus(intervention.id, "postponed")}
+                                          onClick={() =>
+                                            updateStatus(
+                                              intervention.id,
+                                              "postponed"
+                                            )
+                                          }
                                           className="rounded-lg bg-gray-50 p-1.5 text-gray-600 hover:bg-gray-100"
                                           title="Reporter"
                                         >
@@ -370,7 +417,12 @@ function TourneesContent() {
                                       intervention.status === "postponed" ||
                                       intervention.status === "cancelled") && (
                                       <button
-                                        onClick={() => updateStatus(intervention.id, "planned")}
+                                        onClick={() =>
+                                          updateStatus(
+                                            intervention.id,
+                                            "planned"
+                                          )
+                                        }
                                         className="rounded-lg bg-blue-50 p-1.5 text-blue-600 hover:bg-blue-100"
                                         title="Replanifier"
                                       >

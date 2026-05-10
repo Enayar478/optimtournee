@@ -18,9 +18,7 @@ export default function SignInPage() {
           <p className="mb-2 font-medium">Configuration requise :</p>
           <p>
             Ajoutez vos clés Clerk dans le fichier{" "}
-            <code className="rounded bg-amber-100 px-1 py-0.5">
-              .env.local
-            </code>
+            <code className="rounded bg-amber-100 px-1 py-0.5">.env.local</code>
           </p>
           <pre className="mt-2 overflow-x-auto rounded bg-amber-100 p-3 text-left text-xs">
             {`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...

@@ -2,7 +2,10 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
-import { generateAndPersistSchedule } from "@/lib/domain/scheduler-persistence";
+import {
+  generateAndPersistSchedule,
+  EmptySchedulingInputError,
+} from "@/lib/domain/scheduler-persistence";
 import { generateScheduleSchema } from "@/lib/validation/schedule";
 
 export async function GET() {
@@ -69,6 +72,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json(schedule, { status: 201 });
   } catch (error) {
+    if (error instanceof EmptySchedulingInputError) {
+      return NextResponse.json(
+        { error: error.message, code: error.reason },
+        { status: 422 }
+      );
+    }
     console.error("[API /schedules POST]", error);
     return NextResponse.json(
       { error: "Internal server error" },

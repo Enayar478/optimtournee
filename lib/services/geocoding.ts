@@ -106,7 +106,11 @@ export function buildFullAddress(parts: {
   postcode: string;
   country: string;
 }): string {
-  return [parts.street, [parts.postcode, parts.city].filter(Boolean).join(" "), parts.country]
+  return [
+    parts.street,
+    [parts.postcode, parts.city].filter(Boolean).join(" "),
+    parts.country,
+  ]
     .filter(Boolean)
     .join(", ");
 }

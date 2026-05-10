@@ -202,7 +202,7 @@ export default function DemandesPage() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
                   ? "bg-[#2D5A3D] text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -249,7 +249,8 @@ export default function DemandesPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {requests.map((req, index) => {
-                const badge = STATUS_BADGES[req.status] ?? STATUS_BADGES.pending;
+                const badge =
+                  STATUS_BADGES[req.status] ?? STATUS_BADGES.pending;
                 const priorityColor =
                   PRIORITY_COLORS[req.priority] ?? PRIORITY_COLORS[1];
 

@@ -5,9 +5,14 @@
 
 const mockAuth = jest.fn();
 const mockClientFindMany = jest.fn();
+const mockClientFindFirst = jest.fn();
 const mockClientCreate = jest.fn();
 const mockClientUpdate = jest.fn();
 const mockClientDelete = jest.fn();
+const mockContractDeleteMany = jest.fn();
+const mockOneOffDeleteMany = jest.fn();
+const mockInterventionDeleteMany = jest.fn();
+const mockTransaction = jest.fn();
 const mockGetOrCreateUser = jest.fn();
 
 jest.mock("@clerk/nextjs/server", () => ({
@@ -18,10 +23,21 @@ jest.mock("@/lib/prisma", () => ({
   prisma: {
     client: {
       findMany: (...args: unknown[]) => mockClientFindMany(...args),
+      findFirst: (...args: unknown[]) => mockClientFindFirst(...args),
       create: (...args: unknown[]) => mockClientCreate(...args),
       update: (...args: unknown[]) => mockClientUpdate(...args),
       delete: (...args: unknown[]) => mockClientDelete(...args),
     },
+    recurringContract: {
+      deleteMany: (...args: unknown[]) => mockContractDeleteMany(...args),
+    },
+    oneOffRequest: {
+      deleteMany: (...args: unknown[]) => mockOneOffDeleteMany(...args),
+    },
+    plannedIntervention: {
+      deleteMany: (...args: unknown[]) => mockInterventionDeleteMany(...args),
+    },
+    $transaction: (...args: unknown[]) => mockTransaction(...args),
   },
 }));
 
@@ -128,7 +144,12 @@ describe("/api/clients", () => {
 
     it("retourne 500 si Prisma lève une exception", async () => {
       mockClientCreate.mockRejectedValue(new Error("DB error"));
-      const req = makeRequest("POST", { name: "Client X" });
+      const req = makeRequest("POST", {
+        name: "Client X",
+        address: "1 rue Test",
+        lat: 48.85,
+        lng: 2.35,
+      });
       const response = await POST(req);
       expect(response.status).toBe(500);
     });
@@ -173,7 +194,13 @@ describe("/api/clients", () => {
 
     it("retourne 500 si Prisma lève une exception", async () => {
       mockClientUpdate.mockRejectedValue(new Error("Not found"));
-      const req = makeRequest("PUT", { id: "c99", name: "Ghost" });
+      const req = makeRequest("PUT", {
+        id: "c99",
+        name: "Ghost",
+        address: "1 rue Test",
+        lat: 48.85,
+        lng: 2.35,
+      });
       const response = await PUT(req);
       expect(response.status).toBe(500);
     });
@@ -203,8 +230,21 @@ describe("/api/clients", () => {
       expect(response.status).toBe(400);
     });
 
-    it("supprime un client et retourne success", async () => {
-      mockClientDelete.mockResolvedValue({ id: "c1" });
+    it("retourne 404 si le client n'appartient pas à l'utilisateur", async () => {
+      mockClientFindFirst.mockResolvedValue(null);
+      const req = makeRequest(
+        "DELETE",
+        undefined,
+        "http://localhost/api/clients?id=c1"
+      );
+      const response = await DELETE(req);
+      expect(response.status).toBe(404);
+      expect(mockTransaction).not.toHaveBeenCalled();
+    });
+
+    it("supprime un client (cascade contract, one-off, interventions) et retourne success", async () => {
+      mockClientFindFirst.mockResolvedValue({ id: "c1" });
+      mockTransaction.mockResolvedValue([{}, {}, {}, { id: "c1" }]);
 
       const req = makeRequest(
         "DELETE",
@@ -216,13 +256,20 @@ describe("/api/clients", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(mockClientDelete).toHaveBeenCalledWith(
+      expect(mockClientFindFirst).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: "c1", userId: DB_USER.id } })
       );
+      // The transaction must be called with an array of 4 prisma operations:
+      // contract deleteMany, oneOff deleteMany, intervention deleteMany, client delete
+      expect(mockTransaction).toHaveBeenCalledTimes(1);
+      const txArg = mockTransaction.mock.calls[0][0];
+      expect(Array.isArray(txArg)).toBe(true);
+      expect(txArg).toHaveLength(4);
     });
 
-    it("retourne 500 si Prisma lève une exception", async () => {
-      mockClientDelete.mockRejectedValue(new Error("Not found"));
+    it("retourne 500 si la transaction échoue", async () => {
+      mockClientFindFirst.mockResolvedValue({ id: "c99" });
+      mockTransaction.mockRejectedValue(new Error("DB error"));
       const req = makeRequest(
         "DELETE",
         undefined,

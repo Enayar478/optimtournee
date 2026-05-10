@@ -69,7 +69,10 @@ export function OnboardingShell({
           const isActive = stepNum === step;
           const isDone = stepNum < step;
           return (
-            <div key={label} className="flex flex-1 flex-col items-center gap-1">
+            <div
+              key={label}
+              className="flex flex-1 flex-col items-center gap-1"
+            >
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all ${
                   isDone

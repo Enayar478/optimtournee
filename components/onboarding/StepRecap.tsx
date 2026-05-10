@@ -2,7 +2,10 @@
 
 import { motion } from "framer-motion";
 import { Users, UserPlus, FileText, Rocket, MapPin } from "lucide-react";
-import { INTERVENTION_LABELS, RECURRENCE_LABELS } from "@/lib/validation/onboarding";
+import {
+  INTERVENTION_LABELS,
+  RECURRENCE_LABELS,
+} from "@/lib/validation/onboarding";
 
 interface RecapData {
   companyName: string;
@@ -94,7 +97,9 @@ export function StepRecap({ data }: StepRecapProps) {
 
       {/* Teams detail */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Vos équipes</h3>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">
+          Vos équipes
+        </h3>
         <div className="space-y-2">
           {data.teams.map((team, i) => (
             <motion.div
@@ -119,7 +124,9 @@ export function StepRecap({ data }: StepRecapProps) {
 
       {/* Clients detail */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Vos clients</h3>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">
+          Vos clients
+        </h3>
         <div className="space-y-2">
           {data.clients.map((client, i) => (
             <motion.div
@@ -138,8 +145,8 @@ export function StepRecap({ data }: StepRecapProps) {
               </div>
               {client.contract && (
                 <span className="text-xs text-[#2D5A3D]">
-                  {INTERVENTION_LABELS[client.contract.interventionType]} &middot;{" "}
-                  {RECURRENCE_LABELS[client.contract.recurrence]}
+                  {INTERVENTION_LABELS[client.contract.interventionType]}{" "}
+                  &middot; {RECURRENCE_LABELS[client.contract.recurrence]}
                 </span>
               )}
             </motion.div>

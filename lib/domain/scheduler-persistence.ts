@@ -125,7 +125,26 @@ export async function loadSchedulingData(userId: string): Promise<{
 }
 
 /**
- * Génère et persiste un schedule complet dans une transaction Prisma
+ * Thrown when there's nothing to schedule. Caught by the API layer to
+ * return 422 with an actionable message instead of an empty 201 schedule.
+ */
+export class EmptySchedulingInputError extends Error {
+  readonly reason: "no_teams" | "no_clients_or_requests";
+
+  constructor(reason: "no_teams" | "no_clients_or_requests") {
+    super(
+      reason === "no_teams"
+        ? "Aucune équipe disponible. Créez au moins une équipe avant de générer un planning."
+        : "Aucun client avec contrat actif ni demande ponctuelle en attente sur la période."
+    );
+    this.name = "EmptySchedulingInputError";
+    this.reason = reason;
+  }
+}
+
+/**
+ * Génère et persiste un schedule complet dans une transaction Prisma.
+ * Throws EmptySchedulingInputError if there are no teams or no work to schedule.
  */
 export async function generateAndPersistSchedule(
   userId: string,
@@ -134,6 +153,16 @@ export async function generateAndPersistSchedule(
   name?: string
 ): Promise<string> {
   const { teams, clients, oneOffRequests } = await loadSchedulingData(userId);
+
+  if (teams.length === 0) {
+    throw new EmptySchedulingInputError("no_teams");
+  }
+
+  const hasContractedClients = clients.some((c) => c.contract);
+  const hasPendingRequests = oneOffRequests.length > 0;
+  if (!hasContractedClients && !hasPendingRequests) {
+    throw new EmptySchedulingInputError("no_clients_or_requests");
+  }
 
   // Charger les préférences utilisateur
   const prefs = await prisma.schedulingPreferences.findUnique({
@@ -160,7 +189,18 @@ export async function generateAndPersistSchedule(
     loc: GeoLocation
   ): Promise<WeatherForecast | undefined> => {
     if (!apiKey) return undefined;
-    return fetchWeatherForecast(loc.lat, loc.lng, apiKey);
+    // Degrade gracefully on weather API failures: returning undefined makes
+    // the scheduler skip weather constraints for this task rather than
+    // failing the entire planning generation.
+    try {
+      return await fetchWeatherForecast(loc.lat, loc.lng, apiKey);
+    } catch (err) {
+      console.warn(
+        `[scheduler] weather fetch failed for ${loc.address || `${loc.lat},${loc.lng}`}:`,
+        err instanceof Error ? err.message : err
+      );
+      return undefined;
+    }
   };
 
   const domainSchedule: DomainSchedule = await generateSchedule(

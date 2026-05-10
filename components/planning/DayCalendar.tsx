@@ -42,11 +42,17 @@ export function DayCalendar({
       ? interventions.filter((i) => selectedTeamIds.includes(i.assignedTeamId))
       : interventions;
 
-    const map = new Map<string, { team: InterventionDetail["team"]; items: InterventionDetail[] }>();
+    const map = new Map<
+      string,
+      { team: InterventionDetail["team"]; items: InterventionDetail[] }
+    >();
     for (const i of filtered) {
       const existing = map.get(i.assignedTeamId);
       if (existing) {
-        map.set(i.assignedTeamId, { ...existing, items: [...existing.items, i] });
+        map.set(i.assignedTeamId, {
+          ...existing,
+          items: [...existing.items, i],
+        });
       } else {
         map.set(i.assignedTeamId, { team: i.team, items: [i] });
       }
@@ -62,7 +68,9 @@ export function DayCalendar({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold capitalize text-gray-900">{dateStr}</h3>
+      <h3 className="text-lg font-semibold text-gray-900 capitalize">
+        {dateStr}
+      </h3>
 
       {byTeam.length === 0 ? (
         <div className="rounded-xl bg-gray-50 p-8 text-center text-gray-500">
@@ -71,7 +79,9 @@ export function DayCalendar({
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {byTeam.map(({ team, items }) => {
-            const sorted = [...items].sort((a, b) => a.routeOrder - b.routeOrder);
+            const sorted = [...items].sort(
+              (a, b) => a.routeOrder - b.routeOrder
+            );
             const totalDuration = sorted.reduce(
               (s, i) => s + i.estimatedDurationMinutes,
               0
@@ -135,13 +145,16 @@ export function DayCalendar({
                             <span className="truncate font-medium text-gray-900">
                               {intervention.client.name}
                             </span>
-                            <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium ${badge?.class}`}>
+                            <span
+                              className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium ${badge?.class}`}
+                            >
                               {badge?.label}
                             </span>
                           </div>
                           <div className="text-xs text-gray-500">
                             {intervention.estimatedStartTime} -{" "}
-                            {TYPE_LABELS[intervention.interventionType] ?? intervention.interventionType}
+                            {TYPE_LABELS[intervention.interventionType] ??
+                              intervention.interventionType}
                             {" - "}
                             {intervention.estimatedDurationMinutes} min
                           </div>
