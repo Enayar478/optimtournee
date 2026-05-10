@@ -189,7 +189,18 @@ export async function generateAndPersistSchedule(
     loc: GeoLocation
   ): Promise<WeatherForecast | undefined> => {
     if (!apiKey) return undefined;
-    return fetchWeatherForecast(loc.lat, loc.lng, apiKey);
+    // Degrade gracefully on weather API failures: returning undefined makes
+    // the scheduler skip weather constraints for this task rather than
+    // failing the entire planning generation.
+    try {
+      return await fetchWeatherForecast(loc.lat, loc.lng, apiKey);
+    } catch (err) {
+      console.warn(
+        `[scheduler] weather fetch failed for ${loc.address || `${loc.lat},${loc.lng}`}:`,
+        err instanceof Error ? err.message : err
+      );
+      return undefined;
+    }
   };
 
   const domainSchedule: DomainSchedule = await generateSchedule(
