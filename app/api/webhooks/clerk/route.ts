@@ -51,8 +51,14 @@ export async function POST(req: Request) {
     const email = email_addresses?.[0]?.email_address ?? "";
     const name = [first_name, last_name].filter(Boolean).join(" ") || null;
 
-    await prisma.user.create({
-      data: { clerkId, email, name },
+    // upsert (not create): Clerk redirects to /onboarding immediately after
+    // sign-up, so a server route may have already called getOrCreateUser()
+    // before this webhook arrives. Plain create() would crash on the unique
+    // clerkId constraint and Clerk would retry indefinitely.
+    await prisma.user.upsert({
+      where: { clerkId },
+      update: { email, name },
+      create: { clerkId, email, name },
     });
   }
 

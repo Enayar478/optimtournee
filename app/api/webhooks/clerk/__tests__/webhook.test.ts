@@ -87,7 +87,7 @@ describe("/api/webhooks/clerk POST", () => {
     expect(response.status).toBe(400);
   });
 
-  it("traite user.created — crée un utilisateur en DB", async () => {
+  it("traite user.created — upsert utilisateur en DB (idempotent vs race avec getOrCreateUser)", async () => {
     const payload = {
       type: "user.created",
       data: {
@@ -98,7 +98,7 @@ describe("/api/webhooks/clerk POST", () => {
       },
     };
     mockVerify.mockReturnValue(payload);
-    mockUserCreate.mockResolvedValue({
+    mockUserUpsert.mockResolvedValue({
       id: "db_u1",
       clerkId: "clerk_user_abc",
     });
@@ -109,13 +109,44 @@ describe("/api/webhooks/clerk POST", () => {
 
     expect(response.status).toBe(200);
     expect(data.received).toBe(true);
-    expect(mockUserCreate).toHaveBeenCalledWith(
+    expect(mockUserUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
+        where: { clerkId: "clerk_user_abc" },
+        update: { email: "alice@example.com", name: "Alice Dupont" },
+        create: expect.objectContaining({
           clerkId: "clerk_user_abc",
           email: "alice@example.com",
           name: "Alice Dupont",
         }),
+      })
+    );
+    expect(mockUserCreate).not.toHaveBeenCalled();
+  });
+
+  it("traite user.created quand la row existe déjà (race avec getOrCreateUser) — écrase le placeholder", async () => {
+    const payload = {
+      type: "user.created",
+      data: {
+        id: "clerk_user_abc",
+        email_addresses: [{ email_address: "alice@example.com" }],
+        first_name: "Alice",
+        last_name: "Dupont",
+      },
+    };
+    mockVerify.mockReturnValue(payload);
+    mockUserUpsert.mockResolvedValue({
+      id: "db_u1",
+      clerkId: "clerk_user_abc",
+      email: "alice@example.com",
+    });
+
+    const req = makeWebhookRequest(payload);
+    const response = await POST(req);
+
+    expect(response.status).toBe(200);
+    expect(mockUserUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        update: { email: "alice@example.com", name: "Alice Dupont" },
       })
     );
   });
