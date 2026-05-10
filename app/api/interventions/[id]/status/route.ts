@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "@/lib/db/user";
 import { updateStatusSchema } from "@/lib/validation/schedule";
+import {
+  isValidStatusTransition,
+  getAllowedTransitions,
+  type InterventionStatus,
+} from "@/lib/domain/intervention-status";
 
 export async function PATCH(
   request: Request,
@@ -37,9 +42,22 @@ export async function PATCH(
       );
     }
 
+    const currentStatus = intervention.status as InterventionStatus;
+    const nextStatus = parsed.data.status;
+    if (!isValidStatusTransition(currentStatus, nextStatus)) {
+      return NextResponse.json(
+        {
+          error: `Transition de statut invalide : ${currentStatus} → ${nextStatus}`,
+          code: "invalid_status_transition",
+          allowedTransitions: getAllowedTransitions(currentStatus),
+        },
+        { status: 409 }
+      );
+    }
+
     const updated = await prisma.plannedIntervention.update({
       where: { id },
-      data: { status: parsed.data.status },
+      data: { status: nextStatus },
     });
 
     return NextResponse.json(updated);
