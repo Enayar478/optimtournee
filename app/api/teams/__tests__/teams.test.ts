@@ -5,9 +5,13 @@
 
 const mockAuth = jest.fn();
 const mockTeamFindMany = jest.fn();
+const mockTeamFindFirst = jest.fn();
 const mockTeamCreate = jest.fn();
 const mockTeamUpdate = jest.fn();
 const mockTeamDelete = jest.fn();
+const mockTeamMemberDeleteMany = jest.fn();
+const mockTeamMemberCreateMany = jest.fn();
+const mockTransaction = jest.fn();
 const mockGetOrCreateUser = jest.fn();
 
 jest.mock("@clerk/nextjs/server", () => ({
@@ -18,10 +22,16 @@ jest.mock("@/lib/prisma", () => ({
   prisma: {
     team: {
       findMany: (...args: unknown[]) => mockTeamFindMany(...args),
+      findFirst: (...args: unknown[]) => mockTeamFindFirst(...args),
       create: (...args: unknown[]) => mockTeamCreate(...args),
       update: (...args: unknown[]) => mockTeamUpdate(...args),
       delete: (...args: unknown[]) => mockTeamDelete(...args),
     },
+    teamMember: {
+      deleteMany: (...args: unknown[]) => mockTeamMemberDeleteMany(...args),
+      createMany: (...args: unknown[]) => mockTeamMemberCreateMany(...args),
+    },
+    $transaction: (...args: unknown[]) => mockTransaction(...args),
   },
 }));
 
@@ -124,24 +134,24 @@ describe("/api/teams", () => {
       );
     });
 
-    it("crée une équipe sans membres", async () => {
-      const newTeam = {
-        id: "t4",
+    it("rejette une équipe sans membres (validation schema: min 1)", async () => {
+      const req = makeRequest("POST", {
         name: "Équipe Solo",
         color: "#2D5A3D",
         members: [],
-      };
-      mockTeamCreate.mockResolvedValue(newTeam);
-
-      const req = makeRequest("POST", { name: "Équipe Solo" });
+      });
       const response = await POST(req);
-
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(400);
+      expect(mockTeamCreate).not.toHaveBeenCalled();
     });
 
     it("retourne 500 si Prisma lève une exception", async () => {
       mockTeamCreate.mockRejectedValue(new Error("DB error"));
-      const req = makeRequest("POST", { name: "Broken Team" });
+      const req = makeRequest("POST", {
+        name: "Broken Team",
+        color: "#2D5A3D",
+        members: [{ firstName: "Jean", lastName: "Dupont" }],
+      });
       const response = await POST(req);
       expect(response.status).toBe(500);
     });
@@ -168,28 +178,62 @@ describe("/api/teams", () => {
         id: "t1",
         name: "Équipe Mise à Jour",
         color: "#ff0000",
-        members: [],
+        members: [{ firstName: "Jean", lastName: "Dupont" }],
       };
+      mockTeamFindFirst.mockResolvedValue({ id: "t1" });
       mockTeamUpdate.mockResolvedValue(updated);
+      mockTransaction.mockImplementation(async (cb) => {
+        const tx = {
+          teamMember: {
+            deleteMany: mockTeamMemberDeleteMany,
+            createMany: mockTeamMemberCreateMany,
+          },
+          team: { update: mockTeamUpdate },
+        };
+        return cb(tx);
+      });
 
       const req = makeRequest("PUT", {
         id: "t1",
         name: "Équipe Mise à Jour",
         color: "#ff0000",
+        members: [{ firstName: "Jean", lastName: "Dupont" }],
       });
       const response = await PUT(req);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.name).toBe("Équipe Mise à Jour");
-      expect(mockTeamUpdate).toHaveBeenCalledWith(
+      expect(mockTeamFindFirst).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: "t1", userId: DB_USER.id } })
+      );
+      expect(mockTeamUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: "t1" } })
       );
     });
 
-    it("retourne 500 si Prisma lève une exception", async () => {
-      mockTeamUpdate.mockRejectedValue(new Error("Not found"));
-      const req = makeRequest("PUT", { id: "t99", name: "Ghost Team" });
+    it("retourne 404 si l'équipe n'appartient pas à l'utilisateur", async () => {
+      mockTeamFindFirst.mockResolvedValue(null);
+      const req = makeRequest("PUT", {
+        id: "t1",
+        name: "Foreign Team",
+        color: "#2D5A3D",
+        members: [{ firstName: "X", lastName: "Y" }],
+      });
+      const response = await PUT(req);
+      expect(response.status).toBe(404);
+      expect(mockTransaction).not.toHaveBeenCalled();
+    });
+
+    it("retourne 500 si la transaction échoue", async () => {
+      mockTeamFindFirst.mockResolvedValue({ id: "t99" });
+      mockTransaction.mockRejectedValue(new Error("DB error"));
+      const req = makeRequest("PUT", {
+        id: "t99",
+        name: "Ghost Team",
+        color: "#2D5A3D",
+        members: [{ firstName: "X", lastName: "Y" }],
+      });
       const response = await PUT(req);
       expect(response.status).toBe(500);
     });
