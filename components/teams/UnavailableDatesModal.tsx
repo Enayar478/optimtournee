@@ -27,8 +27,18 @@ function formatDateKey(year: number, month: number, day: number): string {
 }
 
 const MONTH_NAMES = [
-  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
 ];
 
 const DAY_HEADERS = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
@@ -177,7 +187,7 @@ export function UnavailableDatesModal({
             {DAY_HEADERS.map((d) => (
               <div
                 key={d}
-                className="text-center text-xs font-medium text-gray-400 py-1"
+                className="py-1 text-center text-xs font-medium text-gray-400"
               >
                 {d}
               </div>
@@ -196,11 +206,11 @@ export function UnavailableDatesModal({
                   key={day}
                   type="button"
                   onClick={() => toggleDate(dateKey)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all mx-auto ${
+                  className={`mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
                     isSelected
                       ? "bg-red-500 text-white"
                       : isToday
-                        ? "bg-[#2D5A3D]/10 text-[#2D5A3D] font-bold"
+                        ? "bg-[#2D5A3D]/10 font-bold text-[#2D5A3D]"
                         : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -213,10 +223,12 @@ export function UnavailableDatesModal({
           {/* Selected dates list */}
           {sortedSelected.length > 0 && (
             <div className="mb-4">
-              <p className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                {sortedSelected.length} date{sortedSelected.length > 1 ? "s" : ""} sélectionnée{sortedSelected.length > 1 ? "s" : ""}
+              <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                {sortedSelected.length} date
+                {sortedSelected.length > 1 ? "s" : ""} sélectionnée
+                {sortedSelected.length > 1 ? "s" : ""}
               </p>
-              <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+              <div className="flex max-h-24 flex-wrap gap-1.5 overflow-y-auto">
                 {sortedSelected.map((date) => (
                   <span
                     key={date}

@@ -62,7 +62,9 @@ export function OneOffRequestModal({
 
   const [form, setForm] = useState<CreateRequestFormData>({
     clientId: request?.clientId ?? "",
-    interventionType: (request?.interventionType as CreateRequestFormData["interventionType"]) ?? "mowing",
+    interventionType:
+      (request?.interventionType as CreateRequestFormData["interventionType"]) ??
+      "mowing",
     description: request?.description ?? "",
     durationEstimate: request?.durationEstimate ?? 60,
     priority: request?.priority ?? 1,

@@ -1,7 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, Download, FileSpreadsheet, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Upload,
+  Download,
+  FileSpreadsheet,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import Papa from "papaparse";
 import {
   type ColumnDef,
@@ -12,7 +18,10 @@ import {
 interface CsvImportBlockProps {
   columns: ColumnDef[];
   templateFilename: string;
-  onImport: (rows: Record<string, string>[]) => { imported: number; errors: string[] };
+  onImport: (rows: Record<string, string>[]) => {
+    imported: number;
+    errors: string[];
+  };
   entityLabel: string; // "équipes" | "clients"
 }
 
@@ -87,9 +96,7 @@ export function CsvImportBlock({
 
       {/* Column descriptions */}
       <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 text-xs">
-        <p className="mb-2 font-medium text-gray-700">
-          Colonnes requises :
-        </p>
+        <p className="mb-2 font-medium text-gray-700">Colonnes requises :</p>
         <div className="mb-3 space-y-1">
           {requiredCols.map((col) => (
             <div key={col.key} className="flex gap-2">
@@ -97,7 +104,8 @@ export function CsvImportBlock({
                 {col.label} *
               </span>
               <span className="text-gray-500">
-                {col.description} — ex: <code className="rounded bg-gray-100 px-1">{col.example}</code>
+                {col.description} — ex:{" "}
+                <code className="rounded bg-gray-100 px-1">{col.example}</code>
               </span>
             </div>
           ))}
@@ -114,7 +122,10 @@ export function CsvImportBlock({
                     {col.label}
                   </span>
                   <span className="text-gray-400">
-                    {col.description} — ex: <code className="rounded bg-gray-100 px-1">{col.example}</code>
+                    {col.description} — ex:{" "}
+                    <code className="rounded bg-gray-100 px-1">
+                      {col.example}
+                    </code>
                   </span>
                 </div>
               ))}

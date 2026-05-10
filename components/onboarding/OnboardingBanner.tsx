@@ -16,9 +16,7 @@ export function OnboardingBanner() {
           <Rocket className="h-8 w-8" />
         </div>
         <div className="flex-1">
-          <h2 className="text-2xl font-bold">
-            Bienvenue sur OptimTournée !
-          </h2>
+          <h2 className="text-2xl font-bold">Bienvenue sur OptimTournée !</h2>
           <p className="mt-2 text-white/80">
             Configurez votre espace en 4 étapes simples : entreprise, équipes,
             clients et contrats. Le système pourra ensuite planifier

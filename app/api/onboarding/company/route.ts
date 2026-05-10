@@ -26,7 +26,10 @@ export async function PUT(req: Request) {
     try {
       user = await getOrCreateUser(userId);
     } catch (dbError) {
-      console.error("[API /onboarding/company PUT] getOrCreateUser failed:", dbError);
+      console.error(
+        "[API /onboarding/company PUT] getOrCreateUser failed:",
+        dbError
+      );
       const message = dbError instanceof Error ? dbError.message : "DB error";
       return NextResponse.json(
         { error: `Erreur utilisateur: ${message}` },
@@ -38,7 +41,10 @@ export async function PUT(req: Request) {
     try {
       body = await req.json();
     } catch (parseError) {
-      console.error("[API /onboarding/company PUT] JSON parse failed:", parseError);
+      console.error(
+        "[API /onboarding/company PUT] JSON parse failed:",
+        parseError
+      );
       return NextResponse.json(
         { error: "Corps de requête invalide" },
         { status: 400 }
@@ -65,8 +71,12 @@ export async function PUT(req: Request) {
         },
       });
     } catch (updateError) {
-      console.error("[API /onboarding/company PUT] prisma.user.update failed:", updateError);
-      const message = updateError instanceof Error ? updateError.message : "Update error";
+      console.error(
+        "[API /onboarding/company PUT] prisma.user.update failed:",
+        updateError
+      );
+      const message =
+        updateError instanceof Error ? updateError.message : "Update error";
       return NextResponse.json(
         { error: `Erreur mise à jour: ${message}` },
         { status: 500 }

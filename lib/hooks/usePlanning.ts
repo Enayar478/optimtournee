@@ -136,9 +136,7 @@ export function usePlanning(scheduleId: string | null) {
   // Extraire les équipes uniques
   const teams = schedule
     ? Array.from(
-        new Map(
-          schedule.interventions.map((i) => [i.team.id, i.team])
-        ).values()
+        new Map(schedule.interventions.map((i) => [i.team.id, i.team])).values()
       )
     : [];
 

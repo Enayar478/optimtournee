@@ -219,9 +219,7 @@ function parseDays(val: string): number[] {
     .filter((n) => n !== undefined);
 }
 
-function parseMembers(
-  val: string
-): { firstName: string; lastName: string }[] {
+function parseMembers(val: string): { firstName: string; lastName: string }[] {
   return parseSemicolonList(val).map((full) => {
     const parts = full.trim().split(/\s+/);
     return {
@@ -257,7 +255,10 @@ export function parseTeamRow(
   const membersRaw = row["Membres"] ?? row["members"] ?? "";
   const members = parseMembers(membersRaw);
   if (members.length === 0)
-    return { data: null, error: `Ligne ${index + 1}: au moins un membre requis` };
+    return {
+      data: null,
+      error: `Ligne ${index + 1}: au moins un membre requis`,
+    };
 
   const colorRaw = (row["Couleur"] ?? row["color"] ?? "").trim();
   const color = colorRaw.startsWith("#")
@@ -274,7 +275,10 @@ export function parseTeamRow(
   }
 
   const pauseRaw = row["Pause déjeuner (min)"] ?? row["pause_dejeuner"] ?? "60";
-  const lunchBreakMinutes = Math.max(0, Math.min(120, parseInt(pauseRaw) || 60));
+  const lunchBreakMinutes = Math.max(
+    0,
+    Math.min(120, parseInt(pauseRaw) || 60)
+  );
 
   const joursRaw = row["Jours travaillés"] ?? row["jours_travailles"] ?? "";
   const workingDays = joursRaw ? parseDays(joursRaw) : [1, 2, 3, 4, 5];
@@ -289,8 +293,11 @@ export function parseTeamRow(
     .map((s) => INTERVENTION_MAP[s.toLowerCase()] ?? "")
     .filter(Boolean);
 
-  const depotAddress =
-    (row["Adresse dépôt"] ?? row["depot_address"] ?? "").trim();
+  const depotAddress = (
+    row["Adresse dépôt"] ??
+    row["depot_address"] ??
+    ""
+  ).trim();
 
   return {
     data: {
@@ -332,11 +339,14 @@ export function parseClientRow(
   if (!address)
     return { data: null, error: `Ligne ${index + 1}: adresse manquante` };
 
-  const phone = (row["Téléphone"] ?? row["telephone"] ?? "").trim() || undefined;
+  const phone =
+    (row["Téléphone"] ?? row["telephone"] ?? "").trim() || undefined;
   const email = (row["Email"] ?? row["email"] ?? "").trim() || undefined;
 
   const interventionRaw = (
-    row["Type d'intervention"] ?? row["intervention"] ?? ""
+    row["Type d'intervention"] ??
+    row["intervention"] ??
+    ""
   ).trim();
   const interventionType = interventionRaw
     ? INTERVENTION_MAP[interventionRaw.toLowerCase()]

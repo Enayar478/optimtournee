@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Cloud, Sun, CloudRain, CloudSnow, CloudLightning, Wind, Thermometer } from "lucide-react";
+import {
+  Cloud,
+  Sun,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  Wind,
+  Thermometer,
+} from "lucide-react";
 
 interface ForecastDay {
   date: string;
@@ -11,7 +19,10 @@ interface ForecastDay {
   description: string;
 }
 
-const CONDITION_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+const CONDITION_ICON: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
   clear: Sun,
   cloudy: Cloud,
   rain: CloudRain,
@@ -65,11 +76,14 @@ export function WeatherBar({ weekStart }: Props) {
   if (loading || forecast.length === 0) return null;
 
   return (
-    <div className="flex gap-2 overflow-x-auto rounded-xl bg-gradient-to-r from-blue-50 to-sky-50 px-3 py-2 border border-blue-100/50">
+    <div className="flex gap-2 overflow-x-auto rounded-xl border border-blue-100/50 bg-gradient-to-r from-blue-50 to-sky-50 px-3 py-2">
       {weekDays.map(({ date, dateKey, forecast: dayForecast }) => {
         if (!dayForecast) {
           return (
-            <div key={dateKey} className="flex min-w-[80px] flex-col items-center gap-1 px-2 py-1 text-xs text-gray-400">
+            <div
+              key={dateKey}
+              className="flex min-w-[80px] flex-col items-center gap-1 px-2 py-1 text-xs text-gray-400"
+            >
               <span>{DAY_NAMES[date.getDay()]}</span>
               <span>--</span>
             </div>
@@ -77,7 +91,8 @@ export function WeatherBar({ weekStart }: Props) {
         }
 
         const Icon = CONDITION_ICON[dayForecast.condition] ?? Cloud;
-        const isWarning = dayForecast.windSpeed > 40 || dayForecast.condition === "storm";
+        const isWarning =
+          dayForecast.windSpeed > 40 || dayForecast.condition === "storm";
 
         return (
           <div

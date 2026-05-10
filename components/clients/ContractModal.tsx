@@ -36,7 +36,9 @@ const DEFAULT_FORM: ContractFormData = {
   maxTemperature: 40,
 };
 
-function buildInitialForm(contract: ContractModalProps["contract"]): ContractFormData {
+function buildInitialForm(
+  contract: ContractModalProps["contract"]
+): ContractFormData {
   if (!contract) return DEFAULT_FORM;
   return {
     interventionType: contract.interventionType,
@@ -60,7 +62,9 @@ export function ContractModal({
   onSave,
 }: ContractModalProps) {
   const toast = useToast();
-  const [form, setForm] = useState<ContractFormData>(() => buildInitialForm(contract));
+  const [form, setForm] = useState<ContractFormData>(() =>
+    buildInitialForm(contract)
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -80,7 +84,9 @@ export function ContractModal({
   const toggleEquipment = (eq: string) => {
     setForm((prev) => {
       const current = prev.requiredEquipment ?? [];
-      const has = current.includes(eq as ContractFormData["requiredEquipment"][number]);
+      const has = current.includes(
+        eq as ContractFormData["requiredEquipment"][number]
+      );
       return {
         ...prev,
         requiredEquipment: has
@@ -120,7 +126,8 @@ export function ContractModal({
       toast.success(contract ? "Contrat mis à jour" : "Contrat créé");
       onSave();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Erreur lors de la sauvegarde";
+      const message =
+        err instanceof Error ? err.message : "Erreur lors de la sauvegarde";
       toast.error(message);
     } finally {
       setSaving(false);
@@ -169,15 +176,24 @@ export function ContractModal({
               </label>
               <select
                 value={form.interventionType}
-                onChange={(e) => updateField("interventionType", e.target.value as ContractFormData["interventionType"])}
+                onChange={(e) =>
+                  updateField(
+                    "interventionType",
+                    e.target.value as ContractFormData["interventionType"]
+                  )
+                }
                 className={inputClass}
               >
                 {Object.entries(INTERVENTION_LABELS).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
                 ))}
               </select>
               {errors.interventionType && (
-                <p className="mt-1 text-sm text-red-500">{errors.interventionType}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.interventionType}
+                </p>
               )}
             </div>
 
@@ -192,11 +208,15 @@ export function ContractModal({
                   min={15}
                   step={15}
                   value={form.durationMinutes}
-                  onChange={(e) => updateField("durationMinutes", Number(e.target.value))}
+                  onChange={(e) =>
+                    updateField("durationMinutes", Number(e.target.value))
+                  }
                   className={inputClass}
                 />
                 {errors.durationMinutes && (
-                  <p className="mt-1 text-sm text-red-500">{errors.durationMinutes}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.durationMinutes}
+                  </p>
                 )}
               </div>
               <div>
@@ -205,11 +225,18 @@ export function ContractModal({
                 </label>
                 <select
                   value={form.recurrence}
-                  onChange={(e) => updateField("recurrence", e.target.value as ContractFormData["recurrence"])}
+                  onChange={(e) =>
+                    updateField(
+                      "recurrence",
+                      e.target.value as ContractFormData["recurrence"]
+                    )
+                  }
                   className={inputClass}
                 >
                   {Object.entries(RECURRENCE_LABELS).map(([key, label]) => (
-                    <option key={key} value={key}>{label}</option>
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -222,11 +249,15 @@ export function ContractModal({
               </label>
               <select
                 value={form.dayOfWeek}
-                onChange={(e) => updateField("dayOfWeek", Number(e.target.value))}
+                onChange={(e) =>
+                  updateField("dayOfWeek", Number(e.target.value))
+                }
                 className={inputClass}
               >
                 {DAY_LABELS.map((label, i) => (
-                  <option key={i} value={i}>{label}</option>
+                  <option key={i} value={i}>
+                    {label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -324,7 +355,12 @@ export function ContractModal({
                             min={0}
                             max={200}
                             value={form.maxWindSpeed}
-                            onChange={(e) => updateField("maxWindSpeed", Number(e.target.value))}
+                            onChange={(e) =>
+                              updateField(
+                                "maxWindSpeed",
+                                Number(e.target.value)
+                              )
+                            }
                             className={inputClass}
                           />
                         </div>
@@ -333,7 +369,9 @@ export function ContractModal({
                             <input
                               type="checkbox"
                               checked={form.noRainForecast}
-                              onChange={(e) => updateField("noRainForecast", e.target.checked)}
+                              onChange={(e) =>
+                                updateField("noRainForecast", e.target.checked)
+                              }
                               className="h-4 w-4 rounded border-gray-300 text-[#2D5A3D] focus:ring-[#2D5A3D]"
                             />
                             Pas de pluie requise
@@ -348,7 +386,12 @@ export function ContractModal({
                           <input
                             type="number"
                             value={form.minTemperature}
-                            onChange={(e) => updateField("minTemperature", Number(e.target.value))}
+                            onChange={(e) =>
+                              updateField(
+                                "minTemperature",
+                                Number(e.target.value)
+                              )
+                            }
                             className={inputClass}
                           />
                         </div>
@@ -359,7 +402,12 @@ export function ContractModal({
                           <input
                             type="number"
                             value={form.maxTemperature}
-                            onChange={(e) => updateField("maxTemperature", Number(e.target.value))}
+                            onChange={(e) =>
+                              updateField(
+                                "maxTemperature",
+                                Number(e.target.value)
+                              )
+                            }
                             className={inputClass}
                           />
                         </div>

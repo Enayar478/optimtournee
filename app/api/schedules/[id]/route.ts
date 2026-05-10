@@ -21,7 +21,16 @@ export async function GET(
         interventions: {
           orderBy: [{ scheduledDate: "asc" }, { routeOrder: "asc" }],
           include: {
-            client: { select: { id: true, name: true, address: true, lat: true, lng: true, contactPhone: true } },
+            client: {
+              select: {
+                id: true,
+                name: true,
+                address: true,
+                lat: true,
+                lng: true,
+                contactPhone: true,
+              },
+            },
             team: { select: { id: true, name: true, color: true } },
           },
         },
@@ -29,13 +38,19 @@ export async function GET(
     });
 
     if (!schedule) {
-      return NextResponse.json({ error: "Schedule non trouvé" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Schedule non trouvé" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(schedule);
   } catch (error) {
     console.error("[API /schedules/:id GET]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -63,7 +78,10 @@ export async function PATCH(
       where: { id, userId: user.id },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Schedule non trouvé" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Schedule non trouvé" },
+        { status: 404 }
+      );
     }
 
     const updated = await prisma.schedule.update({
@@ -74,7 +92,10 @@ export async function PATCH(
     return NextResponse.json(updated);
   } catch (error) {
     console.error("[API /schedules/:id PATCH]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -93,13 +114,19 @@ export async function DELETE(
       where: { id, userId: user.id },
     });
     if (!existing) {
-      return NextResponse.json({ error: "Schedule non trouvé" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Schedule non trouvé" },
+        { status: 404 }
+      );
     }
 
     await prisma.schedule.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[API /schedules/:id DELETE]", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

@@ -82,10 +82,16 @@ export function WeekCalendar({
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
       {/* Header */}
-      <div className="sticky top-0 z-10 grid bg-gray-50 border-b border-gray-100" style={{ gridTemplateColumns: `60px repeat(${daysCount}, 1fr)` }}>
+      <div
+        className="sticky top-0 z-10 grid border-b border-gray-100 bg-gray-50"
+        style={{ gridTemplateColumns: `60px repeat(${daysCount}, 1fr)` }}
+      >
         <div className="p-2 text-center text-xs text-gray-400">Heure</div>
         {days.map((day) => (
-          <div key={day.key} className="border-l border-gray-100 p-2 text-center">
+          <div
+            key={day.key}
+            className="border-l border-gray-100 p-2 text-center"
+          >
             <div className="text-xs font-medium text-gray-500">{day.name}</div>
             <div className="text-sm font-bold text-gray-900">
               {day.date.getDate()}/{day.date.getMonth() + 1}
@@ -95,7 +101,10 @@ export function WeekCalendar({
       </div>
 
       {/* Time grid */}
-      <div className="relative grid" style={{ gridTemplateColumns: `60px repeat(${daysCount}, 1fr)` }}>
+      <div
+        className="relative grid"
+        style={{ gridTemplateColumns: `60px repeat(${daysCount}, 1fr)` }}
+      >
         {/* Time labels */}
         <div>
           {HOURS.map((h) => (
@@ -104,9 +113,7 @@ export function WeekCalendar({
               className="flex items-start justify-end pr-2 text-xs text-gray-400"
               style={{ height: SLOT_HEIGHT }}
             >
-              {Number.isInteger(h)
-                ? `${String(h).padStart(2, "0")}:00`
-                : ""}
+              {Number.isInteger(h) ? `${String(h).padStart(2, "0")}:00` : ""}
             </div>
           ))}
         </div>
@@ -124,7 +131,7 @@ export function WeekCalendar({
               {HOURS.map((h) => (
                 <div
                   key={h}
-                  className="absolute w-full border-t border-gray-50 cursor-pointer hover:bg-[#4A90A4]/5"
+                  className="absolute w-full cursor-pointer border-t border-gray-50 hover:bg-[#4A90A4]/5"
                   style={{
                     top: (h - 7) * 2 * SLOT_HEIGHT,
                     height: SLOT_HEIGHT,
@@ -132,14 +139,19 @@ export function WeekCalendar({
                   onClick={() => {
                     const hour = Math.floor(h);
                     const min = Number.isInteger(h) ? "00" : "30";
-                    onEmptySlotClick(day.key, `${String(hour).padStart(2, "0")}:${min}`);
+                    onEmptySlotClick(
+                      day.key,
+                      `${String(hour).padStart(2, "0")}:${min}`
+                    );
                   }}
                 />
               ))}
 
               {/* Intervention blocks */}
               {dayInterventions.map((intervention) => {
-                const startMins = timeToMinutes(intervention.estimatedStartTime);
+                const startMins = timeToMinutes(
+                  intervention.estimatedStartTime
+                );
                 const topPx = ((startMins - 420) / 30) * SLOT_HEIGHT; // 420 = 7*60
                 const heightPx = Math.max(
                   (intervention.estimatedDurationMinutes / 30) * SLOT_HEIGHT,
@@ -151,7 +163,7 @@ export function WeekCalendar({
                     key={intervention.id}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className={`absolute left-1 right-1 cursor-pointer overflow-hidden rounded-lg px-2 py-1 text-xs text-white shadow-sm transition-shadow hover:shadow-md ${STATUS_OPACITY[intervention.status] ?? ""}`}
+                    className={`absolute right-1 left-1 cursor-pointer overflow-hidden rounded-lg px-2 py-1 text-xs text-white shadow-sm transition-shadow hover:shadow-md ${STATUS_OPACITY[intervention.status] ?? ""}`}
                     style={{
                       top: Math.max(topPx, 0),
                       height: heightPx,
@@ -163,12 +175,13 @@ export function WeekCalendar({
                       onInterventionClick(intervention);
                     }}
                   >
-                    <div className="font-medium truncate">
+                    <div className="truncate font-medium">
                       {intervention.client.name}
                     </div>
                     {heightPx > 30 && (
                       <div className="truncate opacity-80">
-                        {TYPE_LABELS[intervention.interventionType] ?? intervention.interventionType}
+                        {TYPE_LABELS[intervention.interventionType] ??
+                          intervention.interventionType}
                         {" - "}
                         {intervention.estimatedStartTime}
                       </div>

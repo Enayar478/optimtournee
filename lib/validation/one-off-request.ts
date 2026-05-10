@@ -25,7 +25,9 @@ export const createRequestSchema = z
   .refine(
     (data) => {
       if (!data.preferredDateStart || !data.preferredDateEnd) return true;
-      return new Date(data.preferredDateEnd) >= new Date(data.preferredDateStart);
+      return (
+        new Date(data.preferredDateEnd) >= new Date(data.preferredDateStart)
+      );
     },
     {
       message: "La date de fin doit être après la date de début",
@@ -37,7 +39,9 @@ export type CreateRequestFormData = z.infer<typeof createRequestSchema>;
 
 export const updateRequestSchema = z
   .object({
-    status: z.enum(["pending", "scheduled", "completed", "cancelled"]).optional(),
+    status: z
+      .enum(["pending", "scheduled", "completed", "cancelled"])
+      .optional(),
     description: z.string().min(1).max(500).optional(),
     preferredDateStart: z.string().datetime({ offset: true }).optional(),
     preferredDateEnd: z.string().datetime({ offset: true }).optional(),
@@ -45,7 +49,9 @@ export const updateRequestSchema = z
   .refine(
     (data) => {
       if (!data.preferredDateStart || !data.preferredDateEnd) return true;
-      return new Date(data.preferredDateEnd) >= new Date(data.preferredDateStart);
+      return (
+        new Date(data.preferredDateEnd) >= new Date(data.preferredDateStart)
+      );
     },
     {
       message: "La date de fin doit être après la date de début",
