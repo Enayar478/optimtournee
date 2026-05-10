@@ -3,7 +3,7 @@
 > **Source de vérité** des user stories, statuts, et bugs identifiés.
 > Mise à jour à chaque session de test/audit.
 >
-> **Dernière mise à jour** : 2026-05-10 — audit statique complet
+> **Dernière mise à jour** : 2026-05-10 — sprint 1 livré
 > **Branche** : `claude/roadmap-user-stories-wesgR`
 > **PR** : https://github.com/Enayar478/optimtournee/pull/8 (draft)
 > **Prod** : https://optimtournee.vercel.app
@@ -14,9 +14,26 @@
 
 Le test E2E live de la prod n'a pas été possible : le sandbox Claude Code on the web bloque les requêtes HTTP vers les domaines non whitelistés (`Host not in allowlist`), et l'allowlist n'est pas configurable côté utilisateur ([issue #52982](https://github.com/anthropics/claude-code/issues/52982)).
 
-**Pivot** : audit statique du code par 4 sous-agents en parallèle. Les findings ci-dessous sont issus de la lecture du code, pas d'une exécution. Les **numéros de ligne sont à vérifier** avant tout fix — les agents peuvent halluciner des détails. Les **catégories de bugs** (race condition, validation manquante, etc.) sont en revanche fiables.
+**Pivot** : audit statique du code par 4 sous-agents en parallèle, puis **fix de chaque bloquant un par un** avec validation par le code (pas en runtime). Les **numéros de ligne** cités initialement par les agents étaient parfois inexacts — la vraie cause a été reconfirmée à chaque fix par lecture du code source. **2 bugs sur 8 se sont avérés des faux positifs** une fois le code lu attentivement.
 
 Pour passer en mode runtime, lancer Claude Code en CLI local (pas web) ou tester manuellement.
+
+---
+
+## ✅ Sprint 1 — Statut
+
+**Tous les bloquants traités** (8/8) : 6 vrais bugs corrigés + 2 faux positifs invalidés. Tests : **100/100** ✅ (avant : 88/99).
+
+| ID          | Statut                                    | Fix                                                                                                                                                                                                                         |
+| ----------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BUG-A1      | ✅ Fixé                                   | Webhook Clerk `user.created` → upsert (idempotent vs race avec `getOrCreateUser`)                                                                                                                                           |
+| BUG-B1      | ❌ Faux positif                           | Le code était déjà guardé (`allTeams[0] ? ... : null` côté API + `data?.teamOfDay?.members ?? []` côté UI)                                                                                                                  |
+| BUG-B2      | ✅ Fixé                                   | DELETE client wrap les enfants (`RecurringContract`/`OneOffRequest`/`PlannedIntervention`) dans une transaction + ownership check via `findFirst` (404 cross-tenant)                                                        |
+| BUG-C1      | ✅ Fixé                                   | `EmptySchedulingInputError` typé (`no_teams` / `no_clients_or_requests`) → 422 avec `code` stable                                                                                                                           |
+| BUG-C5      | ✅ Fixé (différent du diagnostic initial) | L'agent prétendait que la météo était fetchée dans la transaction Prisma : faux. Vrai bug adjacent : un crash OpenWeather faisait planter toute la génération → try/catch + dégradation gracieuse (skip weather constraint) |
+| BUG-C11     | ✅ Fixé                                   | State machine `lib/domain/intervention-status.ts` (planned→in_progress→completed, terminaux verrouillés) appliqué sur les 2 routes PATCH (status quick + intervention full edit) → 409 avec liste des transitions valides   |
+| BUG-A3      | ❌ Faux positif                           | `StepTeams.tsx:105/112/142` et `StepClients.tsx:119/126/185` persistent chaque CRUD via API — la `useEffect` de la page recharge tout au mount                                                                              |
+| BUG-D-tests | ✅ Fixé                                   | +33 tests sur scheduler/state-machine/schedules POST/intervention status; +11 tests préexistants réparés (teams + weather)                                                                                                  |
 
 ---
 
@@ -60,8 +77,8 @@ Priorisation **MoSCoW** :
 | ----- | ------ | ---- | --------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | US-01 | ⚠️     | M    | En tant que visiteur, je veux comprendre la valeur du produit en moins de 10s sur la landing              | BUG-A4, A5                           |
 | US-02 | ⚠️     | M    | En tant que visiteur, je veux essayer la démo sans créer de compte                                        | (à vérifier en runtime)              |
-| US-03 | ⚠️     | M    | En tant que prospect, je veux créer un compte (email + password ou Google)                                | BUG-A1, A2                           |
-| US-04 | ❌     | M    | En tant que nouvel utilisateur connecté, je veux être guidé vers la création de mon premier client/équipe | BUG-A1, A3 (race condition critique) |
+| US-03 | ⚠️     | M    | En tant que prospect, je veux créer un compte (email + password ou Google)                                | ~~BUG-A1~~ ✅, A2                    |
+| US-04 | ⚠️     | M    | En tant que nouvel utilisateur connecté, je veux être guidé vers la création de mon premier client/équipe | ~~BUG-A1~~ ✅, ~~A3~~ (faux positif) |
 
 ### Epic 2 — Gestion des données métier (CRUD)
 
@@ -69,29 +86,29 @@ Priorisation **MoSCoW** :
 | ----- | ------ | ---- | ---------------------------------------------------------------------------- | --------------------------------------- |
 | US-05 | ⚠️     | M    | En tant que gérant, je veux ajouter un client                                | BUG-B5 (no error toast)                 |
 | US-06 | ⚠️     | M    | En tant que gérant, je veux que l'adresse soit auto-géocodée                 | BUG-B3, B4 (race + no timeout)          |
-| US-07 | ❌     | M    | En tant que gérant, je veux modifier/supprimer un client                     | BUG-B2 (cascade delete orphelin)        |
+| US-07 | ⚠️     | M    | En tant que gérant, je veux modifier/supprimer un client                     | ~~BUG-B2~~ ✅                           |
 | US-08 | ⚠️     | M    | En tant que gérant, je veux créer une équipe avec ses membres et son secteur | BUG-B7 (members shrinkage)              |
 | US-09 | ⚠️     | M    | En tant que gérant, je veux modifier/supprimer une équipe                    | BUG-B7, B8                              |
 | US-10 | 📦     | S    | En tant que gérant, je veux importer mes clients via CSV                     | (papaparse en deps mais non implémenté) |
 
 ### Epic 3 — Génération de planning (cœur métier)
 
-| ID    | Statut | Prio | User story                                                                                       | Bugs liés                                         |
-| ----- | ------ | ---- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
-| US-11 | ⚠️     | M    | En tant que gérant, je veux générer le planning d'une semaine pour toutes mes équipes en 1 clic  | BUG-C1, C5, C6                                    |
-| US-12 | ⚠️     | M    | En tant que gérant, je veux que le planning évite les jours de pluie                             | BUG-C2 (seuil hardcodé), C5 (no fallback weather) |
-| US-13 | ⚠️     | M    | En tant que gérant, je veux voir le planning sous forme de calendrier (semaine + jour)           | BUG-C9 (timezone misalignment)                    |
-| US-14 | ⚠️     | M    | En tant que gérant, je veux voir les tournées sur une carte (Leaflet)                            | BUG-C13 (Paris hardcoded fallback)                |
-| US-15 | ⚠️     | M    | En tant que gérant, je veux ajouter manuellement une intervention au planning                    | BUG-C10 (no conflict detection)                   |
-| US-16 | ⚠️     | M    | En tant que gérant, je veux modifier/déplacer/supprimer une intervention                         | BUG-C7 (pas de re-optim)                          |
-| US-17 | 📦     | S    | En tant que gérant, je veux pouvoir réoptimiser une journée après ajout d'une demande ponctuelle | non implémenté                                    |
+| ID    | Statut | Prio | User story                                                                                       | Bugs liés                          |
+| ----- | ------ | ---- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| US-11 | ⚠️     | M    | En tant que gérant, je veux générer le planning d'une semaine pour toutes mes équipes en 1 clic  | ~~BUG-C1~~ ✅, ~~C5~~ ✅, C6       |
+| US-12 | ⚠️     | M    | En tant que gérant, je veux que le planning évite les jours de pluie                             | BUG-C2 (seuil hardcodé), ~~C5~~ ✅ |
+| US-13 | ⚠️     | M    | En tant que gérant, je veux voir le planning sous forme de calendrier (semaine + jour)           | BUG-C9 (timezone misalignment)     |
+| US-14 | ⚠️     | M    | En tant que gérant, je veux voir les tournées sur une carte (Leaflet)                            | BUG-C13 (Paris hardcoded fallback) |
+| US-15 | ⚠️     | M    | En tant que gérant, je veux ajouter manuellement une intervention au planning                    | BUG-C10 (no conflict detection)    |
+| US-16 | ⚠️     | M    | En tant que gérant, je veux modifier/déplacer/supprimer une intervention                         | BUG-C7 (pas de re-optim)           |
+| US-17 | 📦     | S    | En tant que gérant, je veux pouvoir réoptimiser une journée après ajout d'une demande ponctuelle | non implémenté                     |
 
 ### Epic 4 — Exécution des tournées
 
 | ID    | Statut | Prio | User story                                                                    | Bugs liés                                                 |
 | ----- | ------ | ---- | ----------------------------------------------------------------------------- | --------------------------------------------------------- |
 | US-18 | ⚠️     | M    | En tant qu'équipe, je veux voir les tournées du jour avec adresses et ordre   | BUG-C12 (date hardcodée)                                  |
-| US-19 | ❌     | M    | En tant qu'équipe, je veux passer une intervention en "en cours" / "terminée" | BUG-C11 (pas de state machine)                            |
+| US-19 | ✅     | M    | En tant qu'équipe, je veux passer une intervention en "en cours" / "terminée" | ~~BUG-C11~~ ✅                                            |
 | US-20 | 📦     | S    | En tant qu'équipe, je veux ajouter une note/photo après une intervention      | non implémenté (champ `notes` existe en DB mais pas d'UI) |
 
 ### Epic 5 — Paramètres & préférences
